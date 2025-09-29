@@ -1,0 +1,124 @@
+/* Polimento final para 10/10 */
+
+/* Micro-interações suaves */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Seleção de texto personalizada */
+::selection {
+    background: rgba(102, 126, 234, 0.3);
+    color: #1a202c;
+}
+
+::-moz-selection {
+    background: rgba(102, 126, 234, 0.3);
+    color: #1a202c;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.6), rgba(6, 182, 212, 0.6));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(6, 182, 212, 0.8));
+}
+
+/* Melhorias de performance */
+.form-card,
+.info-card,
+.hero-image img,
+.btn {
+    will-change: transform;
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Transições mais suaves */
+.form-input,
+.form-textarea,
+.form-select {
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Sombras mais realistas */
+.form-card {
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.08),
+        0 0 60px rgba(99, 102, 241, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.02);
+}
+
+/* Efeito de profundidade nos botões */
+.btn-primary {
+    box-shadow: 
+        0 8px 25px rgba(102, 126, 234, 0.35),
+        0 0 20px rgba(118, 75, 162, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+    box-shadow: 
+        0 15px 35px rgba(102, 126, 234, 0.5),
+        0 0 30px rgba(118, 75, 162, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Refinamento tipográfico */
+.form-title {
+    letter-spacing: -0.5px;
+    text-rendering: optimizeLegibility;
+}
+
+.hero-title {
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Melhor contraste para acessibilidade */
+.link-highlight {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.5),
+        0 0 10px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Animação de entrada suave */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.form-card,
+.info-card {
+    animation: fadeInScale 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Otimização para dispositivos de alta densidade */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .hero-title,
+    .form-title {
+        text-shadow: 
+            0 1px 1px rgba(0, 0, 0, 0.3),
+            0 0 20px rgba(255, 255, 255, 0.2);
+    }
+}

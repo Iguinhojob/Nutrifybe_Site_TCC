@@ -1,0 +1,38 @@
+{
+  "nutricionistas": [
+    {
+      "id": 1,
+      "nome": "Nutricionista Teste",
+      "email": "nutri@teste.com",
+      "senha": "123456",
+      "crn": "12345",
+      "status": "approved",
+      "telefone": "(11) 88888-8888",
+      "especialidade": "Nutrição Clínica"
+    }
+  ],
+  "pacientes": [
+    {
+      "id": "patient_test_1",
+      "nome": "João Silva",
+      "email": "joao@teste.com",
+      "idade": 35,
+      "peso": 80,
+      "altura": 175,
+      "objetivo": "Perder peso",
+      "condicaoSaude": "Nenhuma",
+      "nutricionistaId": 1,
+      "status": "accepted",
+      "prescricaoSemanal": ""
+    }
+  ],
+  "solicitacoesPendentes": [],
+  "admin": [
+    {
+      "id": 1,
+      "email": "admin@nutrifybe.com",
+      "senha": "admin123"
+    }
+  ],
+  "activityLog": []
+}
