@@ -31,7 +31,7 @@ const SolicitarConsulta = () => {
     const loadNutricionistas = async () => {
       try {
         const nutris = await nutricionistasAPI.getAll();
-        setNutricionistas(nutris.filter(n => n.status === 'approved'));
+        setNutricionistas(nutris.filter(n => n.Status === 'approved'));
       } catch (error) {
         console.error('Erro ao carregar nutricionistas:', error);
       }
@@ -60,17 +60,14 @@ const SolicitarConsulta = () => {
 
     try {
       await solicitacoesAPI.create({
-        id: 'patient_' + Date.now(),
         nome,
         email,
         idade: parseInt(idade),
         peso: parseFloat(peso),
-        altura: parseInt(altura),
+        altura: parseFloat(altura),
         objetivo,
         condicaoSaude,
-        nutricionistaId: parseInt(nutricionistaId),
-        status: 'pending',
-        ativo: true
+        nutricionistaId: parseInt(nutricionistaId)
       });
 
       setMessage('Solicitação enviada com sucesso! O nutricionista entrará em contato em breve.');
@@ -219,8 +216,8 @@ const SolicitarConsulta = () => {
                 >
                   <option value="">Selecione um nutricionista</option>
                   {nutricionistas.map(nutri => (
-                    <option key={nutri.id} value={nutri.id}>
-                      {nutri.nome} - CRN: {nutri.crn}
+                    <option key={nutri.Id} value={nutri.Id}>
+                      {nutri.Nome} - CRN: {nutri.CRN}
                     </option>
                   ))}
                 </select>

@@ -31,11 +31,11 @@ const NutriDashboard = () => {
         }
         setCurrentUser(user);
         
-        const pacientes = await pacientesAPI.getByNutricionista(user.id);
+        const pacientes = await pacientesAPI.getByNutricionista(user.Id || user.id);
         const nutricionistas = await nutricionistasAPI.getAll();
         
         setAcceptedPatients(pacientes);
-        setManagedNutricionists(nutricionistas.filter(n => n.status === 'approved'));
+        setManagedNutricionists(nutricionistas.filter(n => n.Status === 'approved'));
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       }
@@ -95,15 +95,15 @@ const NutriDashboard = () => {
 
   const getFilteredNutris = () => {
     const availableNutris = managedNutricionists.filter(n => 
-      n.status === 'approved' && n.id !== currentUser?.id
+      n.Status === 'approved' && (n.Id || n.id) !== (currentUser?.Id || currentUser?.id)
     );
     
     if (!searchNutri) return availableNutris;
     
     return availableNutris.filter(n => 
-      n.nome.toLowerCase().includes(searchNutri.toLowerCase()) ||
-      n.crn.toLowerCase().includes(searchNutri.toLowerCase()) ||
-      n.email.toLowerCase().includes(searchNutri.toLowerCase())
+      (n.Nome || n.nome).toLowerCase().includes(searchNutri.toLowerCase()) ||
+      (n.CRN || n.crn).toLowerCase().includes(searchNutri.toLowerCase()) ||
+      (n.Email || n.email).toLowerCase().includes(searchNutri.toLowerCase())
     );
   };
 
@@ -127,17 +127,18 @@ const NutriDashboard = () => {
               <p className="no-patients-message">Você não tem pacientes.</p>
             ) : (
               acceptedPatients.map(patient => (
-                <div key={patient.id} className="patient-item">
+                <div key={patient.Id || patient.id} className="patient-item">
                   <div className="patient-info">
                     <i className="fas fa-user-circle patient-icon"></i>
                     <div className="patient-details">
-                      <h3>{patient.nome}</h3>
-                      <p>Objetivo: {patient.objetivo}</p>
+                      <h3>{patient.Nome || patient.nome}</h3>
+                      <p>Email: {patient.Email || patient.email}</p>
+                      <p>Objetivo: {patient.Objetivo || patient.objetivo}</p>
                     </div>
                   </div>
                   <div className="patient-actions">
                     <Link 
-                      to={`/nutri-prescricao/${patient.id}`} 
+                      to={`/nutri-prescricao/${patient.Id || patient.id}`} 
                       className="btn btn-primary"
                     >
                       Ver Ficha

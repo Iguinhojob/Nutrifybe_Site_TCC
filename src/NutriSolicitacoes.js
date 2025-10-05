@@ -23,8 +23,7 @@ const NutriSolicitacoes = () => {
           return;
         }
 
-        
-        const solicitacoes = await solicitacoesAPI.getByNutricionista(user.id);
+        const solicitacoes = await solicitacoesAPI.getByNutricionista(user.Id || user.id);
         setPendingRequests(solicitacoes);
       } catch (error) {
         console.error('Erro ao carregar solicitações:', error);
@@ -37,7 +36,7 @@ const NutriSolicitacoes = () => {
   const acceptPatientRequest = async (id) => {
     try {
       const acceptedPatient = await solicitacoesAPI.acceptRequest(id);
-      const updatedPending = pendingRequests.filter(req => req.id !== id);
+      const updatedPending = pendingRequests.filter(req => (req.id || req.Id) != id);
       setPendingRequests(updatedPending);
       
       alert(`Paciente ${acceptedPatient.nome} aceito com sucesso!`);
@@ -49,12 +48,12 @@ const NutriSolicitacoes = () => {
 
   const rejectPatientRequest = async (id) => {
     try {
-      const rejectedPatient = pendingRequests.find(req => req.id === id);
+      const rejectedPatient = pendingRequests.find(req => (req.id || req.Id) == id);
       await solicitacoesAPI.delete(id);
-      const updatedPending = pendingRequests.filter(req => req.id !== id);
+      const updatedPending = pendingRequests.filter(req => (req.id || req.Id) != id);
       setPendingRequests(updatedPending);
       
-      alert(`Paciente ${rejectedPatient.nome} recusado.`);
+      alert(`Paciente ${rejectedPatient.Nome || rejectedPatient.nome} recusado.`);
     } catch (error) {
       console.error('Erro ao recusar paciente:', error);
       alert('Erro ao recusar paciente.');
@@ -84,23 +83,24 @@ const NutriSolicitacoes = () => {
                 <div key={request.id} className="request-item">
                   <i className="fas fa-user-circle request-icon"></i>
                   <div className="request-info">
-                    <h3>{request.nome}</h3>
-                    <p><strong>Objetivo:</strong> {request.objetivo}</p>
-                    <p><strong>Peso:</strong> {request.peso}</p>
-                    <p><strong>Idade:</strong> {request.idade}</p>
-                    <p><strong>Altura:</strong> {request.altura}</p>
-                    <p><strong>Condição de saúde ou restrição alimentar?</strong> {request.condicaoSaude}.</p>
+                    <h3>{request.Nome || request.nome}</h3>
+                    <p><strong>Email:</strong> {request.Email || request.email}</p>
+                    <p><strong>Objetivo:</strong> {request.Objetivo || request.objetivo}</p>
+                    <p><strong>Peso:</strong> {request.Peso || request.peso} kg</p>
+                    <p><strong>Idade:</strong> {request.Idade || request.idade} anos</p>
+                    <p><strong>Altura:</strong> {request.Altura || request.altura} cm</p>
+                    <p><strong>Condição de saúde:</strong> {request.CondicaoSaude || request.condicaoSaude}</p>
                   </div>
                   <div className="request-actions">
                     <button 
                       className="btn-accept"
-                      onClick={() => acceptPatientRequest(request.id)}
+                      onClick={() => acceptPatientRequest(request.Id || request.id)}
                     >
                       Aceitar
                     </button>
                     <button 
                       className="btn-reject"
-                      onClick={() => rejectPatientRequest(request.id)}
+                      onClick={() => rejectPatientRequest(request.Id || request.id)}
                     >
                       Recusar
                     </button>

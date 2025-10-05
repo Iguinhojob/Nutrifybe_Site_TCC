@@ -47,11 +47,18 @@ const Login = () => {
         localStorage.setItem('currentUser', JSON.stringify(user));
         navigate('/nutri-dashboard');
       } else {
-        setMessage('E-mail, CRN ou Senha incorretos, ou sua conta ainda não foi aprovada pelo administrador.');
+        setMessage('E-mail, CRN ou Senha incorretos.');
       }
     } catch (error) {
       console.error('Erro no login:', error);
-      setMessage('Erro ao conectar com o servidor. Verifique se o banco de dados está rodando.');
+      
+      if (error.message === 'ACCOUNT_INACTIVE') {
+        setMessage('Sua conta foi inativada pelo administrador. Entre em contato com o suporte.');
+      } else if (error.message === 'PENDING_APPROVAL') {
+        setMessage('Sua conta ainda não foi aprovada pelo administrador.');
+      } else {
+        setMessage('Erro ao conectar com o servidor. Verifique se o banco de dados está rodando.');
+      }
     }
   };
 

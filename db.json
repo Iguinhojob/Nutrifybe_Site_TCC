@@ -150,6 +150,30 @@
       "action": "Ativado",
       "nutriName": "Nutricionista Teste",
       "timestamp": "04/10/2025, 20:29:07"
+    },
+    {
+      "id": 1759626791237,
+      "action": "Paciente Desativado",
+      "nutriName": "João Silva",
+      "timestamp": "04/10/2025, 22:13:11"
+    },
+    {
+      "id": 1759626792616,
+      "action": "Paciente Ativado",
+      "nutriName": "João Silva",
+      "timestamp": "04/10/2025, 22:13:12"
+    },
+    {
+      "id": 1759633091223,
+      "action": "Paciente Desativado",
+      "nutriName": "João Silva",
+      "timestamp": "04/10/2025, 23:58:11"
+    },
+    {
+      "id": 1759633132671,
+      "action": "Paciente Ativado",
+      "nutriName": "João Silva",
+      "timestamp": "04/10/2025, 23:58:52"
     }
   ]
 }

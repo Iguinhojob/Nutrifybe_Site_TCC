@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = 'http://localhost:3001'; // Backend SQL Server
 
 // Funções auxiliares
 const handleResponse = async (response) => {
@@ -39,13 +39,23 @@ export const nutricionistasAPI = {
   }),
   login: async (email, crn, senha) => {
     const nutricionistas = await apiRequest('/nutricionistas');
-    return nutricionistas.find(n => 
-      n.email === email && 
-      n.crn === crn && 
-      n.senha === senha && 
-      n.status === 'approved' &&
-      n.ativo !== false
+    const user = nutricionistas.find(n => 
+      n.Email === email && 
+      n.CRN === crn && 
+      n.Senha === senha
     );
+    
+    if (!user) return null;
+    
+    if (user.Status !== 'approved') {
+      throw new Error('PENDING_APPROVAL');
+    }
+    
+    if (user.ativo === false || user.ativo === 0) {
+      throw new Error('ACCOUNT_INACTIVE');
+    }
+    
+    return user;
   }
 };
 
@@ -55,7 +65,7 @@ export const pacientesAPI = {
   getById: (id) => apiRequest(`/pacientes/${id}`),
   getByNutricionista: async (nutricionistaId) => {
     const pacientes = await apiRequest('/pacientes');
-    return pacientes.filter(p => p.nutricionistaId === nutricionistaId && p.status === 'accepted');
+    return pacientes.filter(p => (p.nutricionistaId || p.NutricionistaId) == nutricionistaId && (p.status || p.Status) === 'accepted');
   },
   create: (data) => apiRequest('/pacientes', {
     method: 'POST',
@@ -75,7 +85,7 @@ export const solicitacoesAPI = {
   getAll: () => apiRequest('/solicitacoesPendentes'),
   getByNutricionista: async (nutricionistaId) => {
     const solicitacoes = await apiRequest('/solicitacoesPendentes');
-    return solicitacoes.filter(s => s.nutricionistaId === nutricionistaId);
+    return solicitacoes.filter(s => (s.nutricionistaId || s.NutricionistaId) == nutricionistaId);
   },
   create: (data) => apiRequest('/solicitacoesPendentes', {
     method: 'POST',
@@ -85,17 +95,27 @@ export const solicitacoesAPI = {
     method: 'DELETE',
   }),
   acceptRequest: async (id) => {
-    // Buscar a solicitação
-    const solicitacao = await apiRequest(`/solicitacoesPendentes/${id}`);
+    // Buscar todas as solicitações e encontrar a específica
+    const solicitacoes = await apiRequest('/solicitacoesPendentes');
+    const solicitacao = solicitacoes.find(s => (s.id || s.Id) == id);
+    
+    if (!solicitacao) throw new Error('Solicitação não encontrada');
     
     // Criar paciente
     const paciente = {
-      ...solicitacao,
+      nome: solicitacao.Nome || solicitacao.nome,
+      email: solicitacao.Email || solicitacao.email,
+      idade: solicitacao.Idade || solicitacao.idade,
+      peso: solicitacao.Peso || solicitacao.peso,
+      altura: solicitacao.Altura || solicitacao.altura,
+      objetivo: solicitacao.Objetivo || solicitacao.objetivo,
+      condicaoSaude: solicitacao.CondicaoSaude || solicitacao.condicaoSaude,
+      nutricionistaId: solicitacao.NutricionistaId || solicitacao.nutricionistaId,
       status: 'accepted',
-      ativo: true,
-      prescricaoSemanal: ''
+      ativo: 1
     };
-    await apiRequest('/pacientes', {
+    
+    const newPaciente = await apiRequest('/pacientes', {
       method: 'POST',
       body: JSON.stringify(paciente),
     });
@@ -105,7 +125,8 @@ export const solicitacoesAPI = {
       method: 'DELETE',
     });
     
-    return paciente;
+    
+    return { nome: paciente.nome, ...newPaciente };
   }
 };
 
@@ -117,20 +138,12 @@ export const adminAPI = {
   },
   create: (data) => apiRequest('/admin', {
     method: 'POST',
-    body: JSON.stringify({
-      ...data,
-      id: Date.now().toString(),
-      dataCriacao: new Date().toISOString()
-    }),
+    body: JSON.stringify(data),
   }),
   getActivityLog: () => apiRequest('/activityLog'),
   addActivity: (activity) => apiRequest('/activityLog', {
     method: 'POST',
-    body: JSON.stringify({
-      ...activity,
-      id: Date.now(),
-      timestamp: new Date().toLocaleString('pt-BR')
-    }),
+    body: JSON.stringify(activity),
   }),
   clearActivityLog: async () => {
     try {
