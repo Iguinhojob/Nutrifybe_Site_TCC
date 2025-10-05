@@ -43,7 +43,8 @@ export const nutricionistasAPI = {
       n.email === email && 
       n.crn === crn && 
       n.senha === senha && 
-      n.status === 'approved'
+      n.status === 'approved' &&
+      n.ativo !== false
     );
   }
 };
@@ -91,6 +92,7 @@ export const solicitacoesAPI = {
     const paciente = {
       ...solicitacao,
       status: 'accepted',
+      ativo: true,
       prescricaoSemanal: ''
     };
     await apiRequest('/pacientes', {
@@ -113,6 +115,14 @@ export const adminAPI = {
     const admins = await apiRequest('/admin');
     return admins.find(a => a.email === email && a.senha === senha);
   },
+  create: (data) => apiRequest('/admin', {
+    method: 'POST',
+    body: JSON.stringify({
+      ...data,
+      id: Date.now().toString(),
+      dataCriacao: new Date().toISOString()
+    }),
+  }),
   getActivityLog: () => apiRequest('/activityLog'),
   addActivity: (activity) => apiRequest('/activityLog', {
     method: 'POST',
@@ -123,10 +133,18 @@ export const adminAPI = {
     }),
   }),
   clearActivityLog: async () => {
-    const activities = await apiRequest('/activityLog');
-    await Promise.all(activities.map(a => 
-      apiRequest(`/activityLog/${a.id}`, { method: 'DELETE' })
-    ));
+    try {
+      const activities = await apiRequest('/activityLog');
+      if (activities.length > 0) {
+        await Promise.all(activities.map(a => 
+          apiRequest(`/activityLog/${a.id}`, { method: 'DELETE' })
+        ));
+      }
+      return true;
+    } catch (error) {
+      console.error('Erro ao limpar log:', error);
+      throw error;
+    }
   }
 };
 

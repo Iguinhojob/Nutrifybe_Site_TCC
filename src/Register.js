@@ -17,6 +17,7 @@ const Register = () => {
 
   const headerLinks = [
     { href: '/', text: 'Início' },
+    { href: '/solicitar-consulta', text: 'Solicitar Consulta' },
     { href: '/registro', text: 'Registro' },
     { href: '/login', text: 'Entrar' },
     { href: '/sobre-nos', text: 'Sobre nós' },
@@ -67,6 +68,7 @@ const Register = () => {
         crn: crn,
         senha: senha,
         status: 'pending',
+        ativo: true,
         telefone: '',
         especialidade: ''
       });

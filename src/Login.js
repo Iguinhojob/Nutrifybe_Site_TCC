@@ -15,6 +15,7 @@ const Login = () => {
 
   const headerLinks = [
     { href: '/', text: 'Início' },
+    { href: '/solicitar-consulta', text: 'Solicitar Consulta' },
     { href: '/registro', text: 'Registro' },
     { href: '/login', text: 'Entrar' },
     { href: '/sobre-nos', text: 'Sobre nós' },

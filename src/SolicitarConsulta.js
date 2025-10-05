@@ -69,7 +69,8 @@ const SolicitarConsulta = () => {
         objetivo,
         condicaoSaude,
         nutricionistaId: parseInt(nutricionistaId),
-        status: 'pending'
+        status: 'pending',
+        ativo: true
       });
 
       setMessage('Solicitação enviada com sucesso! O nutricionista entrará em contato em breve.');
