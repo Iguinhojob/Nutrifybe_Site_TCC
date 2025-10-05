@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
+import Footer from './Footer';
 import fundoImage from './fundo_index.png';
 
 const SobreNos = () => {
@@ -49,6 +50,8 @@ const SobreNos = () => {
           </div>
         </div>
       </main>
+      
+      <Footer />
     </div>
   );
 };

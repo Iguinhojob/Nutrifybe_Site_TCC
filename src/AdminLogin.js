@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
-import { adminAPI } from './services/api';
 import fundoImage from './fundo_index.png';
 
 const AdminLogin = () => {
@@ -30,21 +29,44 @@ const AdminLogin = () => {
       return;
     }
 
+    // Validação básica de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage('Por favor, insira um email válido.');
+      return;
+    }
+
     try {
-      const admin = await adminAPI.login(email, password);
-      
-      if (admin) {
-        localStorage.setItem('currentAdmin', JSON.stringify(admin));
+      const response = await fetch('http://localhost:3001/auth/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email.trim(), senha: password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Sanitizar dados antes de armazenar
+        const sanitizedUser = {
+          id: data.user.id,
+          nome: data.user.nome?.replace(/<[^>]*>/g, ''),
+          email: data.user.email?.replace(/<[^>]*>/g, ''),
+          type: 'admin'
+        };
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('currentAdmin', JSON.stringify(sanitizedUser));
         setMessage('Login bem-sucedido! Redirecionando...');
         setTimeout(() => {
           navigate('/admin-dashboard');
         }, 1000);
       } else {
-        setMessage('Email ou senha incorretos.');
+        setMessage(data.error || 'Email ou senha incorretos.');
       }
     } catch (error) {
       console.error('Erro no login admin:', error);
-      setMessage('Erro ao conectar com o servidor. Verifique se o banco de dados está rodando.');
+      setMessage('Erro ao conectar com o servidor.');
     }
   };
 
@@ -80,7 +102,7 @@ const AdminLogin = () => {
                   type="email"
                   name="email"
                   className="form-input"
-                  placeholder="Digite o email do administrador"
+                  placeholder="Digite seu email"
                   value={formData.email}
                   onChange={handleInputChange}
                   required

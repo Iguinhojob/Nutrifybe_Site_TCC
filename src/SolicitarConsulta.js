@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import Footer from './Footer';
 import { solicitacoesAPI, nutricionistasAPI } from './services/api';
 import fundoImage from './fundo_index.png';
 
@@ -22,6 +23,7 @@ const SolicitarConsulta = () => {
   const headerLinks = [
     { href: '/', text: 'Início' },
     { href: '/solicitar-consulta', text: 'Solicitar Consulta' },
+    { href: '/registro', text: 'Registro' },
     { href: '/login', text: 'Entrar' },
     { href: '/sobre-nos', text: 'Sobre nós' },
     { href: '/suporte', text: 'Suporte' }
@@ -235,6 +237,8 @@ const SolicitarConsulta = () => {
           </div>
         </div>
       </main>
+      
+      <Footer />
     </div>
   );
 };

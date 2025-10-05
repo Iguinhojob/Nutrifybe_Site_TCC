@@ -1,21 +1,33 @@
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
+const path = require('path');
 
 console.log('🚀 Iniciando Nutrifybe...\n');
 
+// Função segura para executar comandos
+const safeExec = (command, args = [], options = {}) => {
+  return spawn(command, args, {
+    stdio: 'inherit',
+    shell: false,
+    ...options
+  });
+};
+
 // Instalar dependências
 console.log('📦 Instalando dependências...');
-exec('npm install', (error) => {
-  if (error) {
+const install = safeExec('npm', ['install']);
+
+install.on('close', (code) => {
+  if (code !== 0) {
     console.log('⚠️  Erro na instalação, continuando...');
   }
   
   // Iniciar servidor
   console.log('🔧 Iniciando servidor...');
-  const server = exec('npm run server-local');
+  safeExec('npm', ['run', 'server-local']);
   
   setTimeout(() => {
     console.log('⚡ Iniciando React...');
-    exec('npm start');
+    safeExec('npm', ['start']);
     
     console.log('\n✅ Sistema iniciado!');
     console.log('📱 App: http://localhost:3000');

@@ -1,10 +1,12 @@
-const sql = require('mssql');
+import 'dotenv/config';
+import sql from 'mssql';
 
 const dbConfig = {
-  user: 'nutrifybe',
-  password: '@ITB123456',
-  server: 'localhost',
-  database: 'nutrifybeDB',
+  user: process.env.DB_USER || 'nutrifybe',
+  password: process.env.DB_PASSWORD || '@ITB123456',
+  server: process.env.DB_SERVER || 'localhost',
+  database: process.env.DB_DATABASE || 'nutrifybeDB',
+  port: parseInt(process.env.DB_PORT) || 1433,
   options: {
     trustServerCertificate: true,
     enableArithAbort: true

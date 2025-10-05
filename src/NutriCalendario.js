@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Modal from './Modal';
-import { loadDataFromLocalStorage, saveDataToLocalStorage } from './utils';
+import { pacientesAPI } from './services/api';
 
 const NutriCalendario = () => {
   const { id } = useParams();
@@ -26,16 +26,22 @@ const NutriCalendario = () => {
   ];
 
   useEffect(() => {
-    const data = loadDataFromLocalStorage();
-    const patient = data.acceptedPatients.find(p => p.id === id);
+    const loadPatient = async () => {
+    let patient;
+    try {
+      patient = await pacientesAPI.getById(id);
+    } catch {
+      const allPacientes = await pacientesAPI.getAll();
+      patient = allPacientes.find(p => (p.Id || p.id) === parseInt(id));
+    }
     
     if (patient) {
       if (!patient.calendario) {
         // Adicionar dados de exemplo para o calendário
         patient.calendario = {
-          '2024-01-15': { alimentacao: 'Café da manhã: Aveia com frutas\nAlmoço: Frango grelhado com salada\nJantar: Sopa de legumes', notas: 'Paciente relatou mais energia', status: 'cumprido' },
-          '2024-01-16': { alimentacao: 'Café da manhã: Iogurte natural\nAlmoço: Peixe com arroz integral\nJantar: Salada com proteína', notas: 'Seguiu a dieta corretamente', status: 'cumprido' },
-          '2024-01-17': { alimentacao: 'Café da manhã: Pão integral\nAlmoço: Não seguiu a dieta\nJantar: Pizza', notas: 'Teve dificuldades no almoço', status: 'parcialmente-cumprido' }
+          '2025-01-15': { alimentacao: 'Café da manhã: Aveia com frutas\nAlmoço: Frango grelhado com salada\nJantar: Sopa de legumes', notas: 'Paciente relatou mais energia', status: 'cumprido' },
+          '2025-01-16': { alimentacao: 'Café da manhã: Iogurte natural\nAlmoço: Peixe com arroz integral\nJantar: Salada com proteína', notas: 'Seguiu a dieta corretamente', status: 'cumprido' },
+          '2025-01-17': { alimentacao: 'Café da manhã: Pão integral\nAlmoço: Não seguiu a dieta\nJantar: Pizza', notas: 'Teve dificuldades no almoço', status: 'parcialmente-cumprido' }
         };
       }
       setCurrentPatient(patient);
@@ -43,6 +49,9 @@ const NutriCalendario = () => {
       alert('Paciente não encontrado para o calendário.');
       navigate('/nutri-dashboard');
     }
+    };
+    
+    loadPatient();
   }, [id, navigate]);
 
   const renderCalendar = () => {
@@ -101,25 +110,19 @@ const NutriCalendario = () => {
   const saveDayDetails = () => {
     if (!currentPatient || !selectedDate) return;
 
-    const data = loadDataFromLocalStorage();
-    const patientIndex = data.acceptedPatients.findIndex(p => p.id === currentPatient.id);
-    
-    if (patientIndex !== -1) {
-      if (!data.acceptedPatients[patientIndex].calendario) {
-        data.acceptedPatients[patientIndex].calendario = {};
-      }
-      
-      data.acceptedPatients[patientIndex].calendario[selectedDate] = {
-        alimentacao: dayData.alimentacao,
-        notas: dayData.notas,
-        status: dayData.status
-      };
-      
-      saveDataToLocalStorage(data);
-      setCurrentPatient(data.acceptedPatients[patientIndex]);
-      alert('Detalhes do dia salvos com sucesso!');
-      setDayModal({ isOpen: false });
+    if (!currentPatient.calendario) {
+      currentPatient.calendario = {};
     }
+    
+    currentPatient.calendario[selectedDate] = {
+      alimentacao: dayData.alimentacao,
+      notas: dayData.notas,
+      status: dayData.status
+    };
+    
+    setCurrentPatient({...currentPatient});
+    alert('Detalhes do dia salvos com sucesso!');
+    setDayModal({ isOpen: false });
   };
 
   const navigateMonth = (direction) => {
@@ -141,10 +144,11 @@ const NutriCalendario = () => {
   };
 
   const getFormattedDate = () => {
-    return new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { 
+    const date = new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { 
       month: 'long', 
       year: 'numeric' 
     });
+    return date.charAt(0).toUpperCase() + date.slice(1);
   };
 
   const getSelectedDateFormatted = () => {
@@ -167,13 +171,13 @@ const NutriCalendario = () => {
       
       <main className="form-section" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1rem'}}>
         <div style={{width: '100%', maxWidth: '900px', marginBottom: '1rem'}}>
-          <Link to={`/nutri-prescricao/${currentPatient.id}`} className="btn btn-outline">
-            Voltar à Ficha
+          <Link to={`/nutri-prescricao/${currentPatient.Id || currentPatient.id}`} className="btn btn-outline">
+            <i className="fas fa-arrow-left"></i>
           </Link>
         </div>
         
         <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-          <h1 className="info-title">Calendário de {currentPatient.nome}</h1>
+          <h1 className="info-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
         <div className="info-card calendar-card" style={{maxWidth: '900px', width: '100%'}}>

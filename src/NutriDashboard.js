@@ -138,7 +138,7 @@ const NutriDashboard = () => {
                   </div>
                   <div className="patient-actions">
                     <Link 
-                      to={`/nutri-prescricao/${patient.Id || patient.id}`} 
+                      to={`/ficha-paciente/${patient.Id || patient.id}`} 
                       className="btn btn-primary"
                     >
                       Ver Ficha

@@ -5,6 +5,7 @@ import { nutricionistasAPI, adminAPI } from './services/api';
 import api from './services/api';
 import jsPDF from 'jspdf';
 import fundoImage from './fundo_index.png';
+import './css/style.css';
 
 const AdminDashboard = () => {
   const [managedNutricionists, setManagedNutricionists] = useState([]);
@@ -24,6 +25,7 @@ const AdminDashboard = () => {
   const [allPatients, setAllPatients] = useState([]);
   const [systemStats, setSystemStats] = useState({});
   const [activityLog, setActivityLog] = useState([]);
+  const [allAdmins, setAllAdmins] = useState([]);
   const navigate = useNavigate();
 
   const reloadData = async () => {
@@ -60,10 +62,12 @@ const AdminDashboard = () => {
         const nutricionistas = await nutricionistasAPI.getAll();
         const activities = await adminAPI.getActivityLog();
         const pacientes = await api.pacientesAPI.getAll();
+        const admins = await adminAPI.getAll();
         
         setManagedNutricionists(nutricionistas);
         setActivityLog(activities);
         setAllPatients(pacientes);
+        setAllAdmins(admins);
         
         // Calcular estatísticas do sistema
         const stats = {
@@ -221,6 +225,7 @@ const AdminDashboard = () => {
     };
   };
 
+  const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
   const headerLinks = [
     { href: '/', text: 'Início' },
     { href: '/admin-login', text: 'Sair' }
@@ -230,88 +235,117 @@ const AdminDashboard = () => {
 
   return (
     <div className="public-theme" style={{backgroundImage: `url(${fundoImage})`}}>
+      <style>{`
+        .admin-profile-btn:hover {
+          background: #059669 !important;
+        }
+      `}</style>
       <Header theme="admin" links={headerLinks} />
       
       <main className="form-section" style={{minHeight: 'calc(100vh - 80px)', padding: '2rem 1rem'}}>
         <div className="info-card" style={{maxWidth: '1400px', width: '95%'}}>
-          <h1 className="info-title">Dashboard do Administrador</h1>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
+            <h1 className="info-title" style={{margin: 0}}>Dashboard do Administrador</h1>
+            <div 
+              className="admin-profile-btn"
+              style={{
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem', 
+                background: '#10b981', 
+                color: 'white', 
+                padding: '0.5rem 1rem', 
+                borderRadius: '8px', 
+                fontSize: '0.9rem', 
+                cursor: 'pointer'
+              }}
+              onClick={() => setActiveTab('profile')}
+            >
+              <div 
+                style={{
+                  width: '24px', 
+                  height: '24px', 
+                  borderRadius: '50%', 
+                  backgroundImage: currentAdmin?.foto ? `url(${currentAdmin.foto})` : 'none',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.8rem',
+                  border: '1px solid rgba(255,255,255,0.3)'
+                }}
+              >
+                {!currentAdmin?.foto && '👤'}
+              </div>
+              {JSON.parse(localStorage.getItem('currentAdmin'))?.nome || 'Admin'}
+            </div>
+          </div>
           
-          <div style={{display: 'flex', justifyContent: 'center', marginBottom: '2rem', gap: '1rem'}}>
+          <div style={{display: 'flex', justifyContent: 'center', marginBottom: '2rem', gap: '0.5rem', flexWrap: 'wrap'}}>
             <button 
               className={`btn ${activeTab === 'dashboard' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('dashboard')}
             >
-              Dashboard
+              📊 Dashboard
             </button>
             <button 
               className={`btn ${activeTab === 'manage' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('manage')}
             >
-              Gerenciar
+              👩‍⚕️ Nutricionistas
             </button>
             <button 
               className={`btn ${activeTab === 'activity' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('activity')}
             >
-              Atividades
+              📋 Atividades
             </button>
             <button 
               className={`btn ${activeTab === 'patients' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('patients')}
             >
-              Pacientes
+              🏥 Pacientes
             </button>
             <button 
               className={`btn ${activeTab === 'reports' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('reports')}
             >
-              Relatórios
+              📈 Relatórios
             </button>
+            <button 
+              className={`btn ${activeTab === 'admins' ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setActiveTab('admins')}
+            >
+              👤 Admins
+            </button>
+
             <button 
               className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('settings')}
             >
-              Configurações
+              ⚙️ Configurações
             </button>
           </div>
 
           {activeTab === 'dashboard' && (
             <>
-              <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '2rem'}}>
+              <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem'}}>
                 <div style={{background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
                   <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{stats.total}</h3>
-                  <p style={{margin: 0, opacity: 0.9}}>Total de Nutricionistas</p>
+                  <p style={{margin: 0, opacity: 0.9}}>Total Nutricionistas</p>
                 </div>
                 <div style={{background: 'linear-gradient(135deg, #f093fb, #f5576c)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
-                  <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{stats.pending}</h3>
-                  <p style={{margin: 0, opacity: 0.9}}>Pendentes</p>
-                </div>
-                <div style={{background: 'linear-gradient(135deg, #4facfe, #00f2fe)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
                   <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{stats.approved}</h3>
                   <p style={{margin: 0, opacity: 0.9}}>Aprovados</p>
                 </div>
-                <div style={{background: 'linear-gradient(135deg, #43e97b, #38f9d7)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
-                  <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{stats.rejected}</h3>
-                  <p style={{margin: 0, opacity: 0.9}}>Rejeitados</p>
-                </div>
-              </div>
-              
-              <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem'}}>
-                <div style={{background: 'linear-gradient(135deg, #ff6b6b, #ee5a24)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
+                <div style={{background: 'linear-gradient(135deg, #4facfe, #00f2fe)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
                   <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{systemStats.totalPacientes || 0}</h3>
                   <p style={{margin: 0, opacity: 0.9}}>Total Pacientes</p>
                 </div>
-                <div style={{background: 'linear-gradient(135deg, #feca57, #ff9ff3)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
-                  <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{systemStats.pacientesAtivos || 0}</h3>
-                  <p style={{margin: 0, opacity: 0.9}}>Pacientes Ativos</p>
-                </div>
-                <div style={{background: 'linear-gradient(135deg, #48dbfb, #0abde3)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
-                  <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{systemStats.nutricionistasAtivos || 0}</h3>
-                  <p style={{margin: 0, opacity: 0.9}}>Nutris Ativos</p>
-                </div>
-                <div style={{background: 'linear-gradient(135deg, #1dd1a1, #55efc4)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
+                <div style={{background: 'linear-gradient(135deg, #43e97b, #38f9d7)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
                   <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{systemStats.solicitacoesPendentes || 0}</h3>
-                  <p style={{margin: 0, opacity: 0.9}}>Solicitações</p>
+                  <p style={{margin: 0, opacity: 0.9}}>Solicitações Pendentes</p>
                 </div>
               </div>
               
@@ -519,7 +553,7 @@ const AdminDashboard = () => {
                     getFilteredNutris().map(nutri => (
                       <div key={nutri.Id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'white', borderRadius: '8px', marginBottom: '0.5rem', border: '1px solid #e5e7eb'}}>
                         <div>
-                          <div style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{nutri.Nome}</div>
+                          <div style={{fontWeight: 'bold', fontSize: '1.1rem'}} dangerouslySetInnerHTML={{__html: nutri.Nome?.replace(/<[^>]*>/g, '')}}></div>
                           <div style={{color: '#6b7280', fontSize: '0.9rem'}}>{nutri.Email} • CRN: {nutri.CRN}</div>
                         </div>
                         <div style={{display: 'flex', gap: '0.5rem', alignItems: 'center'}}>
@@ -586,35 +620,116 @@ const AdminDashboard = () => {
                   <p className="no-items-message">Nenhuma atividade registrada.</p>
                 ) : (
                   activityLog.map(activity => (
-                    <div key={activity.id} className="nutri-item" style={{borderLeft: '4px solid var(--accent-green)'}}>
+                    <div key={activity.Id} className="nutri-item" style={{borderLeft: '4px solid var(--accent-green)'}}>
                       <div className="nutri-info">
-                        <strong>{activity.action}</strong> - {activity.nutriName}
+                        <strong>{activity.Acao}</strong> - {activity.Usuario}
                         <br />
-                        <small style={{color: 'var(--gray-500)'}}>{activity.timestamp}</small>
+                        <small style={{color: 'var(--gray-500)'}}>{new Date(activity.Data).toLocaleString('pt-BR')}</small>
                       </div>
                     </div>
                   ))
                 )}
               </div>
               
-              <button 
-                className="btn btn-warning" 
-                style={{marginTop: '1rem', width: '100%'}}
-                onClick={async () => {
-                  if (window.confirm('Limpar todas as atividades? Esta ação não pode ser desfeita.')) {
-                    try {
-                      await adminAPI.clearActivityLog();
-                      setActivityLog([]);
-                      alert('Histórico limpo com sucesso!');
-                    } catch (error) {
-                      console.error('Erro ao limpar histórico:', error);
-                      alert('Erro ao limpar histórico.');
+              <div style={{marginTop: '1rem', display: 'flex', gap: '1rem'}}>
+                <button 
+                  className="btn btn-primary" 
+                  style={{flex: 1}}
+                  onClick={() => {
+                    const doc = new jsPDF();
+                    const date = new Date().toLocaleDateString('pt-BR');
+                    const time = new Date().toLocaleTimeString('pt-BR');
+                    
+                    // Cabeçalho
+                    doc.setFillColor(16, 185, 129);
+                    doc.rect(0, 0, 210, 30, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(24);
+                    doc.text('NUTRIFYBE', 20, 20);
+                    doc.setFontSize(12);
+                    doc.text('Log de Atividades do Sistema', 20, 26);
+                    doc.setFontSize(10);
+                    doc.text(`${date} - ${time}`, 150, 20);
+                    
+                    // Título
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(16);
+                    doc.text('Histórico de Atividades', 20, 45);
+                    
+                    // Estatísticas
+                    doc.setFontSize(12);
+                    doc.text(`Total de atividades: ${activityLog.length}`, 20, 55);
+                    
+                    // Lista de atividades
+                    let yPos = 70;
+                    doc.setFontSize(9);
+                    
+                    if (activityLog.length === 0) {
+                      doc.setTextColor(128, 128, 128);
+                      doc.text('Nenhuma atividade registrada.', 20, yPos);
+                    } else {
+                      activityLog.forEach((activity, index) => {
+                        if (yPos > 270) {
+                          doc.addPage();
+                          yPos = 20;
+                        }
+                        
+                        // Linha separadora
+                        doc.setDrawColor(200, 200, 200);
+                        doc.line(20, yPos - 2, 190, yPos - 2);
+                        
+                        // Ação
+                        doc.setTextColor(16, 185, 129);
+                        doc.setFont(undefined, 'bold');
+                        doc.text(`${index + 1}. ${activity.Acao}`, 20, yPos);
+                        
+                        // Usuário
+                        doc.setTextColor(0, 0, 0);
+                        doc.setFont(undefined, 'normal');
+                        doc.text(`Usuário: ${activity.Usuario}`, 25, yPos + 6);
+                        
+                        // Data
+                        doc.setTextColor(128, 128, 128);
+                        doc.text(`Data: ${new Date(activity.Data).toLocaleString('pt-BR')}`, 25, yPos + 12);
+                        
+                        yPos += 20;
+                      });
                     }
-                  }
-                }}
-              >
-                Limpar Histórico
-              </button>
+                    
+                    // Rodapé
+                    const pageCount = doc.internal.getNumberOfPages();
+                    for (let i = 1; i <= pageCount; i++) {
+                      doc.setPage(i);
+                      doc.setFontSize(8);
+                      doc.setTextColor(128, 128, 128);
+                      doc.text(`Página ${i} de ${pageCount}`, 20, 290);
+                      doc.text('Nutrifybe - Log de Atividades', 150, 290);
+                    }
+                    
+                    doc.save(`Log_Atividades_Nutrifybe_${new Date().toISOString().split('T')[0]}.pdf`);
+                  }}
+                >
+                  📄 Exportar Log (PDF)
+                </button>
+                <button 
+                  className="btn btn-warning" 
+                  style={{flex: 1}}
+                  onClick={async () => {
+                    if (window.confirm('Limpar todas as atividades? Esta ação não pode ser desfeita.')) {
+                      try {
+                        await adminAPI.clearActivityLog();
+                        setActivityLog([]);
+                        alert('Histórico limpo com sucesso!');
+                      } catch (error) {
+                        console.error('Erro ao limpar histórico:', error);
+                        alert('Erro ao limpar histórico.');
+                      }
+                    }
+                  }}
+                >
+                  🗑️ Limpar Histórico
+                </button>
+              </div>
             </div>
           )}
           
@@ -723,46 +838,102 @@ const AdminDashboard = () => {
                   onClick={() => {
                     const doc = new jsPDF();
                     const date = new Date().toLocaleDateString('pt-BR');
+                    const time = new Date().toLocaleTimeString('pt-BR');
                     
-                    // Cabeçalho
-                    doc.setFontSize(20);
-                    doc.text('Relatório de Pacientes - Nutrifybe', 20, 20);
+                    // Cabeçalho com logo
+                    doc.setFillColor(16, 185, 129);
+                    doc.rect(0, 0, 210, 30, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(24);
+                    doc.text('NUTRIFYBE', 20, 20);
                     doc.setFontSize(12);
-                    doc.text(`Data: ${date}`, 20, 30);
+                    doc.text('Sistema de Gestão Nutricional', 20, 26);
                     
-                    // Estatísticas
-                    doc.setFontSize(16);
-                    doc.text('Resumo de Pacientes', 20, 50);
-                    doc.setFontSize(12);
-                    doc.text(`Total de Pacientes: ${allPatients.length}`, 20, 60);
-                    doc.text(`Pacientes Ativos: ${allPatients.filter(p => p.ativo !== false).length}`, 20, 70);
-                    doc.text(`Pacientes Inativos: ${allPatients.filter(p => p.ativo === false).length}`, 20, 80);
+                    // Data e hora
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(10);
+                    doc.text(`Gerado em: ${date} às ${time}`, 150, 20);
+                    
+                    // Título do relatório
+                    doc.setFontSize(18);
+                    doc.text('Relatório de Pacientes', 20, 45);
+                    
+                    // Estatísticas em caixas
+                    const stats = [
+                      { label: 'Total', value: allPatients.length, color: [59, 130, 246] },
+                      { label: 'Ativos', value: allPatients.filter(p => p.ativo === true).length, color: [16, 185, 129] },
+                      { label: 'Inativos', value: allPatients.filter(p => p.ativo !== true).length, color: [239, 68, 68] }
+                    ];
+                    
+                    stats.forEach((stat, index) => {
+                      const x = 20 + (index * 60);
+                      doc.setFillColor(...stat.color);
+                      doc.rect(x, 55, 50, 20, 'F');
+                      doc.setTextColor(255, 255, 255);
+                      doc.setFontSize(16);
+                      doc.text(stat.value.toString(), x + 25, 63, { align: 'center' });
+                      doc.setFontSize(10);
+                      doc.text(stat.label, x + 25, 70, { align: 'center' });
+                    });
                     
                     // Lista de pacientes
-                    doc.setFontSize(16);
-                    doc.text('Lista de Pacientes', 20, 100);
-                    doc.setFontSize(10);
-                    let yPos = 110;
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(14);
+                    doc.text('Lista Detalhada de Pacientes', 20, 90);
+                    
+                    let yPos = 100;
+                    doc.setFontSize(9);
                     
                     allPatients.forEach((patient, index) => {
                       if (yPos > 270) {
                         doc.addPage();
                         yPos = 20;
                       }
-                      const nutri = managedNutricionists.find(n => n.id === patient.nutricionistaId);
-                      const status = patient.ativo !== false ? 'ATIVO' : 'INATIVO';
-                      doc.text(`${index + 1}. ${patient.nome} - ${patient.email}`, 20, yPos);
+                      
+                      const nutri = managedNutricionists.find(n => n.Id === patient.NutricionistaId);
+                      const status = patient.ativo === true ? 'ATIVO' : 'INATIVO';
+                      const statusColor = patient.ativo === true ? [16, 185, 129] : [239, 68, 68];
+                      
+                      // Linha separadora
+                      doc.setDrawColor(200, 200, 200);
+                      doc.line(20, yPos - 2, 190, yPos - 2);
+                      
+                      // Nome e ID
+                      doc.setFontSize(11);
+                      doc.setFont(undefined, 'bold');
+                      doc.text(`${index + 1}. ${patient.Nome}`, 20, yPos);
+                      doc.setTextColor(...statusColor);
+                      doc.text(`[${status}]`, 150, yPos);
+                      
+                      // Detalhes
+                      doc.setTextColor(0, 0, 0);
+                      doc.setFont(undefined, 'normal');
+                      doc.setFontSize(9);
                       yPos += 8;
-                      doc.text(`   Nutricionista: ${nutri?.nome || 'Não encontrado'} | Status: ${status}`, 20, yPos);
-                      yPos += 8;
-                      doc.text(`   Objetivo: ${patient.objetivo}`, 20, yPos);
+                      doc.text(`Email: ${patient.Email}`, 25, yPos);
+                      yPos += 6;
+                      doc.text(`Nutricionista: ${nutri?.Nome || 'Não atribuído'}`, 25, yPos);
+                      yPos += 6;
+                      doc.text(`Objetivo: ${patient.Objetivo || 'Não informado'}`, 25, yPos);
+                      yPos += 6;
+                      doc.text(`Cadastro: ${new Date(patient.DataCadastro).toLocaleDateString('pt-BR')}`, 25, yPos);
                       yPos += 12;
                     });
                     
-                    doc.save(`pacientes-nutrifybe-${new Date().toISOString().split('T')[0]}.pdf`);
+                    // Rodapé
+                    const pageCount = doc.internal.getNumberOfPages();
+                    for (let i = 1; i <= pageCount; i++) {
+                      doc.setPage(i);
+                      doc.setFontSize(8);
+                      doc.setTextColor(128, 128, 128);
+                      doc.text(`Página ${i} de ${pageCount}`, 20, 290);
+                      doc.text('Nutrifybe - Sistema de Gestão Nutricional', 150, 290);
+                    }
+                    
+                    doc.save(`Pacientes_Nutrifybe_${new Date().toISOString().split('T')[0]}.pdf`);
                   }}
                 >
-                  Exportar Pacientes (PDF)
+                  📄 Exportar Pacientes (PDF)
                 </button>
               </div>
             </div>
@@ -788,10 +959,10 @@ const AdminDashboard = () => {
                   <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Atividades Recentes</h4>
                   <div style={{maxHeight: '200px', overflowY: 'auto'}}>
                     {activityLog.slice(0, 5).map(activity => (
-                      <div key={activity.id} style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>
-                        <small><strong>{activity.action}</strong> - {activity.nutriName}</small>
+                      <div key={activity.Id} style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>
+                        <small><strong>{activity.Acao}</strong> - {activity.Usuario}</small>
                         <br />
-                        <small style={{color: '#6b7280'}}>{activity.timestamp}</small>
+                        <small style={{color: '#6b7280'}}>{new Date(activity.Data).toLocaleString('pt-BR')}</small>
                       </div>
                     ))}
                   </div>
@@ -804,51 +975,122 @@ const AdminDashboard = () => {
                   onClick={() => {
                     const doc = new jsPDF();
                     const date = new Date().toLocaleDateString('pt-BR');
+                    const time = new Date().toLocaleTimeString('pt-BR');
                     
-                    // Cabeçalho
-                    doc.setFontSize(20);
-                    doc.text('Relatório Nutrifybe', 20, 20);
+                    // Cabeçalho com logo
+                    doc.setFillColor(16, 185, 129);
+                    doc.rect(0, 0, 210, 35, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(28);
+                    doc.text('NUTRIFYBE', 20, 22);
                     doc.setFontSize(12);
-                    doc.text(`Data: ${date}`, 20, 30);
+                    doc.text('Relatório Executivo do Sistema', 20, 30);
                     
-                    // Estatísticas
-                    doc.setFontSize(16);
-                    doc.text('Estatísticas Gerais', 20, 50);
-                    doc.setFontSize(12);
-                    doc.text(`Total de Nutricionistas: ${managedNutricionists.length}`, 20, 60);
-                    doc.text(`Nutricionistas Ativos: ${systemStats.nutricionistasAtivos}`, 20, 70);
-                    doc.text(`Total de Pacientes: ${systemStats.totalPacientes}`, 20, 80);
-                    doc.text(`Pacientes Ativos: ${systemStats.pacientesAtivos}`, 20, 90);
-                    doc.text(`Solicitações Pendentes: ${systemStats.solicitacoesPendentes}`, 20, 100);
-                    
-                    // Nutricionistas
-                    doc.setFontSize(16);
-                    doc.text('Nutricionistas', 20, 120);
+                    // Data e hora
                     doc.setFontSize(10);
-                    let yPos = 130;
-                    managedNutricionists.slice(0, 10).forEach((nutri, index) => {
-                      doc.text(`${index + 1}. ${nutri.nome} - ${nutri.email} - Status: ${nutri.status}`, 20, yPos);
-                      yPos += 10;
+                    doc.text(`${date} - ${time}`, 150, 25);
+                    
+                    // Estatísticas em dashboard
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(16);
+                    doc.text('Dashboard Executivo', 20, 50);
+                    
+                    const dashboardStats = [
+                      { label: 'Nutricionistas', value: managedNutricionists.length, active: systemStats.nutricionistasAtivos },
+                      { label: 'Pacientes', value: systemStats.totalPacientes, active: systemStats.pacientesAtivos },
+                      { label: 'Solicitações', value: systemStats.solicitacoesPendentes, active: 0 }
+                    ];
+                    
+                    let xPos = 20;
+                    dashboardStats.forEach((stat) => {
+                      // Caixa principal
+                      doc.setFillColor(248, 250, 252);
+                      doc.rect(xPos, 60, 55, 30, 'F');
+                      doc.setDrawColor(226, 232, 240);
+                      doc.rect(xPos, 60, 55, 30);
+                      
+                      // Números
+                      doc.setFontSize(20);
+                      doc.setTextColor(16, 185, 129);
+                      doc.text(stat.value.toString(), xPos + 27, 75, { align: 'center' });
+                      
+                      // Label
+                      doc.setFontSize(10);
+                      doc.setTextColor(0, 0, 0);
+                      doc.text(stat.label, xPos + 27, 82, { align: 'center' });
+                      
+                      // Ativos (se aplicável)
+                      if (stat.active > 0) {
+                        doc.setFontSize(8);
+                        doc.setTextColor(34, 197, 94);
+                        doc.text(`${stat.active} ativos`, xPos + 27, 87, { align: 'center' });
+                      }
+                      
+                      xPos += 60;
                     });
                     
-                    // Pacientes
-                    if (yPos > 250) {
+                    // Lista de Nutricionistas
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(14);
+                    doc.text('Nutricionistas Cadastrados', 20, 110);
+                    
+                    let yPos = 120;
+                    doc.setFontSize(9);
+                    managedNutricionists.forEach((nutri, index) => {
+                      if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                      }
+                      const statusColor = nutri.Status === 'approved' ? [34, 197, 94] : [239, 68, 68];
+                      doc.setTextColor(0, 0, 0);
+                      doc.text(`${index + 1}. ${nutri.Nome}`, 20, yPos);
+                      doc.text(nutri.Email, 80, yPos);
+                      doc.setTextColor(...statusColor);
+                      doc.text(nutri.Status?.toUpperCase() || 'N/A', 150, yPos);
+                      yPos += 8;
+                    });
+                    
+                    // Nova página para pacientes se necessário
+                    if (yPos > 200) {
                       doc.addPage();
                       yPos = 20;
                     }
-                    doc.setFontSize(16);
-                    doc.text('Pacientes', 20, yPos);
+                    
+                    // Lista de Pacientes
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(14);
+                    doc.text('Pacientes Cadastrados', 20, yPos);
                     yPos += 10;
-                    doc.setFontSize(10);
-                    allPatients.slice(0, 10).forEach((patient, index) => {
-                      doc.text(`${index + 1}. ${patient.nome} - ${patient.email} - Objetivo: ${patient.objetivo}`, 20, yPos);
-                      yPos += 10;
+                    
+                    doc.setFontSize(9);
+                    allPatients.forEach((patient, index) => {
+                      if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                      }
+                      const statusColor = patient.ativo === true ? [34, 197, 94] : [239, 68, 68];
+                      doc.setTextColor(0, 0, 0);
+                      doc.text(`${index + 1}. ${patient.Nome}`, 20, yPos);
+                      doc.text(patient.Email, 80, yPos);
+                      doc.setTextColor(...statusColor);
+                      doc.text(patient.ativo === true ? 'ATIVO' : 'INATIVO', 150, yPos);
+                      yPos += 8;
                     });
                     
-                    doc.save(`relatorio-nutrifybe-${new Date().toISOString().split('T')[0]}.pdf`);
+                    // Rodapé
+                    const pageCount = doc.internal.getNumberOfPages();
+                    for (let i = 1; i <= pageCount; i++) {
+                      doc.setPage(i);
+                      doc.setFontSize(8);
+                      doc.setTextColor(128, 128, 128);
+                      doc.text(`Página ${i} de ${pageCount}`, 20, 290);
+                      doc.text('Nutrifybe - Relatório Confidencial', 150, 290);
+                    }
+                    
+                    doc.save(`Relatorio_Executivo_Nutrifybe_${new Date().toISOString().split('T')[0]}.pdf`);
                   }}
                 >
-                  Exportar PDF
+                  📈 Exportar Relatório (PDF)
                 </button>
                 <button 
                   className="btn btn-secondary"
@@ -874,12 +1116,12 @@ const AdminDashboard = () => {
             </div>
           )}
           
-          {activeTab === 'settings' && (
-            <div style={{background: 'var(--gray-50)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--gray-200)'}}>
-              <h3 style={{color: 'var(--accent-green)', marginBottom: '1.5rem', textAlign: 'center'}}>Configurações do Sistema</h3>
+          {activeTab === 'admins' && (
+            <div style={{background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
+              <h3 style={{color: '#10b981', marginBottom: '1.5rem', fontSize: '1.2rem'}}>Gerenciar Administradores ({allAdmins.length})</h3>
               
-              <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem'}}>
-                <div style={{padding: '1.5rem', background: 'white', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
+              <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem'}}>
+                <div style={{background: '#f9fafb', padding: '1.5rem', borderRadius: '8px'}}>
                   <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Adicionar Admin</h4>
                   <form onSubmit={async (e) => {
                     e.preventDefault();
@@ -891,12 +1133,12 @@ const AdminDashboard = () => {
                     };
                     
                     try {
-                      const result = await adminAPI.create(adminData);
-                      if (result) {
-                        alert('Admin criado com sucesso!');
-                        e.target.reset();
-                        addToActivityLog('Admin Criado', adminData.nome);
-                      }
+                      await adminAPI.create(adminData);
+                      const updatedAdmins = await adminAPI.getAll();
+                      setAllAdmins(updatedAdmins);
+                      alert('Admin criado com sucesso!');
+                      e.target.reset();
+                      addToActivityLog('Admin Criado', adminData.nome);
                     } catch (error) {
                       alert('Erro ao criar admin.');
                     }
@@ -917,6 +1159,252 @@ const AdminDashboard = () => {
                   </form>
                 </div>
                 
+                <div>
+                  <div style={{maxHeight: '400px', overflowY: 'auto'}}>
+                    {allAdmins.length === 0 ? (
+                      <div style={{textAlign: 'center', color: '#6b7280', padding: '2rem'}}>Nenhum admin encontrado</div>
+                    ) : (
+                      allAdmins.map(admin => (
+                        <div key={admin.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: '#f9fafb', borderRadius: '8px', marginBottom: '0.5rem', border: '1px solid #e5e7eb'}}>
+                          <div>
+                            <div style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{admin.nome}</div>
+                            <div style={{color: '#6b7280', fontSize: '0.9rem'}}>{admin.email}</div>
+                            <div style={{color: '#6b7280', fontSize: '0.8rem'}}>{new Date(admin.dataCriacao).toLocaleDateString('pt-BR')}</div>
+                          </div>
+                          {admin.id !== currentAdmin?.id && allAdmins.length > 1 ? (
+                            <button 
+                              style={{padding: '0.5rem 1rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer'}}
+                              onClick={async () => {
+                                if (window.confirm(`Tem certeza que deseja excluir o admin ${admin.nome}?\n\nEsta ação não pode ser desfeita!`)) {
+                                  try {
+                                    await adminAPI.delete(admin.id);
+                                    const updatedAdmins = await adminAPI.getAll();
+                                    setAllAdmins(updatedAdmins);
+                                    addToActivityLog('Admin Excluído', admin.nome);
+                                    alert('Admin excluído com sucesso!');
+                                  } catch (error) {
+                                    alert('Erro ao excluir admin.');
+                                  }
+                                }
+                              }}
+                            >
+                              🗑️ Excluir
+                            </button>
+                          ) : (
+                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem'}}>
+                              <span style={{padding: '0.5rem 1rem', background: '#9ca3af', color: 'white', borderRadius: '6px', fontSize: '0.8rem', cursor: 'not-allowed'}}>
+                                {admin.id === currentAdmin?.id ? '🚫 Você mesmo' : '🚫 Último admin'}
+                              </span>
+                              <small style={{color: '#6b7280', fontSize: '0.7rem', textAlign: 'center'}}>
+                                {admin.id === currentAdmin?.id ? 'Não pode se excluir' : 'Deve ter pelo menos 1 admin'}
+                              </small>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'profile' && (
+            <div style={{background: 'white', padding: '2rem', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
+              <h3 style={{color: '#10b981', marginBottom: '2rem', fontSize: '1.4rem', textAlign: 'center'}}>Meu Perfil</h3>
+              
+              <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '3rem', alignItems: 'start'}}>
+                <div style={{textAlign: 'center'}}>
+                  <div style={{position: 'relative', display: 'inline-block', marginBottom: '1rem'}}>
+                    <div 
+                      style={{
+                        width: '120px', 
+                        height: '120px', 
+                        borderRadius: '50%', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        fontSize: '3rem', 
+                        color: 'white',
+                        backgroundImage: currentAdmin?.foto ? `url(${currentAdmin.foto})` : 'linear-gradient(135deg, #10b981, #059669)',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        cursor: 'pointer',
+                        border: '3px solid #e5e7eb'
+                      }}
+                      onClick={() => document.getElementById('photoInput').click()}
+                    >
+                      {!currentAdmin?.foto && '👤'}
+                    </div>
+                    <input 
+                      id="photoInput" 
+                      type="file" 
+                      accept="image/*" 
+                      style={{display: 'none'}} 
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const canvas = document.createElement('canvas');
+                          const ctx = canvas.getContext('2d');
+                          const img = new Image();
+                          
+                          img.onload = async () => {
+                            canvas.width = 200;
+                            canvas.height = 200;
+                            ctx.drawImage(img, 0, 0, 200, 200);
+                            const foto = canvas.toDataURL('image/jpeg', 0.7);
+                            
+                            try {
+                              await adminAPI.update(currentAdmin.id, { foto });
+                              // Buscar dados atualizados do banco
+                              const admins = await adminAPI.getAll();
+                              const updatedAdmin = admins.find(a => a.id === currentAdmin.id);
+                              localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
+                              addToActivityLog('Foto Atualizada', currentAdmin.nome);
+                              alert('Foto atualizada com sucesso!');
+                              window.location.reload();
+                            } catch (error) {
+                              alert('Erro ao atualizar foto: ' + error.message);
+                            }
+                          };
+                          
+                          const reader = new FileReader();
+                          reader.onload = (e) => img.src = e.target.result;
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <div style={{position: 'absolute', bottom: '5px', right: '5px', background: '#10b981', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem', cursor: 'pointer'}}>
+                      📷
+                    </div>
+                    {currentAdmin?.foto && (
+                      <div 
+                        style={{position: 'absolute', bottom: '5px', left: '5px', background: '#ef4444', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem', cursor: 'pointer'}}
+                        onClick={async () => {
+                          if (window.confirm('Remover foto de perfil?')) {
+                            try {
+                              await adminAPI.update(currentAdmin.id, { foto: null });
+                              const admins = await adminAPI.getAll();
+                              const updatedAdmin = admins.find(a => a.id === currentAdmin.id);
+                              localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
+                              addToActivityLog('Foto Removida', currentAdmin.nome);
+                              window.location.reload();
+                            } catch (error) {
+                              alert('Erro ao remover foto.');
+                            }
+                          }
+                        }}
+                      >
+                        🗑️
+                      </div>
+                    )}
+                  </div>
+                  <h4 style={{margin: '0 0 0.5rem 0', color: '#374151'}}>{currentAdmin?.nome}</h4>
+                  <p style={{color: '#6b7280', fontSize: '0.9rem', margin: '0 0 0.5rem 0'}}>Administrador</p>
+                  <div style={{background: '#f3f4f6', padding: '0.75rem', borderRadius: '6px', fontSize: '0.8rem', color: '#6b7280'}}>
+                    <div style={{marginBottom: '0.25rem'}}><strong>Email:</strong> {currentAdmin?.email}</div>
+                    <div><strong>ID:</strong> #{currentAdmin?.id}</div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div style={{background: '#f9fafb', padding: '1.5rem', borderRadius: '8px', marginBottom: '1.5rem'}}>
+                    <h5 style={{margin: '0 0 1rem 0', color: '#374151'}}>Editar Informações</h5>
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      const formData = new FormData(e.target);
+                      const nome = formData.get('nome');
+                      const email = formData.get('email');
+                      
+                      try {
+                        await adminAPI.update(currentAdmin.id, { nome, email });
+                        // Buscar dados atualizados do banco
+                        const admins = await adminAPI.getAll();
+                        const updatedAdmin = admins.find(a => a.id === currentAdmin.id);
+                        localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
+                        alert('Informações atualizadas com sucesso!');
+                        addToActivityLog('Perfil Atualizado', nome);
+                        window.location.reload();
+                      } catch (error) {
+                        alert('Erro ao atualizar informações.');
+                      }
+                    }}>
+                      <div className="form-group">
+                        <label className="form-label">Nome</label>
+                        <input type="text" name="nome" className="form-input" defaultValue={currentAdmin?.nome} required />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Email</label>
+                        <input type="email" name="email" className="form-input" defaultValue={currentAdmin?.email} required />
+                      </div>
+                      <div style={{display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderTop: '1px solid #e5e7eb', marginTop: '1rem', paddingTop: '1rem'}}>
+                        <span style={{fontWeight: '500', color: '#374151'}}>Membro desde:</span>
+                        <span style={{color: '#6b7280'}}>{new Date(currentAdmin?.dataCriacao).toLocaleDateString('pt-BR')}</span>
+                      </div>
+                      <button type="submit" className="btn btn-primary" style={{width: '100%', marginTop: '1rem'}}>Salvar Alterações</button>
+                    </form>
+                  </div>
+                  
+                  <div style={{background: '#f9fafb', padding: '1.5rem', borderRadius: '8px'}}>
+                    <h5 style={{margin: '0 0 1rem 0', color: '#374151'}}>Alterar Senha</h5>
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      const formData = new FormData(e.target);
+                      const senhaAtual = formData.get('senhaAtual');
+                      const novaSenha = formData.get('novaSenha');
+                      const confirmarSenha = formData.get('confirmarSenha');
+                      
+                      if (senhaAtual !== currentAdmin?.senha) {
+                        alert('Senha atual incorreta!');
+                        return;
+                      }
+                      
+                      if (novaSenha !== confirmarSenha) {
+                        alert('Nova senha e confirmação não coincidem!');
+                        return;
+                      }
+                      
+                      if (novaSenha.length < 6) {
+                        alert('Nova senha deve ter pelo menos 6 caracteres!');
+                        return;
+                      }
+                      
+                      try {
+                        await adminAPI.update(currentAdmin.id, { senha: novaSenha });
+                        const updatedAdmin = { ...currentAdmin, senha: novaSenha };
+                        localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
+                        alert('Senha alterada com sucesso!');
+                        e.target.reset();
+                        addToActivityLog('Senha Alterada', currentAdmin.nome);
+                      } catch (error) {
+                        alert('Erro ao alterar senha.');
+                      }
+                    }}>
+                      <div className="form-group">
+                        <label className="form-label">Senha Atual</label>
+                        <input type="password" name="senhaAtual" className="form-input" required />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Nova Senha</label>
+                        <input type="password" name="novaSenha" className="form-input" required />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Confirmar Nova Senha</label>
+                        <input type="password" name="confirmarSenha" className="form-input" required />
+                      </div>
+                      <button type="submit" className="btn btn-primary" style={{width: '100%'}}>Alterar Senha</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'settings' && (
+            <div style={{background: 'var(--gray-50)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--gray-200)'}}>
+              <h3 style={{color: 'var(--accent-green)', marginBottom: '1.5rem', textAlign: 'center'}}>Configurações do Sistema</h3>
+              
+              <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem'}}>
                 <div style={{padding: '1.5rem', background: 'white', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
                   <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Manutenção</h4>
                   <button 
@@ -957,8 +1445,9 @@ const AdminDashboard = () => {
                 <div style={{padding: '1.5rem', background: 'white', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
                   <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Informações do Sistema</h4>
                   <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Versão: <strong>1.0.0</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Banco: <strong>JSON Server</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Versão: <strong>2.0.0</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Banco: <strong>SQL Server</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Servidor: <strong>localhost:3001</strong></li>
                     <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Status: <strong style={{color: 'green'}}>Online</strong></li>
                     <li style={{padding: '0.5rem 0'}}>Administrador: <strong>admin@nutrifybe.com</strong></li>
                   </ul>

@@ -1,4 +1,5 @@
 // Configuração para funcionar em rede
+require('dotenv').config();
 const os = require('os');
 
 // Pegar IP da máquina automaticamente
@@ -18,10 +19,10 @@ const localIP = getLocalIP();
 
 // Configuração do banco para rede
 const dbConfig = {
-  user: 'nutrifybe',
-  password: '@ITB123456',
+  user: process.env.DB_USER || 'nutrifybe',
+  password: process.env.DB_PASSWORD,
   server: localIP, // IP da máquina onde está o SQL Server
-  database: 'nutrifybeDB',
+  database: process.env.DB_DATABASE || 'nutrifybeDB',
   options: {
     trustServerCertificate: true,
     enableArithAbort: true

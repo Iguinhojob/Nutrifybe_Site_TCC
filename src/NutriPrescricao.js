@@ -18,11 +18,19 @@ const NutriPrescricao = () => {
   useEffect(() => {
     const loadPatient = async () => {
       try {
-        const patient = await pacientesAPI.getById(id);
+        // Primeiro tenta buscar por ID específico
+        let patient;
+        try {
+          patient = await pacientesAPI.getById(id);
+        } catch {
+          // Se falhar, busca todos e filtra pelo ID
+          const allPacientes = await pacientesAPI.getAll();
+          patient = allPacientes.find(p => (p.Id || p.id) === parseInt(id));
+        }
         
         if (patient) {
           setCurrentPatient(patient);
-          setPrescription(patient.prescricaoSemanal || '');
+          setPrescription(patient.prescricaoSemanal || patient.PrescricaoSemanal || '');
         } else {
           alert('Paciente não encontrado.');
           navigate('/nutri-dashboard');
@@ -41,15 +49,18 @@ const NutriPrescricao = () => {
     if (!currentPatient) return;
 
     try {
-      await pacientesAPI.update(currentPatient.id, {
-        ...currentPatient,
+      const patientId = currentPatient.Id || currentPatient.id;
+      console.log('Salvando prescrição para paciente ID:', patientId);
+      console.log('Prescrição:', prescription);
+      
+      await pacientesAPI.update(patientId, {
         prescricaoSemanal: prescription
       });
       
       alert('Prescrição semanal salva com sucesso!');
     } catch (error) {
-      console.error('Erro ao salvar prescrição:', error);
-      alert('Erro ao salvar prescrição.');
+      console.error('Erro completo:', error);
+      alert('Erro ao salvar prescrição: ' + error.message);
     }
   };
 
@@ -62,30 +73,29 @@ const NutriPrescricao = () => {
       <Header theme="nutri" links={headerLinks} />
       
       <main className="nutri-dashboard">
-        <Link to="/nutri-dashboard" className="btn btn-outline" style={{marginBottom: '1rem'}}>
-          Voltar ao Dashboard
-        </Link>
-        
         <div className="nutri-welcome">
-          <h1 className="nutri-welcome-title">Ficha de {currentPatient.nome}</h1>
+          <h1 className="nutri-welcome-title">Ficha de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
         <div className="nutri-card">
+          <Link to="/nutri-dashboard" className="back-arrow">
+            <i className="fas fa-arrow-left"></i>
+          </Link>
           <div className="patient-details-section">
             <i className="fas fa-user-circle request-icon"></i>
-            <h2 className="patient-name-detail">{currentPatient.nome}</h2>
-            <p><strong>Objetivo:</strong> {currentPatient.objetivo}</p>
-            <p><strong>Peso:</strong> {currentPatient.peso} kg</p>
-            <p><strong>Idade:</strong> {currentPatient.idade} anos</p>
-            <p><strong>Altura:</strong> {currentPatient.altura} cm</p>
-            <p><strong>Email:</strong> {currentPatient.email}</p>
+            <h2 className="patient-name-detail">{currentPatient.Nome || currentPatient.nome}</h2>
+            <p><strong>Objetivo:</strong> {currentPatient.Objetivo || currentPatient.objetivo}</p>
+            <p><strong>Peso:</strong> {currentPatient.Peso || currentPatient.peso} kg</p>
+            <p><strong>Idade:</strong> {currentPatient.Idade || currentPatient.idade} anos</p>
+            <p><strong>Altura:</strong> {currentPatient.Altura || currentPatient.altura} cm</p>
+            <p><strong>Email:</strong> {currentPatient.Email || currentPatient.email}</p>
             
             <Link 
-              to={`/nutri-calendario/${currentPatient.id}`}
+              to={`/nutri-calendario/${currentPatient.Id || currentPatient.id}`}
               className="btn btn-secondary"
               style={{display: 'inline-block', marginTop: '1rem', textDecoration: 'none'}}
             >
-              📅 Ver Calendário de Alimentação
+              <span style={{fontSize: '1rem', marginRight: '0.5rem'}}>📅</span> Ver Calendário de Alimentação
             </Link>
           </div>
 

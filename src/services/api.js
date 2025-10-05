@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001'; // Backend SQL Server
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001'; // Backend SQL Server
 
 // Funções auxiliares
 const handleResponse = async (response) => {
@@ -9,10 +9,16 @@ const handleResponse = async (response) => {
 };
 
 const apiRequest = async (endpoint, options = {}) => {
+  // Validar endpoint para prevenir SSRF
+  if (!endpoint.startsWith('/') || endpoint.includes('..')) {
+    throw new Error('Invalid endpoint');
+  }
+  
   const url = `${API_BASE_URL}${endpoint}`;
   const config = {
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-Token': Math.random().toString(36).substring(2),
       ...options.headers,
     },
     ...options,
@@ -65,7 +71,7 @@ export const pacientesAPI = {
   getById: (id) => apiRequest(`/pacientes/${id}`),
   getByNutricionista: async (nutricionistaId) => {
     const pacientes = await apiRequest('/pacientes');
-    return pacientes.filter(p => (p.nutricionistaId || p.NutricionistaId) == nutricionistaId && (p.status || p.Status) === 'accepted');
+    return pacientes.filter(p => (p.nutricionistaId || p.NutricionistaId) === nutricionistaId && (p.status || p.Status) === 'accepted');
   },
   create: (data) => apiRequest('/pacientes', {
     method: 'POST',
@@ -85,7 +91,7 @@ export const solicitacoesAPI = {
   getAll: () => apiRequest('/solicitacoesPendentes'),
   getByNutricionista: async (nutricionistaId) => {
     const solicitacoes = await apiRequest('/solicitacoesPendentes');
-    return solicitacoes.filter(s => (s.nutricionistaId || s.NutricionistaId) == nutricionistaId);
+    return solicitacoes.filter(s => (s.nutricionistaId || s.NutricionistaId) === nutricionistaId);
   },
   create: (data) => apiRequest('/solicitacoesPendentes', {
     method: 'POST',
@@ -97,7 +103,7 @@ export const solicitacoesAPI = {
   acceptRequest: async (id) => {
     // Buscar todas as solicitações e encontrar a específica
     const solicitacoes = await apiRequest('/solicitacoesPendentes');
-    const solicitacao = solicitacoes.find(s => (s.id || s.Id) == id);
+    const solicitacao = solicitacoes.find(s => (s.id || s.Id) === id);
     
     if (!solicitacao) throw new Error('Solicitação não encontrada');
     
@@ -132,6 +138,7 @@ export const solicitacoesAPI = {
 
 // Admin
 export const adminAPI = {
+  getAll: () => apiRequest('/admin'),
   login: async (email, senha) => {
     const admins = await apiRequest('/admin');
     return admins.find(a => a.email === email && a.senha === senha);
@@ -140,25 +147,21 @@ export const adminAPI = {
     method: 'POST',
     body: JSON.stringify(data),
   }),
+  update: (id, data) => apiRequest(`/admin/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  delete: (id) => apiRequest(`/admin/${id}`, {
+    method: 'DELETE',
+  }),
   getActivityLog: () => apiRequest('/activityLog'),
   addActivity: (activity) => apiRequest('/activityLog', {
     method: 'POST',
     body: JSON.stringify(activity),
   }),
-  clearActivityLog: async () => {
-    try {
-      const activities = await apiRequest('/activityLog');
-      if (activities.length > 0) {
-        await Promise.all(activities.map(a => 
-          apiRequest(`/activityLog/${a.id}`, { method: 'DELETE' })
-        ));
-      }
-      return true;
-    } catch (error) {
-      console.error('Erro ao limpar log:', error);
-      throw error;
-    }
-  }
+  clearActivityLog: () => apiRequest('/activityLog', {
+    method: 'DELETE'
+  })
 };
 
 const api = {
