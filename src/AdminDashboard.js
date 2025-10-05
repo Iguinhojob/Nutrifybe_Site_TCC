@@ -4,8 +4,8 @@ import Header from './Header';
 import { nutricionistasAPI, adminAPI } from './services/api';
 import api from './services/api';
 import jsPDF from 'jspdf';
-const fundoImage = '/images/fundo_index.png';
 import './css/style.css';
+const fundoImage = '/images/fundo_index.png';
 
 const AdminDashboard = () => {
   const [managedNutricionists, setManagedNutricionists] = useState([]);
