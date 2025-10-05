@@ -1,21 +1,28 @@
 # Nutrifybe - Sistema de Gestão Nutricional
 
-Sistema completo para gestão de consultas nutricionais com banco de dados integrado.
+Sistema completo para gestão de consultas nutricionais com banco de dados SQL Server.
 
 ## 🚀 Como Iniciar o Sistema
 
-### 1. Instalar Dependências
+### 1. Instalar Dependências do Frontend
 ```bash
 npm install
 ```
 
-### 2. Iniciar o Banco de Dados
+### 2. Instalar Dependências do Backend
 ```bash
-npm run server
+cd backend
+npm install
 ```
-O banco de dados estará disponível em: `http://localhost:3001`
 
-### 3. Iniciar a Aplicação (em outro terminal)
+### 3. Iniciar o Backend SQL Server
+```bash
+cd backend
+node index.js
+```
+O backend estará disponível em: `http://localhost:3001`
+
+### 4. Iniciar a Aplicação (em outro terminal)
 ```bash
 npm start
 ```
@@ -56,14 +63,20 @@ A aplicação estará disponível em: `http://localhost:3000`
 - ✅ Log de atividades
 - ✅ Dashboard com estatísticas
 
-## 📊 Estrutura do Banco de Dados
+## 📊 Estrutura do Banco de Dados SQL Server
 
 ### Tabelas Principais:
-- **nutricionistas** - Dados dos profissionais
-- **pacientes** - Pacientes aceitos
-- **solicitacoesPendentes** - Solicitações aguardando aprovação
-- **admin** - Dados dos administradores
-- **activityLog** - Log de atividades do sistema
+- **Nutricionistas** - Dados dos profissionais
+- **Pacientes** - Pacientes aceitos
+- **SolicitacoesPendentes** - Solicitações aguardando aprovação
+- **Admin** - Dados dos administradores
+- **ActivityLog** - Log de atividades do sistema
+
+### Configuração do Banco:
+- **Servidor:** localhost
+- **Banco:** nutrifybeDB
+- **Usuário:** nutrifybe
+- **Senha:** @ITB123456
 
 ## 🔄 APIs Disponíveis
 
@@ -87,8 +100,9 @@ A aplicação estará disponível em: `http://localhost:3000`
 ## 🛠️ Tecnologias Utilizadas
 
 - **Frontend:** React.js
-- **Backend:** JSON Server (API REST)
-- **Banco de Dados:** JSON (arquivo db.json)
+- **Backend:** Node.js + Express
+- **Banco de Dados:** SQL Server
+- **ORM:** mssql (driver nativo)
 - **Roteamento:** React Router
 - **Estilização:** CSS customizado
 
@@ -114,6 +128,7 @@ Sistema totalmente responsivo, funcionando em:
 
 ## 🚨 Importante
 
-- Mantenha os dois servidores rodando (React na porta 3000 e JSON Server na porta 3001)
-- O banco de dados é salvo automaticamente no arquivo `db.json`
-- Para resetar dados, edite o arquivo `db.json` diretamente
+- Mantenha os dois servidores rodando (React na porta 3000 e Backend na porta 3001)
+- Certifique-se que o SQL Server está ativo no Windows
+- O banco `nutrifybeDB` deve estar criado antes de iniciar
+- Execute os scripts SQL da pasta backend para criar as tabelas
