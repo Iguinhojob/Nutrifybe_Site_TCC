@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
-import fundoImage from './fundo_index.png';
+const fundoImage = '/images/fundo_index.png';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({

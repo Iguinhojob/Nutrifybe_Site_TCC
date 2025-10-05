@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { solicitacoesAPI, nutricionistasAPI } from './services/api';
-import fundoImage from './fundo_index.png';
+const fundoImage = '/images/fundo_index.png';
 
 const SolicitarConsulta = () => {
   const [formData, setFormData] = useState({

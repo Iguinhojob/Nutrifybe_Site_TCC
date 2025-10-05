@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import fundoImage from './fundo_index.png';
+const fundoImage = '/images/fundo_index.png';
 
 const RecuperarSenha = () => {
   const [email, setEmail] = useState('');

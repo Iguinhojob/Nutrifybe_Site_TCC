@@ -4,7 +4,7 @@ import Header from './Header';
 import { nutricionistasAPI, adminAPI } from './services/api';
 import api from './services/api';
 import jsPDF from 'jspdf';
-import fundoImage from './fundo_index.png';
+const fundoImage = '/images/fundo_index.png';
 import './css/style.css';
 
 const AdminDashboard = () => {
