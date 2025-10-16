@@ -1,0 +1,10 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "java -Dserver.port=$PORT -jar target/nutrifybe-backend-1.0.0.jar",
+    "healthcheckPath": "/api/nutricionistas"
+  }
+}
