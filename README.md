@@ -1,32 +1,38 @@
 # Nutrifybe - Sistema de Gestão Nutricional
 
-Sistema completo para gestão de consultas nutricionais com banco de dados SQL Server.
+Sistema completo para gestão de consultas nutricionais com backend Java Spring Boot e banco SQL Server.
 
 ## 🚀 Como Iniciar o Sistema
 
-### 1. Instalar Dependências do Frontend
+### Método Rápido (Recomendado)
 ```bash
+# Instalar dependências
 npm install
-```
 
-### 2. Instalar Dependências do Backend
-```bash
-cd backend
-npm install
-```
+# Iniciar sistema completo
+./iniciar-producao.sh
 
-### 3. Iniciar o Backend SQL Server
-```bash
-cd backend
-node index.js
-```
-O backend estará disponível em: `http://localhost:3001`
-
-### 4. Iniciar a Aplicação (em outro terminal)
-```bash
+# Em outro terminal, iniciar frontend
 npm start
 ```
-A aplicação estará disponível em: `http://localhost:3000`
+
+### Método Manual
+```bash
+# 1. Instalar dependências
+npm install
+
+# 2. Iniciar backend Java
+cd nutrifybe-backend
+mvn spring-boot:run
+
+# 3. Em outro terminal, iniciar frontend
+npm start
+```
+
+### URLs do Sistema
+- **Frontend:** http://localhost:3000
+- **Backend:** http://localhost:8081
+- **Banco:** SQL Server Somee.com (remoto)
 
 ## 👥 Usuários de Teste
 
@@ -63,7 +69,14 @@ A aplicação estará disponível em: `http://localhost:3000`
 - ✅ Log de atividades
 - ✅ Dashboard com estatísticas
 
-## 📊 Estrutura do Banco de Dados SQL Server
+## 📊 Estrutura do Banco de Dados
+
+### Banco SQL Server (Produção):
+- **Servidor:** nutrifybe_db.mssql.somee.com
+- **Banco:** nutrifybe_db
+- **Usuário:** nutrifybe
+- **Senha:** @ITB123456
+- **Porta:** 1433
 
 ### Tabelas Principais:
 - **Nutricionistas** - Dados dos profissionais
@@ -72,39 +85,51 @@ A aplicação estará disponível em: `http://localhost:3000`
 - **Admin** - Dados dos administradores
 - **ActivityLog** - Log de atividades do sistema
 
-### Configuração do Banco:
-- **Servidor:** localhost
-- **Banco:** nutrifybeDB
-- **Usuário:** nutrifybe
-- **Senha:** @ITB123456
+### JSON Server (Desenvolvimento):
+- Arquivo: `db.json`
+- Porta: 3001
 
 ## 🔄 APIs Disponíveis
 
-### Nutricionistas
-- `GET /nutricionistas` - Listar todos
-- `POST /nutricionistas` - Criar novo
-- `PUT /nutricionistas/:id` - Atualizar
-- `DELETE /nutricionistas/:id` - Excluir
+### Backend Java Spring Boot (Porta 8081)
 
-### Pacientes
-- `GET /pacientes` - Listar todos
-- `POST /pacientes` - Criar novo
-- `PUT /pacientes/:id` - Atualizar
-- `DELETE /pacientes/:id` - Excluir
+#### Autenticação
+- `POST /auth/login` - Login nutricionista
+- `POST /auth/admin-login` - Login admin
+- `POST /auth/register` - Registro nutricionista
 
-### Solicitações
-- `GET /solicitacoesPendentes` - Listar pendentes
-- `POST /solicitacoesPendentes` - Nova solicitação
-- `DELETE /solicitacoesPendentes/:id` - Remover
+#### Nutricionistas
+- `GET /api/nutricionistas` - Listar todos
+- `POST /api/nutricionistas` - Criar novo
+- `PUT /api/nutricionistas/{id}` - Atualizar
+- `DELETE /api/nutricionistas/{id}` - Excluir
+
+#### Pacientes
+- `GET /api/pacientes` - Listar todos
+- `POST /api/pacientes` - Criar novo
+- `PUT /api/pacientes/{id}` - Atualizar
+- `DELETE /api/pacientes/{id}` - Excluir
+
+#### Solicitações
+- `GET /api/solicitacoes-pendentes` - Listar pendentes
+- `POST /api/solicitacoes-pendentes` - Nova solicitação
+- `DELETE /api/solicitacoes-pendentes/{id}` - Remover
+
+#### Activity Log
+- `GET /api/activity-log` - Listar logs
+- `POST /api/activity-log` - Criar log
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Frontend:** React.js
-- **Backend:** Node.js + Express
-- **Banco de Dados:** SQL Server
-- **ORM:** mssql (driver nativo)
-- **Roteamento:** React Router
+- **Frontend:** React.js 19.1.1
+- **Backend:** Java 17 + Spring Boot 3.2.0
+- **Banco de Dados:** SQL Server (Somee.com)
+- **ORM:** Spring Data JPA + Hibernate
+- **Segurança:** Spring Security + JWT
+- **Roteamento:** React Router 7.9.2
 - **Estilização:** CSS customizado
+- **Build:** Maven
+- **Desenvolvimento:** JSON Server (alternativa)
 
 ## 📝 Fluxo de Uso
 
@@ -128,7 +153,13 @@ Sistema totalmente responsivo, funcionando em:
 
 ## 🚨 Importante
 
-- Mantenha os dois servidores rodando (React na porta 3000 e Backend na porta 3001)
-- Certifique-se que o SQL Server está ativo no Windows
-- O banco `nutrifybeDB` deve estar criado antes de iniciar
-- Execute os scripts SQL da pasta backend para criar as tabelas
+### Para Produção:
+- Mantenha os dois servidores rodando (React na porta 3000 e Java na porta 8081)
+- O banco SQL Server está hospedado no Somee.com
+- Certifique-se que o Java 17+ está instalado
+- Use `./iniciar-producao.sh` para inicialização automática
+
+### Para Desenvolvimento:
+- Use `npm run server` para JSON Server na porta 3001
+- Ou use o backend Java completo
+- Configure a API base URL no frontend conforme necessário

@@ -37,7 +37,7 @@ const AdminLogin = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/auth/admin/login', {
+      const response = await fetch('https://refactored-space-sniffle-x5pgw5gp6p5q26q49-8081.app.github.dev/auth/admin-login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

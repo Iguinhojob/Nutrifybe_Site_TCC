@@ -23,7 +23,10 @@
     "server-local": "node server-local.js",
     "dev": "concurrently \"npm run server\" \"npm start\"",
     "dev-local": "concurrently \"npm run server-local\" \"npm start\"",
-    "iniciar": "node iniciar.js"
+    "dev-java": "REACT_APP_USE_JAVA_API=true npm start",
+    "iniciar": "node iniciar.js",
+    "backend:java": "cd nutrifybe-backend && mvn spring-boot:run",
+    "backend:json": "npm run server"
   },
   "eslintConfig": {
     "extends": [
@@ -44,6 +47,7 @@
     ]
   },
   "devDependencies": {
-    "json-server": "^1.0.0-beta.3"
+    "json-server": "^1.0.0-beta.3",
+    "concurrently": "^8.2.2"
   }
 }

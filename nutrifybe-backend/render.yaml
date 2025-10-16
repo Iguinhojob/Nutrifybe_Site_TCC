@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: nutrifybe-backend
+    env: java
+    buildCommand: mvn clean install -DskipTests
+    startCommand: java -jar target/nutrifybe-backend-1.0.0.jar
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 10000
