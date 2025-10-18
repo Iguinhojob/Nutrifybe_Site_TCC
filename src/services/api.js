@@ -1,4 +1,6 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001'; // Backend SQL Server
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://nutrifybe.vercel.app/api'
+  : 'http://localhost:3001';
 
 // Funções auxiliares
 const handleResponse = async (response) => {
