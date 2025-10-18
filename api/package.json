@@ -2,9 +2,11 @@
   "name": "nutrifybe-api",
   "version": "1.0.0",
   "scripts": {
-    "start": "json-server --watch db.json --port $PORT --host 0.0.0.0"
+    "start": "node index.js"
   },
   "dependencies": {
-    "json-server": "^0.17.4"
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "mssql": "^10.0.1"
   }
 }
