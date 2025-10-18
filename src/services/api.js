@@ -17,6 +17,8 @@ const apiRequest = async (endpoint, options = {}) => {
   }
   
   const url = `${API_BASE_URL}${endpoint}`;
+  console.log('API Request:', url);
+  
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -27,26 +29,27 @@ const apiRequest = async (endpoint, options = {}) => {
   };
 
   const response = await fetch(url, config);
+  console.log('API Response:', response.status, response.statusText);
   return handleResponse(response);
 };
 
 // Nutricionistas
 export const nutricionistasAPI = {
-  getAll: () => apiRequest('/nutricionistas'),
-  getById: (id) => apiRequest(`/nutricionistas/${id}`),
-  create: (data) => apiRequest('/nutricionistas', {
+  getAll: () => apiRequest('/api/nutricionistas'),
+  getById: (id) => apiRequest(`/api/nutricionistas/${id}`),
+  create: (data) => apiRequest('/api/nutricionistas', {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-  update: (id, data) => apiRequest(`/nutricionistas/${id}`, {
+  update: (id, data) => apiRequest(`/api/nutricionistas/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   }),
-  delete: (id) => apiRequest(`/nutricionistas/${id}`, {
+  delete: (id) => apiRequest(`/api/nutricionistas/${id}`, {
     method: 'DELETE',
   }),
   login: async (email, crn, senha) => {
-    const nutricionistas = await apiRequest('/nutricionistas');
+    const nutricionistas = await apiRequest('/api/nutricionistas');
     const user = nutricionistas.find(n => 
       n.Email === email && 
       n.CRN === crn && 
@@ -69,42 +72,42 @@ export const nutricionistasAPI = {
 
 // Pacientes
 export const pacientesAPI = {
-  getAll: () => apiRequest('/pacientes'),
-  getById: (id) => apiRequest(`/pacientes/${id}`),
+  getAll: () => apiRequest('/api/pacientes'),
+  getById: (id) => apiRequest(`/api/pacientes/${id}`),
   getByNutricionista: async (nutricionistaId) => {
-    const pacientes = await apiRequest('/pacientes');
+    const pacientes = await apiRequest('/api/pacientes');
     return pacientes.filter(p => (p.nutricionistaId || p.NutricionistaId) === nutricionistaId && (p.status || p.Status) === 'accepted');
   },
-  create: (data) => apiRequest('/pacientes', {
+  create: (data) => apiRequest('/api/pacientes', {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-  update: (id, data) => apiRequest(`/pacientes/${id}`, {
+  update: (id, data) => apiRequest(`/api/pacientes/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   }),
-  delete: (id) => apiRequest(`/pacientes/${id}`, {
+  delete: (id) => apiRequest(`/api/pacientes/${id}`, {
     method: 'DELETE',
   })
 };
 
 // Solicitações Pendentes
 export const solicitacoesAPI = {
-  getAll: () => apiRequest('/solicitacoesPendentes'),
+  getAll: () => apiRequest('/api/solicitacoesPendentes'),
   getByNutricionista: async (nutricionistaId) => {
-    const solicitacoes = await apiRequest('/solicitacoesPendentes');
+    const solicitacoes = await apiRequest('/api/solicitacoesPendentes');
     return solicitacoes.filter(s => (s.nutricionistaId || s.NutricionistaId) === nutricionistaId);
   },
-  create: (data) => apiRequest('/solicitacoesPendentes', {
+  create: (data) => apiRequest('/api/solicitacoesPendentes', {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-  delete: (id) => apiRequest(`/solicitacoesPendentes/${id}`, {
+  delete: (id) => apiRequest(`/api/solicitacoesPendentes/${id}`, {
     method: 'DELETE',
   }),
   acceptRequest: async (id) => {
     // Buscar todas as solicitações e encontrar a específica
-    const solicitacoes = await apiRequest('/solicitacoesPendentes');
+    const solicitacoes = await apiRequest('/api/solicitacoesPendentes');
     const solicitacao = solicitacoes.find(s => (s.id || s.Id) === id);
     
     if (!solicitacao) throw new Error('Solicitação não encontrada');
@@ -123,13 +126,13 @@ export const solicitacoesAPI = {
       ativo: 1
     };
     
-    const newPaciente = await apiRequest('/pacientes', {
+    const newPaciente = await apiRequest('/api/pacientes', {
       method: 'POST',
       body: JSON.stringify(paciente),
     });
     
     // Remover da lista de pendentes
-    await apiRequest(`/solicitacoesPendentes/${id}`, {
+    await apiRequest(`/api/solicitacoesPendentes/${id}`, {
       method: 'DELETE',
     });
     
@@ -140,28 +143,28 @@ export const solicitacoesAPI = {
 
 // Admin
 export const adminAPI = {
-  getAll: () => apiRequest('/admin'),
+  getAll: () => apiRequest('/api/admin'),
   login: async (email, senha) => {
-    const admins = await apiRequest('/admin');
+    const admins = await apiRequest('/api/admin');
     return admins.find(a => a.email === email && a.senha === senha);
   },
-  create: (data) => apiRequest('/admin', {
+  create: (data) => apiRequest('/api/admin', {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-  update: (id, data) => apiRequest(`/admin/${id}`, {
+  update: (id, data) => apiRequest(`/api/admin/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   }),
-  delete: (id) => apiRequest(`/admin/${id}`, {
+  delete: (id) => apiRequest(`/api/admin/${id}`, {
     method: 'DELETE',
   }),
-  getActivityLog: () => apiRequest('/activityLog'),
-  addActivity: (activity) => apiRequest('/activityLog', {
+  getActivityLog: () => apiRequest('/api/activityLog'),
+  addActivity: (activity) => apiRequest('/api/activityLog', {
     method: 'POST',
     body: JSON.stringify(activity),
   }),
-  clearActivityLog: () => apiRequest('/activityLog', {
+  clearActivityLog: () => apiRequest('/api/activityLog', {
     method: 'DELETE'
   })
 };
