@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { adminAPI } from './services/api';
 const fundoImage = '/images/fundo_index.png';
 
 const AdminLogin = () => {
@@ -37,32 +38,23 @@ const AdminLogin = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/auth/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: email.trim(), senha: password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Sanitizar dados antes de armazenar
+      const admin = await adminAPI.login(email.trim(), password);
+      
+      if (admin) {
         const sanitizedUser = {
-          id: data.user.id,
-          nome: data.user.nome?.replace(/<[^>]*>/g, ''),
-          email: data.user.email?.replace(/<[^>]*>/g, ''),
+          id: admin.id,
+          nome: admin.nome?.replace(/<[^>]*>/g, ''),
+          email: admin.email?.replace(/<[^>]*>/g, ''),
           type: 'admin'
         };
-        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('authToken', 'admin_token_' + admin.id);
         localStorage.setItem('currentAdmin', JSON.stringify(sanitizedUser));
         setMessage('Login bem-sucedido! Redirecionando...');
         setTimeout(() => {
           navigate('/admin-dashboard');
         }, 1000);
       } else {
-        setMessage(data.error || 'Email ou senha incorretos.');
+        setMessage('Email ou senha incorretos.');
       }
     } catch (error) {
       console.error('Erro no login admin:', error);
