@@ -1447,7 +1447,7 @@ const AdminDashboard = () => {
                   <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
                     <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Versão: <strong>2.0.0</strong></li>
                     <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Banco: <strong>SQL Server</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Servidor: <strong>localhost:3001</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Servidor: <strong>SQL Server Somee.com</strong></li>
                     <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Status: <strong style={{color: 'green'}}>Online</strong></li>
                     <li style={{padding: '0.5rem 0'}}>Administrador: <strong>admin@nutrifybe.com</strong></li>
                   </ul>
