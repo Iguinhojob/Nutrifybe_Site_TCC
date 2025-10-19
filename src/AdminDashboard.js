@@ -620,11 +620,11 @@ const AdminDashboard = () => {
                   <p className="no-items-message">Nenhuma atividade registrada.</p>
                 ) : (
                   activityLog.map(activity => (
-                    <div key={activity.Id} className="nutri-item" style={{borderLeft: '4px solid var(--accent-green)'}}>
+                    <div key={activity.id} className="nutri-item" style={{borderLeft: '4px solid var(--accent-green)'}}>
                       <div className="nutri-info">
-                        <strong>{activity.Acao}</strong> - {activity.Usuario}
+                        <strong>{activity.action}</strong> - {activity.nutriName}
                         <br />
-                        <small style={{color: 'var(--gray-500)'}}>{new Date(activity.Data).toLocaleString('pt-BR')}</small>
+                        <small style={{color: 'var(--gray-500)'}}>{new Date(activity.timestamp).toLocaleString('pt-BR')}</small>
                       </div>
                     </div>
                   ))
@@ -681,16 +681,16 @@ const AdminDashboard = () => {
                         // Ação
                         doc.setTextColor(16, 185, 129);
                         doc.setFont(undefined, 'bold');
-                        doc.text(`${index + 1}. ${activity.Acao}`, 20, yPos);
+                        doc.text(`${index + 1}. ${activity.action}`, 20, yPos);
                         
                         // Usuário
                         doc.setTextColor(0, 0, 0);
                         doc.setFont(undefined, 'normal');
-                        doc.text(`Usuário: ${activity.Usuario}`, 25, yPos + 6);
+                        doc.text(`Usuário: ${activity.nutriName}`, 25, yPos + 6);
                         
                         // Data
                         doc.setTextColor(128, 128, 128);
-                        doc.text(`Data: ${new Date(activity.Data).toLocaleString('pt-BR')}`, 25, yPos + 12);
+                        doc.text(`Data: ${new Date(activity.timestamp).toLocaleString('pt-BR')}`, 25, yPos + 12);
                         
                         yPos += 20;
                       });
@@ -959,12 +959,12 @@ const AdminDashboard = () => {
                   <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Atividades Recentes</h4>
                   <div style={{maxHeight: '200px', overflowY: 'auto'}}>
                     {activityLog.slice(0, 5).map(activity => (
-                      <div key={activity.Id} style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>
-                        <small><strong>{activity.Acao}</strong> - {activity.Usuario}</small>
+                      <div key={activity.id} style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>
+                        <small><strong>{activity.action}</strong> - {activity.nutriName}</small>
                         <br />
-                        <small style={{color: '#6b7280'}}>{new Date(activity.Data).toLocaleString('pt-BR')}</small>
+                        <small style={{color: '#6b7280'}}>{new Date(activity.timestamp).toLocaleString('pt-BR')}</small>
                       </div>
-                    ))}
+                    ))
                   </div>
                 </div>
               </div>
@@ -1256,13 +1256,14 @@ const AdminDashboard = () => {
                             
                             try {
                               await adminAPI.update(currentAdmin.id, { foto });
-                              // Buscar dados atualizados do banco
-                              const admins = await adminAPI.getAll();
-                              const updatedAdmin = admins.find(a => a.id === currentAdmin.id);
+                              // Atualizar localStorage
+                              const updatedAdmin = { ...currentAdmin, foto };
                               localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
                               addToActivityLog('Foto Atualizada', currentAdmin.nome);
                               alert('Foto atualizada com sucesso!');
-                              window.location.reload();
+                              // Forçar re-render
+                              setActiveTab('dashboard');
+                              setTimeout(() => setActiveTab('profile'), 100);
                             } catch (error) {
                               alert('Erro ao atualizar foto: ' + error.message);
                             }
@@ -1284,11 +1285,14 @@ const AdminDashboard = () => {
                           if (window.confirm('Remover foto de perfil?')) {
                             try {
                               await adminAPI.update(currentAdmin.id, { foto: null });
-                              const admins = await adminAPI.getAll();
-                              const updatedAdmin = admins.find(a => a.id === currentAdmin.id);
+                              // Atualizar localStorage
+                              const updatedAdmin = { ...currentAdmin, foto: null };
                               localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
                               addToActivityLog('Foto Removida', currentAdmin.nome);
-                              window.location.reload();
+                              alert('Foto removida com sucesso!');
+                              // Forçar re-render
+                              setActiveTab('dashboard');
+                              setTimeout(() => setActiveTab('profile'), 100);
                             } catch (error) {
                               alert('Erro ao remover foto.');
                             }
@@ -1318,13 +1322,14 @@ const AdminDashboard = () => {
                       
                       try {
                         await adminAPI.update(currentAdmin.id, { nome, email });
-                        // Buscar dados atualizados do banco
-                        const admins = await adminAPI.getAll();
-                        const updatedAdmin = admins.find(a => a.id === currentAdmin.id);
+                        // Atualizar localStorage
+                        const updatedAdmin = { ...currentAdmin, nome, email };
                         localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
                         alert('Informações atualizadas com sucesso!');
                         addToActivityLog('Perfil Atualizado', nome);
-                        window.location.reload();
+                        // Forçar re-render
+                        setActiveTab('dashboard');
+                        setTimeout(() => setActiveTab('profile'), 100);
                       } catch (error) {
                         alert('Erro ao atualizar informações.');
                       }

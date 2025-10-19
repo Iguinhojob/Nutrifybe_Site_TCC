@@ -70,13 +70,14 @@ app.get('/api/admin', async (req, res) => {
 app.put('/api/admin/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { nome, email, foto } = req.body;
+    const { nome, email, senha, foto } = req.body;
     await sql.connect(config);
     let query = 'UPDATE Admin SET ';
     const updates = [];
-    if (nome) updates.push(`nome = '${nome}'`);
-    if (email) updates.push(`email = '${email}'`);
-    if (foto !== undefined) updates.push(`foto = ${foto ? `'${foto}'` : 'NULL'}`);
+    if (nome) updates.push(`nome = '${nome.replace(/'/g, "''")}'`);
+    if (email) updates.push(`email = '${email.replace(/'/g, "''")}'`);
+    if (senha) updates.push(`senha = '${senha.replace(/'/g, "''")}'`);
+    if (foto !== undefined) updates.push(`foto = ${foto ? `'${foto.replace(/'/g, "''")}'` : 'NULL'}`);
     query += updates.join(', ') + ` WHERE id = ${id}`;
     await sql.query(query);
     res.json({ success: true });
