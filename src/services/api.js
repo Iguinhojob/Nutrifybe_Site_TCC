@@ -49,24 +49,22 @@ export const nutricionistasAPI = {
     method: 'DELETE',
   }),
   login: async (email, crn, senha) => {
-    const nutricionistas = await apiRequest('/api/nutricionistas');
-    const user = nutricionistas.find(n => 
-      n.Email === email && 
-      n.CRN === crn && 
-      n.Senha === senha
-    );
-    
-    if (!user) return null;
-    
-    if (user.Status !== 'approved') {
-      throw new Error('PENDING_APPROVAL');
+    try {
+      const response = await apiRequest('/api/nutricionistas/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, crn, senha }),
+      });
+      
+      if (response.success) {
+        return response.nutricionista;
+      }
+      return null;
+    } catch (error) {
+      if (error.message.includes('401')) {
+        return null;
+      }
+      throw error;
     }
-    
-    if (user.ativo === false || user.ativo === 0) {
-      throw new Error('ACCOUNT_INACTIVE');
-    }
-    
-    return user;
   }
 };
 
