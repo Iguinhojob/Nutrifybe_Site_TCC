@@ -33,7 +33,7 @@ const SolicitarConsulta = () => {
     const loadNutricionistas = async () => {
       try {
         const nutris = await nutricionistasAPI.getAll();
-        setNutricionistas(nutris.filter(n => n.Status === 'approved'));
+        setNutricionistas(nutris.filter(n => n.status === 'approved'));
       } catch (error) {
         console.error('Erro ao carregar nutricionistas:', error);
       }
@@ -218,8 +218,8 @@ const SolicitarConsulta = () => {
                 >
                   <option value="">Selecione um nutricionista</option>
                   {nutricionistas.map(nutri => (
-                    <option key={nutri.Id} value={nutri.Id}>
-                      {nutri.Nome} - CRN: {nutri.CRN}
+                    <option key={nutri.id} value={nutri.id}>
+                      {nutri.nome} - CRN: {nutri.crn}
                     </option>
                   ))}
                 </select>
