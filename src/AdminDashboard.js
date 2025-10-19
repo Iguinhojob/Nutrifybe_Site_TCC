@@ -195,7 +195,7 @@ const AdminDashboard = () => {
   };
 
   const getPendingNutris = () => managedNutricionists.filter(n => n.status === 'pending');
-  const getApprovedNutris = () => managedNutricionistas.filter(n => n.status === 'approved');
+  const getApprovedNutris = () => managedNutricionists.filter(n => n.status === 'approved');
   const getRejectedNutris = () => managedNutricionists.filter(n => n.status === 'rejected');
   
   const getFilteredNutris = () => {
