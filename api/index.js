@@ -18,6 +18,21 @@ const config = {
 };
 
 // Nutricionistas
+app.post('/api/nutricionistas/login', async (req, res) => {
+  try {
+    const { email, crn, senha } = req.body;
+    await sql.connect(config);
+    const result = await sql.query`SELECT * FROM Nutricionistas WHERE email = ${email} AND crn = ${crn} AND senha = ${senha} AND status = 'approved' AND ativo = 1`;
+    if (result.recordset.length > 0) {
+      res.json({ success: true, nutricionista: result.recordset[0] });
+    } else {
+      res.status(401).json({ success: false, message: 'Credenciais inválidas' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/nutricionistas', async (req, res) => {
   try {
     await sql.connect(config);
