@@ -87,7 +87,7 @@ app.post('/api/admin', async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
     await sql.connect(config);
-    await sql.query`INSERT INTO Admin (nome, email, senha, dataCriacao) VALUES (${nome}, ${email}, ${senha}, GETDATE())`;
+    await sql.query`INSERT INTO Admin (nome, email, senha, data_criacao) VALUES (${nome}, ${email}, ${senha}, GETDATE())`;
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
