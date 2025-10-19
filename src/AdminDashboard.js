@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
@@ -625,7 +624,7 @@ const AdminDashboard = () => {
                       <div className="nutri-info">
                         <strong>{activity.action}</strong> - {activity.nutriName}
                         <br />
-                        <small style={{color: 'var(--gray-500)'}}>{new Date(activity.timestamp).toLocaleString('pt_BR')}</small>
+                        <small style={{color: 'var(--gray-500)'}}>{new Date(activity.timestamp).toLocaleString()}</small>
                       </div>
                     </div>
                   ))
@@ -638,8 +637,8 @@ const AdminDashboard = () => {
                   style={{flex: 1}}
                   onClick={() => {
                     const doc = new jsPDF();
-                    const date = new Date().toLocaleDateString('pt_BR');
-                    const time = new Date().toLocaleTimeString('pt_BR');
+                    const date = new Date().toLocaleDateString();
+                    const time = new Date().toLocaleTimeString();
                     
                     // Cabeçalho
                     doc.setFillColor(16, 185, 129);
@@ -691,7 +690,7 @@ const AdminDashboard = () => {
                         
                         // Data
                         doc.setTextColor(128, 128, 128);
-                        doc.text(`Data: ${new Date(activity.timestamp).toLocaleString('pt_BR')}`, 25, yPos + 12);
+                        doc.text(`Data: ${new Date(activity.timestamp).toLocaleString()}`, 25, yPos + 12);
                         
                         yPos += 20;
                       });
@@ -762,7 +761,7 @@ const AdminDashboard = () => {
                             <br />
                             👩‍⚕️ {nutri?.nome || 'Sem nutricionista'} • 🎯 {patient.objetivo}
                             <br />
-                            📅 {new Date(patient.data_criacao).toLocaleDateString('pt_BR')}
+                            📅 {new Date(patient.data_criacao).toLocaleDateString()}
                           </div>
                         </div>
                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end'}}>
@@ -838,8 +837,8 @@ const AdminDashboard = () => {
                   className="btn btn-primary"
                   onClick={() => {
                     const doc = new jsPDF();
-                    const date = new Date().toLocaleDateString('pt_BR');
-                    const time = new Date().toLocaleTimeString('pt_BR');
+                    const date = new Date().toLocaleDateString();
+                    const time = new Date().toLocaleTimeString();
                     
                     // Cabeçalho com logo
                     doc.setFillColor(16, 185, 129);
@@ -917,7 +916,7 @@ const AdminDashboard = () => {
                       yPos += 6;
                       doc.text(`Objetivo: ${patient.Objetivo || 'Não informado'}`, 25, yPos);
                       yPos += 6;
-                      doc.text(`Cadastro: ${new Date(patient.DataCadastro).toLocaleDateString('pt_BR')}`, 25, yPos);
+                      doc.text(`Cadastro: ${new Date(patient.DataCadastro).toLocaleDateString()}`, 25, yPos);
                       yPos += 12;
                     });
                     
@@ -963,7 +962,7 @@ const AdminDashboard = () => {
                       <div key={activity.id} style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>
                         <small><strong>{activity.action}</strong> - {activity.nutriName}</small>
                         <br />
-                        <small style={{color: '#6b7280'}}>{new Date(activity.timestamp).toLocaleString('pt_BR')}</small>
+                        <small style={{color: '#6b7280'}}>{new Date(activity.timestamp).toLocaleString()}</small>
                       </div>
                     ))
                   </div>
@@ -975,8 +974,8 @@ const AdminDashboard = () => {
                   className="btn btn-primary"
                   onClick={() => {
                     const doc = new jsPDF();
-                    const date = new Date().toLocaleDateString('pt_BR');
-                    const time = new Date().toLocaleTimeString('pt_BR');
+                    const date = new Date().toLocaleDateString();
+                    const time = new Date().toLocaleTimeString();
                     
                     // Cabeçalho com logo
                     doc.setFillColor(16, 185, 129);
@@ -1101,7 +1100,7 @@ const AdminDashboard = () => {
                       pacientes: allPatients,
                       atividades: activityLog,
                       estatisticas: systemStats,
-                      dataExportacao: new Date().toLocaleString('pt_BR')
+                      dataExportacao: new Date().toLocaleString()
                     };
                     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
@@ -1170,7 +1169,7 @@ const AdminDashboard = () => {
                           <div>
                             <div style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{admin.nome}</div>
                             <div style={{color: '#6b7280', fontSize: '0.9rem'}}>{admin.email}</div>
-                            <div style={{color: '#6b7280', fontSize: '0.8rem'}}>{new Date(admin.dataCriacao).toLocaleDateString('pt_BR')}</div>
+                            <div style={{color: '#6b7280', fontSize: '0.8rem'}}>{new Date(admin.dataCriacao).toLocaleDateString()}</div>
                           </div>
                           {admin.id !== currentAdmin?.id && allAdmins.length > 1 ? (
                             <button 
@@ -1345,7 +1344,7 @@ const AdminDashboard = () => {
                       </div>
                       <div style={{display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderTop: '1px solid #e5e7eb', marginTop: '1rem', paddingTop: '1rem'}}>
                         <span style={{fontWeight: '500', color: '#374151'}}>Membro desde:</span>
-                        <span style={{color: '#6b7280'}}>{new Date(currentAdmin?.dataCriacao).toLocaleDateString('pt_BR')}</span>
+                        <span style={{color: '#6b7280'}}>{new Date(currentAdmin?.dataCriacao).toLocaleDateString()}</span>
                       </div>
                       <button type="submit" className="btn btn-primary" style={{width: '100%', marginTop: '1rem'}}>Salvar Alterações</button>
                     </form>
