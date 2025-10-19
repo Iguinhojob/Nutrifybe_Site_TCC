@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { nutricionistasAPI, adminAPI } from './services/api';
@@ -198,7 +198,7 @@ const AdminDashboard = () => {
   const getApprovedNutris = () => managedNutricionists.filter(n => n.status === 'approved');
   const getRejectedNutris = () => managedNutricionists.filter(n => n.status === 'rejected');
   
-  const getFilteredNutris = () => {
+  const getFilteredNutris = useMemo(() => {
     let filtered = managedNutricionists;
     
     if (statusFilter !== 'all') {
@@ -214,16 +214,16 @@ const AdminDashboard = () => {
     }
     
     return filtered;
-  };
+  }, [managedNutricionists, statusFilter, searchTerm]);
   
-  const getStats = () => {
+  const stats = useMemo(() => {
     return {
       total: managedNutricionists.length,
-      pending: getPendingNutris().length,
-      approved: getApprovedNutris().length,
-      rejected: getRejectedNutris().length
+      pending: managedNutricionists.filter(n => n.status === 'pending').length,
+      approved: managedNutricionists.filter(n => n.status === 'approved').length,
+      rejected: managedNutricionists.filter(n => n.status === 'rejected').length
     };
-  };
+  }, [managedNutricionists]);
 
   const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
   const headerLinks = [
@@ -231,7 +231,7 @@ const AdminDashboard = () => {
     { href: '/admin-login', text: 'Sair' }
   ];
 
-  const stats = getStats();
+
 
   return (
     <div className="public-theme" style={{backgroundImage: `url(${fundoImage})`}}>
@@ -266,7 +266,7 @@ const AdminDashboard = () => {
                   width: '24px', 
                   height: '24px', 
                   borderRadius: '50%', 
-                  backgroundImage: currentAdmin?.foto ? `url(${currentAdmin.foto})` : 'none',
+                  backgroundImage: currentAdmin?.foto ? `url(${encodeURIComponent(currentAdmin.foto)})` : 'none',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   display: 'flex',
@@ -524,7 +524,7 @@ const AdminDashboard = () => {
               </div>
 
               <div style={{background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-                <h3 style={{color: '#10b981', marginBottom: '1rem', fontSize: '1.2rem'}}>Nutricionistas ({getFilteredNutris().length})</h3>
+                <h3 style={{color: '#10b981', marginBottom: '1rem', fontSize: '1.2rem'}}>Nutricionistas ({getFilteredNutris.length})</h3>
                 
                 <div style={{marginBottom: '1rem', display: 'flex', gap: '1rem'}}>
                   <input
@@ -547,10 +547,10 @@ const AdminDashboard = () => {
                 </div>
                 
                 <div style={{maxHeight: '400px', overflowY: 'auto'}}>
-                  {getFilteredNutris().length === 0 ? (
+                  {getFilteredNutris.length === 0 ? (
                     <div style={{textAlign: 'center', color: '#6b7280', padding: '2rem'}}>Nenhum nutricionista encontrado</div>
                   ) : (
-                    getFilteredNutris().map(nutri => (
+                    getFilteredNutris.map(nutri => (
                       <div key={nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'white', borderRadius: '8px', marginBottom: '0.5rem', border: '1px solid #e5e7eb'}}>
                         <div>
                           <div style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{nutri.nome}</div>
@@ -1227,7 +1227,7 @@ const AdminDashboard = () => {
                         justifyContent: 'center', 
                         fontSize: '3rem', 
                         color: 'white',
-                        backgroundImage: currentAdmin?.foto ? `url(${currentAdmin.foto})` : 'linear-gradient(135deg, #10b981, #059669)',
+                        backgroundImage: currentAdmin?.foto ? `url(${encodeURIComponent(currentAdmin.foto)})` : 'linear-gradient(135deg, #10b981, #059669)',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         cursor: 'pointer',
