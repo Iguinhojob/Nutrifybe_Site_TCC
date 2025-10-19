@@ -748,7 +748,7 @@ const AdminDashboard = () => {
                   <p className="no-items-message">Nenhum paciente encontrado.</p>
                 ) : (
                   allPatients.map(patient => {
-                    const nutri = managedNutricionists.find(n => n.id === patient.nutricionistaId);
+                    const nutri = managedNutricionists.find(n => n.id === patient.nutricionista_id);
                     return (
                       <div key={patient.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: patient.ativo === true ? '#f9fafb' : '#fef2f2', borderRadius: '8px', marginBottom: '0.5rem', border: `1px solid ${patient.ativo === true ? '#e5e7eb' : '#fecaca'}`}}>
                         <div style={{flex: 1}}>
