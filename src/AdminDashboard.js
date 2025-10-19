@@ -965,6 +965,7 @@ const AdminDashboard = () => {
                         <small style={{color: '#6b7280'}}>{new Date(activity.timestamp).toLocaleString()}</small>
                       </div>
                     ))
+                  }
                   </div>
                 </div>
               </div>
