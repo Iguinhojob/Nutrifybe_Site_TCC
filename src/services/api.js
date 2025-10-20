@@ -94,7 +94,13 @@ export const solicitacoesAPI = {
   getAll: () => apiRequest('/api/solicitacoesPendentes'),
   getByNutricionista: async (nutricionistaId) => {
     const solicitacoes = await apiRequest('/api/solicitacoesPendentes');
-    return solicitacoes.filter(s => (s.nutricionistaId || s.NutricionistaId) === nutricionistaId);
+    console.log('Solicitações:', solicitacoes);
+    console.log('Nutricionista ID buscado:', nutricionistaId);
+    return solicitacoes.filter(s => {
+      const solicitacaoNutriId = s.nutricionistaId || s.NutricionistaId;
+      console.log('Comparando:', solicitacaoNutriId, 'com', nutricionistaId);
+      return String(solicitacaoNutriId) === String(nutricionistaId);
+    });
   },
   create: (data) => apiRequest('/api/solicitacoesPendentes', {
     method: 'POST',
