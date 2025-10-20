@@ -194,7 +194,7 @@ app.post('/api/solicitacoesPendentes', async (req, res) => {
   try {
     const { nome, email, idade, peso, altura, objetivo, condicaoSaude, nutricionistaId } = req.body;
     await sql.connect(config);
-    await sql.query`INSERT INTO SolicitacoesPendentes (nome, email, idade, peso, altura, objetivo, condicaoSaude, nutricionista_id) VALUES (${nome}, ${email}, ${idade}, ${peso}, ${altura}, ${objetivo}, ${condicaoSaude}, ${nutricionistaId})`;
+    await sql.query`INSERT INTO SolicitacoesPendentes (nome, email, idade, peso, altura, objetivo, condicaoSaude, nutricionistaId) VALUES (${nome}, ${email}, ${idade}, ${peso}, ${altura}, ${objetivo}, ${condicaoSaude}, ${nutricionistaId})`;
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
