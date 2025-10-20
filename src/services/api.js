@@ -74,12 +74,9 @@ export const pacientesAPI = {
   getById: (id) => apiRequest(`/api/pacientes/${id}`),
   getByNutricionista: async (nutricionistaId) => {
     const pacientes = await apiRequest('/api/pacientes');
-    console.log('Pacientes:', pacientes);
-    console.log('Nutricionista ID buscado:', nutricionistaId);
     return pacientes.filter(p => {
       const pacienteNutriId = p.nutricionistaId || p.NutricionistaId || p.nutricionista_id;
       const pacienteStatus = p.status || p.Status;
-      console.log('Paciente:', p.nome, 'NutriID:', pacienteNutriId, 'Status:', pacienteStatus);
       return String(pacienteNutriId) === String(nutricionistaId) && pacienteStatus === 'accepted';
     });
   },
