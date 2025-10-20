@@ -192,9 +192,9 @@ app.get('/api/solicitacoesPendentes', async (req, res) => {
 
 app.post('/api/solicitacoesPendentes', async (req, res) => {
   try {
-    const { nome, email, objetivo, nutricionista_id } = req.body;
+    const { nome, email, idade, peso, altura, objetivo, condicaoSaude, nutricionistaId } = req.body;
     await sql.connect(config);
-    await sql.query`INSERT INTO SolicitacoesPendentes (nome, email, objetivo, nutricionista_id, data_criacao) VALUES (${nome}, ${email}, ${objetivo}, ${nutricionista_id}, GETDATE())`;
+    await sql.query`INSERT INTO SolicitacoesPendentes (nome, email, idade, peso, altura, objetivo, condicaoSaude, nutricionista_id, data_criacao) VALUES (${nome}, ${email}, ${idade}, ${peso}, ${altura}, ${objetivo}, ${condicaoSaude}, ${nutricionistaId}, GETDATE())`;
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -244,4 +244,13 @@ app.delete('/api/activityLog', async (req, res) => {
   }
 });
 
+// Para desenvolvimento local
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+  });
+}
+
+// Para Vercel (serverless)
 module.exports = app;

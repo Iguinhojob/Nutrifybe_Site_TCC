@@ -33,9 +33,16 @@ const SolicitarConsulta = () => {
     const loadNutricionistas = async () => {
       try {
         const nutris = await nutricionistasAPI.getAll();
-        setNutricionistas(nutris.filter(n => n.status === 'approved'));
+        // Filtrar nutricionistas aprovados e ativos (compatibilidade com diferentes formatos)
+        const aprovados = nutris.filter(n => 
+          (n.status === 'approved' || n.Status === 'approved') && 
+          (n.ativo === 1 || n.ativo === true || n.Ativo === 1 || n.Ativo === true)
+        );
+        setNutricionistas(aprovados);
+        console.log('Nutricionistas carregados:', aprovados);
       } catch (error) {
         console.error('Erro ao carregar nutricionistas:', error);
+        setMessage('Erro ao carregar lista de nutricionistas.');
       }
     };
     
@@ -60,8 +67,24 @@ const SolicitarConsulta = () => {
       return;
     }
 
+    // Validações adicionais
+    if (parseInt(idade) < 1 || parseInt(idade) > 120) {
+      setMessage('Por favor, insira uma idade válida.');
+      return;
+    }
+
+    if (parseFloat(peso) <= 0 || parseFloat(peso) > 500) {
+      setMessage('Por favor, insira um peso válido.');
+      return;
+    }
+
+    if (parseFloat(altura) <= 0 || parseFloat(altura) > 300) {
+      setMessage('Por favor, insira uma altura válida em centímetros.');
+      return;
+    }
+
     try {
-      await solicitacoesAPI.create({
+      console.log('Enviando solicitação:', {
         nome,
         email,
         idade: parseInt(idade),
@@ -72,7 +95,21 @@ const SolicitarConsulta = () => {
         nutricionistaId: parseInt(nutricionistaId)
       });
 
+      const response = await solicitacoesAPI.create({
+        nome,
+        email,
+        idade: parseInt(idade),
+        peso: parseFloat(peso),
+        altura: parseFloat(altura),
+        objetivo,
+        condicaoSaude,
+        nutricionistaId: parseInt(nutricionistaId),
+        status: 'pending'
+      });
+
+      console.log('Resposta da API:', response);
       setMessage('Solicitação enviada com sucesso! O nutricionista entrará em contato em breve.');
+      
       setFormData({
         nome: '',
         email: '',
@@ -88,8 +125,8 @@ const SolicitarConsulta = () => {
         navigate('/');
       }, 3000);
     } catch (error) {
-      console.error('Erro ao enviar solicitação:', error);
-      setMessage('Erro ao enviar solicitação. Tente novamente.');
+      console.error('Erro detalhado ao enviar solicitação:', error);
+      setMessage(`Erro ao enviar solicitação: ${error.message}. Verifique se a API está rodando.`);
     }
   };
 
@@ -218,8 +255,8 @@ const SolicitarConsulta = () => {
                 >
                   <option value="">Selecione um nutricionista</option>
                   {nutricionistas.map(nutri => (
-                    <option key={nutri.id} value={nutri.id}>
-                      {nutri.nome} - CRN: {nutri.crn}
+                    <option key={nutri.id || nutri.Id} value={nutri.id || nutri.Id}>
+                      {nutri.nome || nutri.Nome} - CRN: {nutri.crn || nutri.CRN}
                     </option>
                   ))}
                 </select>
