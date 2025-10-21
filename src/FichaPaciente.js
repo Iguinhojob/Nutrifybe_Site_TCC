@@ -18,6 +18,129 @@ const FichaPaciente = () => {
     status: 'planejado'
   });
 
+  const renderCalendar = () => {
+    if (!paciente) return null;
+
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const today = new Date();
+    
+    const days = [];
+    
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push(
+        <div key={`empty-${i}`} style={{padding: '8px'}}></div>
+      );
+    }
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+      const currentDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const dayInfo = paciente.calendario && paciente.calendario[currentDateStr];
+      const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+      
+      days.push(
+        <div
+          key={day}
+          style={{
+            padding: '8px',
+            border: '1px solid #e2e8f0',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            backgroundColor: isToday ? '#06b6d4' : dayInfo ? '#f0f9ff' : 'white',
+            color: isToday ? 'white' : 'black',
+            position: 'relative',
+            minHeight: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onClick={() => openDayModal(currentDateStr)}
+        >
+          <div>{day}</div>
+          {dayInfo && (
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: dayInfo.status === 'cumprido' ? '#10b981' : 
+                             dayInfo.status === 'parcialmente-cumprido' ? '#f59e0b' : '#ef4444',
+              position: 'absolute',
+              top: '2px',
+              right: '2px'
+            }}></div>
+          )}
+        </div>
+      );
+    }
+    
+    return days;
+  };
+
+  const openDayModal = (dateStr) => {
+    setSelectedDate(dateStr);
+    const dayInfo = paciente.calendario && paciente.calendario[dateStr] || {};
+    setDayData({
+      alimentacao: dayInfo.alimentacao || '',
+      notas: dayInfo.notas || '',
+      status: dayInfo.status || 'planejado'
+    });
+    setDayModal({ isOpen: true });
+  };
+
+  const saveDayDetails = () => {
+    if (!paciente || !selectedDate) return;
+
+    if (!paciente.calendario) {
+      paciente.calendario = {};
+    }
+    
+    paciente.calendario[selectedDate] = {
+      alimentacao: dayData.alimentacao,
+      notas: dayData.notas,
+      status: dayData.status
+    };
+    
+    setPaciente({...paciente});
+    alert('Detalhes do dia salvos com sucesso!');
+    setDayModal({ isOpen: false });
+  };
+
+  const navigateMonth = (direction) => {
+    if (direction === 'prev') {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(currentYear - 1);
+      } else {
+        setCurrentMonth(currentMonth - 1);
+      }
+    } else {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(currentYear + 1);
+      } else {
+        setCurrentMonth(currentMonth + 1);
+      }
+    }
+  };
+
+  const getFormattedDate = () => {
+    const date = new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { 
+      month: 'long', 
+      year: 'numeric' 
+    });
+    return date.charAt(0).toUpperCase() + date.slice(1);
+  };
+
+  const getSelectedDateFormatted = () => {
+    if (!selectedDate) return '';
+    return new Date(selectedDate + 'T12:00:00').toLocaleDateString('pt-BR', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Dashboard' },
     { href: '/nutri-solicitacoes', text: 'Solicitações' },
@@ -110,8 +233,8 @@ const FichaPaciente = () => {
               <h3 style={{color: '#06b6d4', marginBottom: '1rem'}}>Dados Pessoais</h3>
               <p><strong>Idade:</strong> {paciente.idade} anos</p>
               <p><strong>Peso:</strong> {paciente.peso} kg</p>
-              <p><strong>Altura:</strong> {(paciente.altura / 100).toFixed(2)} m</p>
-              <p><strong>IMC:</strong> {(paciente.peso / Math.pow(paciente.altura / 100, 2)).toFixed(1)}</p>
+              <p><strong>Altura:</strong> {paciente.altura ? (paciente.altura / 100).toFixed(2) : 'N/A'} m</p>
+              <p><strong>IMC:</strong> {paciente.peso && paciente.altura ? (paciente.peso / Math.pow(paciente.altura / 100, 2)).toFixed(1) : 'N/A'}</p>
             </div>
 
             <div style={{
@@ -232,128 +355,27 @@ const FichaPaciente = () => {
             Salvar Detalhes do Dia
           </button>
         </div>
+        
+        <div style={{marginTop: '1rem', padding: '1rem', background: '#f3f4f6', borderRadius: '8px'}}>
+          <h4 style={{margin: '0 0 0.5rem 0', color: '#374151'}}>Legenda:</h4>
+          <div style={{display: 'flex', gap: '1rem', fontSize: '0.9rem', flexWrap: 'wrap'}}>
+            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+              <div style={{width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#10b981'}}></div>
+              <span>Cumprido</span>
+            </div>
+            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+              <div style={{width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#f59e0b'}}></div>
+              <span>Parcial</span>
+            </div>
+            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+              <div style={{width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#ef4444'}}></div>
+              <span>Não Cumprido</span>
+            </div>
+          </div>
+        </div>
       </Modal>
     </div>
   );
-
-  const renderCalendar = () => {
-    if (!paciente) return null;
-
-    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const today = new Date();
-    
-    const days = [];
-    
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(
-        <div key={`empty-${i}`} style={{padding: '8px'}}></div>
-      );
-    }
-    
-    for (let day = 1; day <= daysInMonth; day++) {
-      const currentDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const dayInfo = paciente.calendario && paciente.calendario[currentDateStr];
-      const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-      
-      days.push(
-        <div
-          key={day}
-          style={{
-            padding: '8px',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            backgroundColor: isToday ? '#06b6d4' : dayInfo ? '#f0f9ff' : 'white',
-            color: isToday ? 'white' : 'black',
-            position: 'relative'
-          }}
-          onClick={() => openDayModal(currentDateStr)}
-        >
-          <div>{day}</div>
-          {dayInfo && (
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: dayInfo.status === 'cumprido' ? '#10b981' : 
-                             dayInfo.status === 'parcialmente-cumprido' ? '#f59e0b' : '#ef4444',
-              position: 'absolute',
-              top: '2px',
-              right: '2px'
-            }}></div>
-          )}
-        </div>
-      );
-    }
-    
-    return days;
-  };
-
-  const openDayModal = (dateStr) => {
-    setSelectedDate(dateStr);
-    const dayInfo = paciente.calendario && paciente.calendario[dateStr] || {};
-    setDayData({
-      alimentacao: dayInfo.alimentacao || '',
-      notas: dayInfo.notas || '',
-      status: dayInfo.status || 'planejado'
-    });
-    setDayModal({ isOpen: true });
-  };
-
-  const saveDayDetails = () => {
-    if (!paciente || !selectedDate) return;
-
-    if (!paciente.calendario) {
-      paciente.calendario = {};
-    }
-    
-    paciente.calendario[selectedDate] = {
-      alimentacao: dayData.alimentacao,
-      notas: dayData.notas,
-      status: dayData.status
-    };
-    
-    setPaciente({...paciente});
-    alert('Detalhes do dia salvos com sucesso!');
-    setDayModal({ isOpen: false });
-  };
-
-  const navigateMonth = (direction) => {
-    if (direction === 'prev') {
-      if (currentMonth === 0) {
-        setCurrentMonth(11);
-        setCurrentYear(currentYear - 1);
-      } else {
-        setCurrentMonth(currentMonth - 1);
-      }
-    } else {
-      if (currentMonth === 11) {
-        setCurrentMonth(0);
-        setCurrentYear(currentYear + 1);
-      } else {
-        setCurrentMonth(currentMonth + 1);
-      }
-    }
-  };
-
-  const getFormattedDate = () => {
-    const date = new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { 
-      month: 'long', 
-      year: 'numeric' 
-    });
-    return date.charAt(0).toUpperCase() + date.slice(1);
-  };
-
-  const getSelectedDateFormatted = () => {
-    if (!selectedDate) return '';
-    return new Date(selectedDate + 'T12:00:00').toLocaleDateString('pt-BR', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  };
 };
 
 export default FichaPaciente;
