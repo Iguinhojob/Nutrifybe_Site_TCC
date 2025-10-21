@@ -482,63 +482,13 @@
     }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --gray-50: #1f2937;
-        --gray-100: #374151;
-        --gray-200: #4b5563;
-        --gray-300: #6b7280;
-        --white: #f9fafb;
-    }
-}
+/* Dark mode support - removido para não alterar cores */
 
-/* Print styles */
-@media print {
-    .hero-section,
-    .features-section,
-    header,
-    .btn,
-    .mobile-menu-toggle {
-        display: none !important;
-    }
-    
-    .card, .info-card {
-        box-shadow: none !important;
-        border: 1px solid #000 !important;
-        background: white !important;
-    }
-    
-    .patient-item, .request-item {
-        border: 1px solid #ccc !important;
-        margin-bottom: 1rem !important;
-        page-break-inside: avoid;
-    }
-}
+/* Print styles - removido para não alterar cores */
 
-/* Accessibility improvements */
-@media (prefers-contrast: high) {
-    .btn {
-        border: 2px solid currentColor;
-    }
-    
-    .card, .form-card, .info-card {
-        border: 2px solid var(--gray-300);
-    }
-    
-    .patient-item, .request-item {
-        border: 2px solid var(--gray-300);
-    }
-}
+/* Accessibility improvements - removido para não alterar cores */
 
-/* Focus improvements for keyboard navigation */
-.btn:focus-visible,
-.form-input:focus-visible,
-.form-textarea:focus-visible,
-.form-select:focus-visible {
-    outline: 3px solid var(--primary-purple);
-    outline-offset: 2px;
-}
+/* Focus improvements - removido para não alterar cores */
 
 /* Ensure minimum touch targets */
 @media (max-width: 768px) {
