@@ -152,16 +152,19 @@ const FichaPaciente = () => {
       try {
         // Busca todos os pacientes e filtra pelo ID
         const allPacientes = await pacientesAPI.getAll();
+        console.log('=== DEBUG FICHA PACIENTE ===');
         console.log('Todos os pacientes:', allPacientes);
-        console.log('ID buscado:', id);
+        console.log('ID buscado da URL:', id, 'tipo:', typeof id);
         
         const data = allPacientes.find(p => {
           const pacienteId = p.Id || p.id;
-          console.log('Comparando:', pacienteId, 'com', id);
+          console.log('Paciente:', p.nome, 'ID:', pacienteId, 'tipo:', typeof pacienteId);
+          console.log('Comparando:', pacienteId, '===', id, '?', String(pacienteId) === String(id));
           return String(pacienteId) === String(id);
         });
         
-        console.log('Paciente encontrado:', data);
+        console.log('Resultado da busca:', data);
+        console.log('=== FIM DEBUG ===');
         if (data && !data.calendario) {
           data.calendario = {
             '2025-01-15': { alimentacao: 'Café da manhã: Aveia com frutas\nAlmoço: Frango grelhado com salada\nJantar: Sopa de legumes', notas: 'Paciente relatou mais energia', status: 'cumprido' },
@@ -195,8 +198,10 @@ const FichaPaciente = () => {
     return (
       <div className="nutri-theme">
         <Header theme="nutri" links={headerLinks} />
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh'}}>
+        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh'}}>
           <p>Paciente não encontrado</p>
+          <p style={{fontSize: '0.9rem', color: '#666'}}>ID buscado: {id}</p>
+          <p style={{fontSize: '0.9rem', color: '#666'}}>Verifique o console para mais detalhes</p>
         </div>
       </div>
     );
