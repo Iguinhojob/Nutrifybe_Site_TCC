@@ -43,6 +43,21 @@ app.get('/api/nutricionistas', async (req, res) => {
   }
 });
 
+app.get('/api/nutricionistas/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await sql.connect(config);
+    const result = await sql.query`SELECT * FROM Nutricionistas WHERE id = ${id}`;
+    if (result.recordset.length > 0) {
+      res.json(result.recordset[0]);
+    } else {
+      res.status(404).json({ error: 'Nutricionista não encontrado' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.put('/api/nutricionistas/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -140,6 +155,21 @@ app.get('/api/pacientes', async (req, res) => {
     await sql.connect(config);
     const result = await sql.query('SELECT * FROM Pacientes');
     res.json(result.recordset);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/pacientes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await sql.connect(config);
+    const result = await sql.query`SELECT * FROM Pacientes WHERE id = ${id}`;
+    if (result.recordset.length > 0) {
+      res.json(result.recordset[0]);
+    } else {
+      res.status(404).json({ error: 'Paciente não encontrado' });
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
