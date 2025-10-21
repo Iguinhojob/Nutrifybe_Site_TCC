@@ -17,16 +17,18 @@ const FichaPaciente = () => {
   useEffect(() => {
     const loadPaciente = async () => {
       try {
-        // Primeiro tenta buscar por ID específico
-        let data;
-        try {
-          data = await pacientesAPI.getById(id);
-        } catch {
-          // Se falhar, busca todos e filtra pelo ID
-          const allPacientes = await pacientesAPI.getAll();
-          data = allPacientes.find(p => (p.Id || p.id) === parseInt(id));
-        }
+        // Busca todos os pacientes e filtra pelo ID
+        const allPacientes = await pacientesAPI.getAll();
+        console.log('Todos os pacientes:', allPacientes);
+        console.log('ID buscado:', id);
         
+        const data = allPacientes.find(p => {
+          const pacienteId = p.Id || p.id;
+          console.log('Comparando:', pacienteId, 'com', id);
+          return String(pacienteId) === String(id);
+        });
+        
+        console.log('Paciente encontrado:', data);
         setPaciente(data);
       } catch (error) {
         console.error('Erro ao carregar paciente:', error);
@@ -72,8 +74,8 @@ const FichaPaciente = () => {
           
           <div style={{textAlign: 'center', marginBottom: '2rem'}}>
             <div style={{fontSize: '4rem', color: '#06b6d4', marginBottom: '1rem'}}>👤</div>
-            <h1 style={{color: '#374151', marginBottom: '0.5rem'}}>{paciente.Nome || paciente.nome}</h1>
-            <p style={{color: '#6b7280'}}>{paciente.Email || paciente.email}</p>
+            <h1 style={{color: '#374151', marginBottom: '0.5rem'}}>{paciente.nome}</h1>
+            <p style={{color: '#6b7280'}}>{paciente.email}</p>
           </div>
 
           <div style={{
@@ -89,10 +91,10 @@ const FichaPaciente = () => {
               border: '1px solid #e2e8f0'
             }}>
               <h3 style={{color: '#06b6d4', marginBottom: '1rem'}}>Dados Pessoais</h3>
-              <p><strong>Idade:</strong> {paciente.Idade || paciente.idade} anos</p>
-              <p><strong>Peso:</strong> {paciente.Peso || paciente.peso} kg</p>
-              <p><strong>Altura:</strong> {((paciente.Altura || paciente.altura) / 100).toFixed(2)} m</p>
-              <p><strong>IMC:</strong> {((paciente.Peso || paciente.peso) / Math.pow((paciente.Altura || paciente.altura) / 100, 2)).toFixed(1)}</p>
+              <p><strong>Idade:</strong> {paciente.idade} anos</p>
+              <p><strong>Peso:</strong> {paciente.peso} kg</p>
+              <p><strong>Altura:</strong> {(paciente.altura / 100).toFixed(2)} m</p>
+              <p><strong>IMC:</strong> {(paciente.peso / Math.pow(paciente.altura / 100, 2)).toFixed(1)}</p>
             </div>
 
             <div style={{
@@ -102,8 +104,8 @@ const FichaPaciente = () => {
               border: '1px solid #e2e8f0'
             }}>
               <h3 style={{color: '#06b6d4', marginBottom: '1rem'}}>Objetivos</h3>
-              <p><strong>Objetivo:</strong> {paciente.Objetivo || paciente.objetivo}</p>
-              <p><strong>Condição de Saúde:</strong> {paciente.CondicaoSaude || paciente.condicaoSaude}</p>
+              <p><strong>Objetivo:</strong> {paciente.objetivo}</p>
+              <p><strong>Condição de Saúde:</strong> {paciente.condicao_saude || paciente.condicaoSaude}</p>
             </div>
           </div>
 
@@ -126,13 +128,13 @@ const FichaPaciente = () => {
 
           <div style={{display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap'}}>
             <Link 
-              to={`/nutri-prescricao/${paciente.Id || paciente.id}`}
+              to={`/nutri-prescricao/${paciente.id}`}
               className="btn btn-primary btn-lg"
             >
               <span style={{fontSize: '1rem', marginRight: '0.5rem'}}>📝</span> Criar Prescrição
             </Link>
             <Link 
-              to={`/nutri-calendario/${paciente.Id || paciente.id}`}
+              to={`/nutri-calendario/${paciente.id}`}
               className="btn btn-secondary btn-lg"
             >
               <span style={{fontSize: '1rem', marginRight: '0.5rem'}}>📅</span> Ver Calendário
