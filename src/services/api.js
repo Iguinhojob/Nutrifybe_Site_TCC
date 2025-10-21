@@ -120,30 +120,35 @@ export const solicitacoesAPI = {
     
     if (!solicitacao) throw new Error('Solicitação não encontrada');
     
-    // Criar paciente
+    console.log('Solicitação encontrada:', solicitacao);
+    
+    // Criar paciente com todos os campos
     const paciente = {
-      nome: solicitacao.Nome || solicitacao.nome,
-      email: solicitacao.Email || solicitacao.email,
-      idade: solicitacao.Idade || solicitacao.idade,
-      peso: solicitacao.Peso || solicitacao.peso,
-      altura: solicitacao.Altura || solicitacao.altura,
-      objetivo: solicitacao.Objetivo || solicitacao.objetivo,
-      condicaoSaude: solicitacao.CondicaoSaude || solicitacao.condicaoSaude,
-      nutricionistaId: solicitacao.NutricionistaId || solicitacao.nutricionistaId,
+      nome: solicitacao.nome,
+      email: solicitacao.email,
+      idade: solicitacao.idade,
+      peso: solicitacao.peso,
+      altura: solicitacao.altura,
+      objetivo: solicitacao.objetivo,
+      condicaoSaude: solicitacao.condicaoSaude,
+      nutricionistaId: solicitacao.nutricionistaId,
       status: 'accepted',
       ativo: 1
     };
+    
+    console.log('Criando paciente:', paciente);
     
     const newPaciente = await apiRequest('/api/pacientes', {
       method: 'POST',
       body: JSON.stringify(paciente),
     });
     
+    console.log('Paciente criado:', newPaciente);
+    
     // Remover da lista de pendentes
     await apiRequest(`/api/solicitacoesPendentes/${id}`, {
       method: 'DELETE',
     });
-    
     
     return { nome: paciente.nome, ...newPaciente };
   }
