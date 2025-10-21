@@ -13,6 +13,30 @@ const Header = ({ theme = 'public', links = [] }) => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  // Fechar menu mobile ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (mobileMenuOpen && !event.target.closest('nav')) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [mobileMenuOpen]);
+
+  // Fechar menu mobile ao redimensionar tela
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     if (theme === 'nutri') {
       const loadUserData = async () => {

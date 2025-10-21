@@ -1,0 +1,505 @@
+/* ========================================
+   RESPONSIVIDADE MOBILE APRIMORADA
+======================================== */
+
+/* Mobile First - Base styles */
+@media (max-width: 480px) {
+    /* Header mobile */
+    header {
+        padding: 0.5rem 0;
+    }
+    
+    .logo {
+        font-size: 1rem;
+        left: 0.5rem;
+    }
+    
+    .logo-text {
+        display: none;
+    }
+    
+    nav ul {
+        padding: 1rem;
+        gap: 0.25rem;
+    }
+    
+    nav ul li a {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Hero section mobile */
+    .hero-section {
+        padding: 1rem 0.5rem;
+        min-height: calc(100vh - 60px);
+    }
+    
+    .hero-title {
+        font-size: 2rem !important;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-brand {
+        font-size: 0.9em;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 0 1rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0 1rem;
+    }
+    
+    .hero-actions .btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 0.875rem 1.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .hero-image img {
+        max-width: 80%;
+    }
+    
+    /* Cards mobile */
+    .card, .form-card, .info-card {
+        margin: 0.5rem;
+        padding: 1.5rem 1rem;
+        border-radius: 16px;
+    }
+    
+    .card-title, .form-title, .info-title {
+        font-size: 1.5rem;
+    }
+    
+    .card-subtitle, .form-subtitle {
+        font-size: 1rem;
+    }
+    
+    /* Formulários mobile */
+    .form-input, .form-textarea, .form-select {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-label {
+        font-size: 0.8rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn-lg {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    /* Dashboard nutricionista mobile */
+    .nutri-dashboard {
+        padding: 1rem 0.5rem;
+    }
+    
+    .nutri-welcome-title {
+        font-size: 1.75rem;
+    }
+    
+    .nutri-card {
+        padding: 1.5rem 1rem;
+        margin: 0.5rem;
+    }
+    
+    .patient-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .patient-info {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .patient-actions {
+        width: 100%;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .patient-actions .btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    /* Solicitações mobile */
+    .request-item {
+        padding: 1.5rem 1rem;
+    }
+    
+    .request-icon {
+        font-size: 3rem;
+    }
+    
+    .request-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+    
+    .btn-accept, .btn-reject {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+    }
+    
+    /* Admin dashboard mobile */
+    .admin-dashboard-container {
+        padding: 1.5rem 1rem;
+        margin: 0.5rem;
+    }
+    
+    .admin-title {
+        font-size: 1.75rem;
+    }
+    
+    .dashboard-sections {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .admin-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .nutri-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+    
+    .nutri-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    /* Ficha do paciente mobile */
+    .back-arrow {
+        width: 2rem;
+        height: 2rem;
+        top: 0.5rem;
+        left: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Features section mobile */
+    .features-section {
+        padding: 2rem 1rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+    }
+    
+    /* Modal mobile */
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem 1rem;
+        margin: 1rem auto;
+    }
+    
+    .modal-title {
+        font-size: 1.5rem;
+    }
+    
+    .modal-textarea, .modal-select {
+        width: calc(100% - 10px);
+        padding: 0.75rem;
+    }
+    
+    /* Calendário mobile */
+    .calendar-grid {
+        gap: 2px;
+    }
+    
+    .calendar-day {
+        min-height: 50px;
+        padding: 4px 2px;
+        font-size: 0.75rem;
+    }
+    
+    .day-number {
+        font-size: 0.8rem;
+    }
+    
+    .day-name {
+        font-size: 0.7rem;
+        padding: 5px 0;
+    }
+    
+    /* Prescrição mobile */
+    .prescription-textarea {
+        min-height: 200px;
+        padding: 1rem;
+    }
+    
+    .btn-save-prescription {
+        width: 90%;
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Tablet styles */
+@media (min-width: 481px) and (max-width: 768px) {
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-description {
+        font-size: 1.125rem;
+        max-width: 500px;
+        margin: 0 auto 2rem;
+    }
+    
+    .hero-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .card, .form-card, .info-card {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+    
+    .dashboard-sections {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .patient-item, .request-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .patient-actions, .request-actions {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Desktop small */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .hero-container {
+        gap: 3rem;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+    
+    .dashboard-sections {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .nutri-card, .admin-dashboard-container {
+        padding: 2.5rem 2rem;
+    }
+}
+
+/* Landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .hero-section {
+        min-height: calc(100vh - 60px);
+        padding: 1rem;
+    }
+    
+    .hero-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: center;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-description {
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-actions {
+        flex-direction: row;
+        gap: 1rem;
+    }
+    
+    .hero-actions .btn {
+        width: auto;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Touch improvements */
+@media (hover: none) and (pointer: coarse) {
+    .btn, .patient-item, .request-item, .nutri-item {
+        min-height: 44px;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.5rem;
+    }
+    
+    .mobile-menu-toggle {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .calendar-day {
+        min-height: 60px;
+    }
+    
+    .form-input, .form-textarea, .form-select {
+        min-height: 44px;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .hero-image img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+    
+    .logo-icon {
+        image-rendering: -webkit-optimize-contrast;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .hero-title,
+    .hero-brand,
+    .hero-image img,
+    .particle,
+    .mascote-container,
+    .btn::before,
+    .card,
+    .patient-item,
+    .request-item {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .btn:hover,
+    .patient-item:hover,
+    .request-item:hover {
+        transform: none !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --gray-50: #1f2937;
+        --gray-100: #374151;
+        --gray-200: #4b5563;
+        --gray-300: #6b7280;
+        --white: #f9fafb;
+    }
+}
+
+/* Print styles */
+@media print {
+    .hero-section,
+    .features-section,
+    header,
+    .btn,
+    .mobile-menu-toggle {
+        display: none !important;
+    }
+    
+    .card, .info-card {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+        background: white !important;
+    }
+    
+    .patient-item, .request-item {
+        border: 1px solid #ccc !important;
+        margin-bottom: 1rem !important;
+        page-break-inside: avoid;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-contrast: high) {
+    .btn {
+        border: 2px solid currentColor;
+    }
+    
+    .card, .form-card, .info-card {
+        border: 2px solid var(--gray-300);
+    }
+    
+    .patient-item, .request-item {
+        border: 2px solid var(--gray-300);
+    }
+}
+
+/* Focus improvements for keyboard navigation */
+.btn:focus-visible,
+.form-input:focus-visible,
+.form-textarea:focus-visible,
+.form-select:focus-visible {
+    outline: 3px solid var(--primary-purple);
+    outline-offset: 2px;
+}
+
+/* Ensure minimum touch targets */
+@media (max-width: 768px) {
+    .btn,
+    .patient-actions .btn,
+    .request-actions .btn,
+    .nutri-action-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .mobile-menu-toggle {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.75rem;
+    }
+    
+    .back-arrow {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
