@@ -84,8 +84,8 @@ const NutriCalendario = () => {
           onClick={() => openDayModal(currentDateStr)}
           style={{
             background: isToday ? '#4ade80' : 'white',
-            minHeight: '100px',
-            padding: '0.75rem',
+            minHeight: window.innerWidth < 768 ? '60px' : '100px',
+            padding: window.innerWidth < 768 ? '0.5rem' : '0.75rem',
             cursor: 'pointer',
             position: 'relative',
             display: 'flex',
@@ -213,21 +213,27 @@ const NutriCalendario = () => {
     <div className="nutri-theme">
       <Header theme="nutri" links={headerLinks} />
       
-      <main className="nutri-dashboard">
-        <div style={{marginBottom: '1rem'}}>
+      <main className="form-section" style={{
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        padding: '2rem 1rem',
+        minHeight: '100vh'
+      }}>
+        <div style={{width: '100%', maxWidth: '900px', marginBottom: '1rem'}}>
           <Link to={`/nutri-prescricao/${currentPatient.Id || currentPatient.id}`} className="btn btn-outline">
             <i className="fas fa-arrow-left"></i>
           </Link>
         </div>
         
-        <div className="nutri-welcome">
-          <h1 className="nutri-welcome-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
+        <div style={{textAlign: 'center', marginBottom: '2rem'}}>
+          <h1 className="info-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
         <div style={{
           background: 'rgba(255, 255, 255, 0.95)',
           borderRadius: '20px',
-          padding: '2rem',
+          padding: window.innerWidth < 768 ? '1rem' : '2rem',
           boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
           maxWidth: '900px',
           width: '100%'
@@ -237,7 +243,7 @@ const NutriCalendario = () => {
             justifyContent: 'space-between',
             alignItems: 'center',
             marginBottom: '2rem',
-            padding: '1.5rem',
+            padding: window.innerWidth < 768 ? '1rem' : '1.5rem',
             background: 'var(--accent-green)',
             color: 'white',
             borderRadius: '16px'
@@ -255,7 +261,11 @@ const NutriCalendario = () => {
             >
               <i className="fas fa-chevron-left"></i>
             </button>
-            <h2 style={{margin: 0, fontSize: '1.5rem', fontWeight: 600}}>{getFormattedDate()}</h2>
+            <h2 style={{
+              margin: 0, 
+              fontSize: window.innerWidth < 768 ? '1.2rem' : '1.5rem', 
+              fontWeight: 600
+            }}>{getFormattedDate()}</h2>
             <button 
               onClick={() => navigateMonth('next')}
               style={{
@@ -277,7 +287,8 @@ const NutriCalendario = () => {
             gap: '2px',
             background: '#e5e7eb',
             borderRadius: '16px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            width: '100%'
           }}>
             {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
               <div key={day} style={{

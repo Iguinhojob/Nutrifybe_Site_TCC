@@ -93,7 +93,7 @@ const FichaPaciente = () => {
             <p style={{color: '#6b7280'}}>{paciente.email}</p>
           </div>
 
-          <div style={{
+          <div className="patient-data-grid" style={{
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
             gap: '2rem',
@@ -143,7 +143,7 @@ const FichaPaciente = () => {
 
 
 
-          <div style={{display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap'}}>
+          <div className="patient-buttons" style={{display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap'}}>
             <Link 
               to={`/nutri-prescricao/${paciente.Id || paciente.id}`}
               className="btn btn-primary btn-lg"

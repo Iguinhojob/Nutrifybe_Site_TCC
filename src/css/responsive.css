@@ -34,6 +34,12 @@
         min-height: calc(100vh - 60px);
     }
     
+    .hero-container {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+        text-align: center !important;
+    }
+    
     .hero-title {
         font-size: 2rem !important;
         margin-bottom: 1rem;
@@ -58,12 +64,34 @@
     .hero-actions .btn {
         width: 100%;
         max-width: 280px;
-        padding: 0.875rem 1.5rem;
-        font-size: 0.95rem;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-primary {
+        min-height: 50px;
+    }
+    
+    .btn-outline {
+        min-height: 50px;
     }
     
     .hero-image img {
-        max-width: 80%;
+        max-width: 60%;
+        height: auto;
+    }
+    
+    .mascote-container {
+        max-width: 200px;
+        margin: 0 auto;
+    }
+    
+    .mascote-container img {
+        width: 100%;
+        height: auto;
+        max-width: 150px;
     }
     
     /* Cards mobile */
@@ -71,6 +99,15 @@
         margin: 0.5rem;
         padding: 1.5rem 1rem;
         border-radius: 16px;
+        width: calc(100% - 1rem);
+        box-sizing: border-box;
+    }
+    
+    .nutri-card {
+        margin: 0.5rem;
+        padding: 1.5rem 1rem;
+        width: calc(100% - 1rem);
+        box-sizing: border-box;
     }
     
     .card-title, .form-title, .info-title {
@@ -256,6 +293,24 @@
         top: 0.5rem;
         left: 0.5rem;
         font-size: 0.9rem;
+    }
+    
+    /* Grid responsivo para dados do paciente */
+    .patient-data-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Botões da ficha do paciente */
+    .patient-buttons {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        width: 100% !important;
+    }
+    
+    .patient-buttons .btn {
+        width: 100% !important;
+        max-width: none !important;
     }
     
     /* Features section mobile */
