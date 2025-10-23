@@ -66,7 +66,7 @@ const NutriCalendario = () => {
     
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(
-        <div key={`empty-${i}`} style={{padding: '8px'}}></div>
+        <div key={`empty-${i}`} className="calendar-day empty-day"></div>
       );
     }
     
@@ -78,33 +78,17 @@ const NutriCalendario = () => {
       days.push(
         <div
           key={day}
-          style={{
-            padding: '8px',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            backgroundColor: isToday ? '#06b6d4' : dayInfo ? '#f0f9ff' : 'white',
-            color: isToday ? 'white' : 'black',
-            position: 'relative',
-            minHeight: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
+          className={`calendar-day ${isToday ? 'current-date' : ''}`}
           onClick={() => openDayModal(currentDateStr)}
         >
-          <div>{day}</div>
-          {dayInfo && (
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: dayInfo.status === 'cumprido' ? '#10b981' : 
-                             dayInfo.status === 'parcialmente-cumprido' ? '#f59e0b' : '#ef4444',
-              position: 'absolute',
-              top: '2px',
-              right: '2px'
-            }}></div>
+          <span className="day-number">{day}</span>
+          {dayInfo && dayInfo.status && (
+            <div className={`day-status-indicator status-${dayInfo.status}`}></div>
+          )}
+          {dayInfo && dayInfo.alimentacao && (
+            <div className="day-preview">
+              {dayInfo.alimentacao.split('\n')[0].substring(0, 20)}...
+            </div>
           )}
         </div>
       );
@@ -197,30 +181,25 @@ const NutriCalendario = () => {
           <h1 className="nutri-welcome-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
-        <div className="nutri-card">
-          <div className="calendar-header" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
-            <button className="btn btn-outline" onClick={() => navigateMonth('prev')}>
-              ←
+        <div className="info-card calendar-card" style={{maxWidth: '900px', width: '100%'}}>
+          <div className="calendar-header">
+            <button className="calendar-nav-btn" onClick={() => navigateMonth('prev')}>
+              <i className="fas fa-chevron-left"></i>
             </button>
             <h2>{getFormattedDate()}</h2>
-            <button className="btn btn-outline" onClick={() => navigateMonth('next')}>
-              →
+            <button className="calendar-nav-btn" onClick={() => navigateMonth('next')}>
+              <i className="fas fa-chevron-right"></i>
             </button>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(7, 1fr)',
-            gap: '4px',
-            textAlign: 'center'
-          }}>
-            <div style={{fontWeight: 'bold', padding: '8px'}}>Dom</div>
-            <div style={{fontWeight: 'bold', padding: '8px'}}>Seg</div>
-            <div style={{fontWeight: 'bold', padding: '8px'}}>Ter</div>
-            <div style={{fontWeight: 'bold', padding: '8px'}}>Qua</div>
-            <div style={{fontWeight: 'bold', padding: '8px'}}>Qui</div>
-            <div style={{fontWeight: 'bold', padding: '8px'}}>Sex</div>
-            <div style={{fontWeight: 'bold', padding: '8px'}}>Sáb</div>
+          <div className="calendar-grid">
+            <div className="day-name">Dom</div>
+            <div className="day-name">Seg</div>
+            <div className="day-name">Ter</div>
+            <div className="day-name">Qua</div>
+            <div className="day-name">Qui</div>
+            <div className="day-name">Sex</div>
+            <div className="day-name">Sáb</div>
             {renderCalendar()}
           </div>
         </div>
@@ -234,30 +213,27 @@ const NutriCalendario = () => {
         <label htmlFor="alimentacaoDiaria">Alimentação do Dia:</label>
         <textarea
           id="alimentacaoDiaria"
-          className="form-textarea"
+          className="modal-textarea"
           placeholder="Descreva a alimentação do dia..."
           value={dayData.alimentacao}
           onChange={(e) => setDayData({ ...dayData, alimentacao: e.target.value })}
-          style={{width: '100%', minHeight: '100px', margin: '0.5rem 0'}}
         />
 
         <label htmlFor="notasDiarias">Notas e Observações:</label>
         <textarea
           id="notasDiarias"
-          className="form-textarea"
+          className="modal-textarea"
           placeholder="Adicione notas sobre o dia..."
           value={dayData.notas}
           onChange={(e) => setDayData({ ...dayData, notas: e.target.value })}
-          style={{width: '100%', minHeight: '80px', margin: '0.5rem 0'}}
         />
 
         <label htmlFor="statusDiario">Status do Dia:</label>
         <select
           id="statusDiario"
-          className="form-input"
+          className="modal-select"
           value={dayData.status}
           onChange={(e) => setDayData({ ...dayData, status: e.target.value })}
-          style={{width: '100%', margin: '0.5rem 0'}}
         >
           <option value="planejado">Planejado</option>
           <option value="cumprido">Cumprido</option>
