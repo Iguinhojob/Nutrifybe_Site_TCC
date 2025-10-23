@@ -66,7 +66,10 @@ const NutriCalendario = () => {
     
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(
-        <div key={`empty-${i}`} className="calendar-day empty-day"></div>
+        <div key={`empty-${i}`} style={{
+          background: '#f9fafb',
+          minHeight: '100px'
+        }}></div>
       );
     }
     
@@ -78,15 +81,55 @@ const NutriCalendario = () => {
       days.push(
         <div
           key={day}
-          className={`calendar-day ${isToday ? 'current-date' : ''}`}
           onClick={() => openDayModal(currentDateStr)}
+          style={{
+            background: isToday ? '#4ade80' : 'white',
+            minHeight: '100px',
+            padding: '0.75rem',
+            cursor: 'pointer',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            color: isToday ? 'white' : '#374151',
+            transition: 'all 0.3s ease',
+            border: isToday ? '2px solid #22c55e' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (!isToday) {
+              e.target.style.background = '#f0fdf4';
+              e.target.style.transform = 'translateY(-2px)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isToday) {
+              e.target.style.background = 'white';
+              e.target.style.transform = 'translateY(0)';
+            }
+          }}
         >
-          <span className="day-number">{day}</span>
+          <span style={{
+            fontWeight: 600,
+            fontSize: '1.1rem',
+            marginBottom: '0.5rem'
+          }}>{day}</span>
           {dayInfo && dayInfo.status && (
-            <div className={`day-status-indicator status-${dayInfo.status}`}></div>
+            <div style={{
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              background: dayInfo.status === 'cumprido' ? '#10b981' : 
+                         dayInfo.status === 'parcialmente-cumprido' ? '#f59e0b' : '#ef4444',
+              marginBottom: '0.5rem'
+            }}></div>
           )}
           {dayInfo && dayInfo.alimentacao && (
-            <div className="day-preview">
+            <div style={{
+              fontSize: '0.7rem',
+              color: isToday ? 'rgba(255,255,255,0.8)' : '#6b7280',
+              lineHeight: 1.3,
+              overflow: 'hidden'
+            }}>
               {dayInfo.alimentacao.split('\n')[0].substring(0, 20)}...
             </div>
           )}
@@ -181,25 +224,71 @@ const NutriCalendario = () => {
           <h1 className="nutri-welcome-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
-        <div className="info-card calendar-card" style={{maxWidth: '900px', width: '100%'}}>
-          <div className="calendar-header">
-            <button className="calendar-nav-btn" onClick={() => navigateMonth('prev')}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '20px',
+          padding: '2rem',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+          maxWidth: '900px',
+          width: '100%'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '2rem',
+            padding: '1.5rem',
+            background: 'var(--accent-green)',
+            color: 'white',
+            borderRadius: '16px'
+          }}>
+            <button 
+              onClick={() => navigateMonth('prev')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: 'none',
+                color: 'white',
+                padding: '0.75rem 1rem',
+                borderRadius: '12px',
+                cursor: 'pointer'
+              }}
+            >
               <i className="fas fa-chevron-left"></i>
             </button>
-            <h2>{getFormattedDate()}</h2>
-            <button className="calendar-nav-btn" onClick={() => navigateMonth('next')}>
+            <h2 style={{margin: 0, fontSize: '1.5rem', fontWeight: 600}}>{getFormattedDate()}</h2>
+            <button 
+              onClick={() => navigateMonth('next')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: 'none',
+                color: 'white',
+                padding: '0.75rem 1rem',
+                borderRadius: '12px',
+                cursor: 'pointer'
+              }}
+            >
               <i className="fas fa-chevron-right"></i>
             </button>
           </div>
 
-          <div className="calendar-grid">
-            <div className="day-name">Dom</div>
-            <div className="day-name">Seg</div>
-            <div className="day-name">Ter</div>
-            <div className="day-name">Qua</div>
-            <div className="day-name">Qui</div>
-            <div className="day-name">Sex</div>
-            <div className="day-name">Sáb</div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(7, 1fr)',
+            gap: '2px',
+            background: '#e5e7eb',
+            borderRadius: '16px',
+            overflow: 'hidden'
+          }}>
+            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
+              <div key={day} style={{
+                background: '#f3f4f6',
+                padding: '1rem',
+                textAlign: 'center',
+                fontWeight: 600,
+                color: '#374151',
+                fontSize: '0.9rem'
+              }}>{day}</div>
+            ))}
             {renderCalendar()}
           </div>
         </div>
