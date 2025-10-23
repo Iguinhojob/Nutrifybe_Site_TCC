@@ -37,14 +37,19 @@ const NutriCalendario = () => {
     }
     
     if (patient) {
-      if (!patient.calendario) {
-        // Adicionar dados de exemplo para o calendário
-        patient.calendario = {
-          '2025-01-15': { alimentacao: 'Café da manhã: Aveia com frutas\nAlmoço: Frango grelhado com salada\nJantar: Sopa de legumes', notas: 'Paciente relatou mais energia', status: 'cumprido' },
-          '2025-01-16': { alimentacao: 'Café da manhã: Iogurte natural\nAlmoço: Peixe com arroz integral\nJantar: Salada com proteína', notas: 'Seguiu a dieta corretamente', status: 'cumprido' },
-          '2025-01-17': { alimentacao: 'Café da manhã: Pão integral\nAlmoço: Não seguiu a dieta\nJantar: Pizza', notas: 'Teve dificuldades no almoço', status: 'parcialmente-cumprido' }
-        };
+      // Carregar calendário do banco ou criar vazio
+      if (patient.calendario && typeof patient.calendario === 'string') {
+        try {
+          patient.calendario = JSON.parse(patient.calendario);
+        } catch (e) {
+          console.error('Erro ao parsear calendário:', e);
+          patient.calendario = {};
+        }
+      } else if (!patient.calendario) {
+        patient.calendario = {};
       }
+      
+      console.log('Calendário carregado:', patient.calendario);
       setCurrentPatient(patient);
     } else {
       alert('Paciente não encontrado para o calendário.');
@@ -151,7 +156,7 @@ const NutriCalendario = () => {
     setDayModal({ isOpen: true });
   };
 
-  const saveDayDetails = () => {
+  const saveDayDetails = async () => {
     if (!currentPatient || !selectedDate) return;
 
     if (!currentPatient.calendario) {
@@ -164,9 +169,22 @@ const NutriCalendario = () => {
       status: dayData.status
     };
     
-    setCurrentPatient({...currentPatient});
-    alert('Detalhes do dia salvos com sucesso!');
-    setDayModal({ isOpen: false });
+    try {
+      const patientId = currentPatient.Id || currentPatient.id;
+      console.log('Salvando calendário para paciente ID:', patientId);
+      console.log('Dados do calendário:', currentPatient.calendario);
+      
+      await pacientesAPI.update(patientId, {
+        calendario: currentPatient.calendario
+      });
+      
+      setCurrentPatient({...currentPatient});
+      alert('Detalhes do dia salvos com sucesso!');
+      setDayModal({ isOpen: false });
+    } catch (error) {
+      console.error('Erro ao salvar calendário:', error);
+      alert('Erro ao salvar: ' + error.message);
+    }
   };
 
   const navigateMonth = (direction) => {
@@ -264,7 +282,8 @@ const NutriCalendario = () => {
             <h2 style={{
               margin: 0, 
               fontSize: window.innerWidth < 768 ? '1.2rem' : '1.5rem', 
-              fontWeight: 600
+              fontWeight: 600,
+              color: 'white'
             }}>{getFormattedDate()}</h2>
             <button 
               onClick={() => navigateMonth('next')}

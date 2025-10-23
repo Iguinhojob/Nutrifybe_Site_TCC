@@ -189,7 +189,7 @@ app.post('/api/pacientes', async (req, res) => {
 app.put('/api/pacientes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { ativo, prescricaoSemanal, nutricionistaId } = req.body;
+    const { ativo, prescricaoSemanal, nutricionistaId, calendario } = req.body;
     console.log(`🔄 [${new Date().toLocaleString()}] UPDATING PACIENTE - ID: ${id}, Ativo: ${ativo}, Prescricao: ${prescricaoSemanal ? 'YES' : 'NO'}, NutricionistaId: ${nutricionistaId}`);
     await sql.connect(config);
     
@@ -201,6 +201,10 @@ app.put('/api/pacientes/:id', async (req, res) => {
       updates.push(`prescricao_semanal = N'${cleanPrescricao}'`);
     }
     if (nutricionistaId !== undefined) updates.push(`nutricionista_id = ${nutricionistaId}`);
+    if (calendario !== undefined) {
+      const cleanCalendario = JSON.stringify(calendario).replace(/'/g, "''");
+      updates.push(`calendario = N'${cleanCalendario}'`);
+    }
     
     if (updates.length === 0) {
       console.log(`⚠️ [${new Date().toLocaleString()}] NO FIELDS TO UPDATE`);
