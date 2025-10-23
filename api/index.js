@@ -189,9 +189,20 @@ app.post('/api/pacientes', async (req, res) => {
 app.put('/api/pacientes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { ativo } = req.body;
+    const { ativo, prescricaoSemanal } = req.body;
     await sql.connect(config);
-    await sql.query`UPDATE Pacientes SET ativo = ${ativo} WHERE id = ${id}`;
+    
+    let query = 'UPDATE Pacientes SET ';
+    const updates = [];
+    if (ativo !== undefined) updates.push(`ativo = ${ativo}`);
+    if (prescricaoSemanal !== undefined) updates.push(`prescricao_semanal = '${prescricaoSemanal.replace(/'/g, "''")}'`);
+    
+    if (updates.length === 0) {
+      return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    }
+    
+    query += updates.join(', ') + ` WHERE id = ${id}`;
+    await sql.query(query);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });

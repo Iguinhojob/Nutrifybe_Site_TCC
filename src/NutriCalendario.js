@@ -12,7 +12,7 @@ const NutriCalendario = () => {
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDate, setSelectedDate] = useState(null);
-  const [calendarModal, setCalendarModal] = useState({ isOpen: false });
+
   const [dayModal, setDayModal] = useState({ isOpen: false });
   const [dayData, setDayData] = useState({
     alimentacao: '',
@@ -66,29 +66,45 @@ const NutriCalendario = () => {
     
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(
-        <div key={`empty-${i}`} className="calendar-day empty-day"></div>
+        <div key={`empty-${i}`} style={{padding: '8px'}}></div>
       );
     }
     
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const dayInfo = currentPatient.calendario[currentDateStr];
+      const dayInfo = currentPatient.calendario && currentPatient.calendario[currentDateStr];
       const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
       
       days.push(
         <div
           key={day}
-          className={`calendar-day ${isToday ? 'current-date' : ''}`}
+          style={{
+            padding: '8px',
+            border: '1px solid #e2e8f0',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            backgroundColor: isToday ? '#06b6d4' : dayInfo ? '#f0f9ff' : 'white',
+            color: isToday ? 'white' : 'black',
+            position: 'relative',
+            minHeight: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
           onClick={() => openDayModal(currentDateStr)}
         >
-          <span className="day-number">{day}</span>
-          {dayInfo && dayInfo.status && (
-            <div className={`day-status-indicator status-${dayInfo.status}`}></div>
-          )}
-          {dayInfo && dayInfo.alimentacao && (
-            <div className="day-preview">
-              {dayInfo.alimentacao.split('\n')[0].substring(0, 20)}...
-            </div>
+          <div>{day}</div>
+          {dayInfo && (
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: dayInfo.status === 'cumprido' ? '#10b981' : 
+                             dayInfo.status === 'parcialmente-cumprido' ? '#f59e0b' : '#ef4444',
+              position: 'absolute',
+              top: '2px',
+              right: '2px'
+            }}></div>
           )}
         </div>
       );
@@ -170,58 +186,45 @@ const NutriCalendario = () => {
     <div className="nutri-theme">
       <Header theme="nutri" links={headerLinks} />
       
-      <main className="form-section" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1rem'}}>
-        <div style={{width: '100%', maxWidth: '900px', marginBottom: '1rem'}}>
+      <main className="nutri-dashboard">
+        <div style={{marginBottom: '1rem'}}>
           <Link to={`/nutri-prescricao/${currentPatient.Id || currentPatient.id}`} className="btn btn-outline">
             <i className="fas fa-arrow-left"></i>
           </Link>
         </div>
         
-        <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-          <h1 className="info-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
+        <div className="nutri-welcome">
+          <h1 className="nutri-welcome-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
-        <div className="calendar-button-container">
-          <button 
-            className="calendar-open-btn"
-            onClick={() => setCalendarModal({ isOpen: true })}
-          >
-            <i className="fas fa-calendar-alt"></i>
-            <span>Abrir Calendário</span>
-            <div className="calendar-btn-subtitle">Visualizar e editar alimentação diária</div>
-          </button>
-        </div>
-      </main>
-
-      <Modal
-        isOpen={calendarModal.isOpen}
-        onClose={() => setCalendarModal({ isOpen: false })}
-        title={`Calendário - ${getFormattedDate()}`}
-        size="large"
-      >
-        <div className="calendar-modal-content">
-          <div className="calendar-header">
-            <button className="calendar-nav-btn" onClick={() => navigateMonth('prev')}>
-              <i className="fas fa-chevron-left"></i>
+        <div className="nutri-card">
+          <div className="calendar-header" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
+            <button className="btn btn-outline" onClick={() => navigateMonth('prev')}>
+              ←
             </button>
             <h2>{getFormattedDate()}</h2>
-            <button className="calendar-nav-btn" onClick={() => navigateMonth('next')}>
-              <i className="fas fa-chevron-right"></i>
+            <button className="btn btn-outline" onClick={() => navigateMonth('next')}>
+              →
             </button>
           </div>
 
-          <div className="calendar-grid">
-            <div className="day-name">Dom</div>
-            <div className="day-name">Seg</div>
-            <div className="day-name">Ter</div>
-            <div className="day-name">Qua</div>
-            <div className="day-name">Qui</div>
-            <div className="day-name">Sex</div>
-            <div className="day-name">Sáb</div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(7, 1fr)',
+            gap: '4px',
+            textAlign: 'center'
+          }}>
+            <div style={{fontWeight: 'bold', padding: '8px'}}>Dom</div>
+            <div style={{fontWeight: 'bold', padding: '8px'}}>Seg</div>
+            <div style={{fontWeight: 'bold', padding: '8px'}}>Ter</div>
+            <div style={{fontWeight: 'bold', padding: '8px'}}>Qua</div>
+            <div style={{fontWeight: 'bold', padding: '8px'}}>Qui</div>
+            <div style={{fontWeight: 'bold', padding: '8px'}}>Sex</div>
+            <div style={{fontWeight: 'bold', padding: '8px'}}>Sáb</div>
             {renderCalendar()}
           </div>
         </div>
-      </Modal>
+      </main>
 
       <Modal
         isOpen={dayModal.isOpen}
@@ -231,27 +234,30 @@ const NutriCalendario = () => {
         <label htmlFor="alimentacaoDiaria">Alimentação do Dia:</label>
         <textarea
           id="alimentacaoDiaria"
-          className="modal-textarea"
+          className="form-textarea"
           placeholder="Descreva a alimentação do dia..."
           value={dayData.alimentacao}
           onChange={(e) => setDayData({ ...dayData, alimentacao: e.target.value })}
+          style={{width: '100%', minHeight: '100px', margin: '0.5rem 0'}}
         />
 
         <label htmlFor="notasDiarias">Notas e Observações:</label>
         <textarea
           id="notasDiarias"
-          className="modal-textarea"
+          className="form-textarea"
           placeholder="Adicione notas sobre o dia..."
           value={dayData.notas}
           onChange={(e) => setDayData({ ...dayData, notas: e.target.value })}
+          style={{width: '100%', minHeight: '80px', margin: '0.5rem 0'}}
         />
 
         <label htmlFor="statusDiario">Status do Dia:</label>
         <select
           id="statusDiario"
-          className="modal-select"
+          className="form-input"
           value={dayData.status}
           onChange={(e) => setDayData({ ...dayData, status: e.target.value })}
+          style={{width: '100%', margin: '0.5rem 0'}}
         >
           <option value="planejado">Planejado</option>
           <option value="cumprido">Cumprido</option>
@@ -266,22 +272,18 @@ const NutriCalendario = () => {
         </div>
         
         <div style={{marginTop: '1rem', padding: '1rem', background: '#f3f4f6', borderRadius: '8px'}}>
-          <h4 style={{margin: '0 0 0.5rem 0', color: '#374151'}}>Legenda de Status:</h4>
-          <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.9rem'}}>
+          <h4 style={{margin: '0 0 0.5rem 0', color: '#374151'}}>Legenda:</h4>
+          <div style={{display: 'flex', gap: '1rem', fontSize: '0.9rem', flexWrap: 'wrap'}}>
             <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-              <div className="status-planejado" style={{width: '12px', height: '12px', borderRadius: '50%'}}></div>
-              <span>Planejado</span>
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-              <div className="status-cumprido" style={{width: '12px', height: '12px', borderRadius: '50%'}}></div>
+              <div style={{width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#10b981'}}></div>
               <span>Cumprido</span>
             </div>
             <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-              <div className="status-parcialmente-cumprido" style={{width: '12px', height: '12px', borderRadius: '50%'}}></div>
+              <div style={{width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#f59e0b'}}></div>
               <span>Parcial</span>
             </div>
             <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-              <div className="status-nao-cumprido" style={{width: '12px', height: '12px', borderRadius: '50%'}}></div>
+              <div style={{width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#ef4444'}}></div>
               <span>Não Cumprido</span>
             </div>
           </div>
