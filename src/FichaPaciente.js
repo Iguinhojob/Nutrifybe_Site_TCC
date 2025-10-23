@@ -166,10 +166,27 @@ const FichaPaciente = () => {
         console.log('Resultado da busca:', data);
         console.log('=== FIM DEBUG ===');
         if (data && !data.calendario) {
+          const today = new Date();
+          const currentMonth = today.getMonth() + 1;
+          const currentYear = today.getFullYear();
+          const currentDay = today.getDate();
+          
           data.calendario = {
-            '2025-01-15': { alimentacao: 'Café da manhã: Aveia com frutas\nAlmoço: Frango grelhado com salada\nJantar: Sopa de legumes', notas: 'Paciente relatou mais energia', status: 'cumprido' },
-            '2025-01-16': { alimentacao: 'Café da manhã: Iogurte natural\nAlmoço: Peixe com arroz integral\nJantar: Salada com proteína', notas: 'Seguiu a dieta corretamente', status: 'cumprido' },
-            '2025-01-17': { alimentacao: 'Café da manhã: Pão integral\nAlmoço: Não seguiu a dieta\nJantar: Pizza', notas: 'Teve dificuldades no almoço', status: 'parcialmente-cumprido' }
+            [`${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(Math.max(1, currentDay - 2)).padStart(2, '0')}`]: { 
+              alimentacao: 'Café da manhã: Aveia com frutas\nAlmoço: Frango grelhado com salada\nJantar: Sopa de legumes', 
+              notas: 'Paciente seguiu a dieta corretamente', 
+              status: 'cumprido' 
+            },
+            [`${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(Math.max(1, currentDay - 1)).padStart(2, '0')}`]: { 
+              alimentacao: 'Café da manhã: Iogurte natural\nAlmoço: Peixe com arroz integral\nJantar: Salada com proteína', 
+              notas: 'Boa adesão ao plano alimentar', 
+              status: 'cumprido' 
+            },
+            [`${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(currentDay).padStart(2, '0')}`]: { 
+              alimentacao: 'Café da manhã: Pão integral\nAlmoço: Planejado - Salada com proteína\nJantar: A definir', 
+              notas: 'Dia atual - acompanhar evolução', 
+              status: 'planejado' 
+            }
           };
         }
         setPaciente(data);

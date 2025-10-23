@@ -12,6 +12,7 @@ const NutriCalendario = () => {
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDate, setSelectedDate] = useState(null);
+  const [calendarModal, setCalendarModal] = useState({ isOpen: false });
   const [dayModal, setDayModal] = useState({ isOpen: false });
   const [dayData, setDayData] = useState({
     alimentacao: '',
@@ -180,7 +181,25 @@ const NutriCalendario = () => {
           <h1 className="info-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
-        <div className="info-card calendar-card" style={{maxWidth: '900px', width: '100%'}}>
+        <div className="calendar-button-container">
+          <button 
+            className="calendar-open-btn"
+            onClick={() => setCalendarModal({ isOpen: true })}
+          >
+            <i className="fas fa-calendar-alt"></i>
+            <span>Abrir Calendário</span>
+            <div className="calendar-btn-subtitle">Visualizar e editar alimentação diária</div>
+          </button>
+        </div>
+      </main>
+
+      <Modal
+        isOpen={calendarModal.isOpen}
+        onClose={() => setCalendarModal({ isOpen: false })}
+        title={`Calendário - ${getFormattedDate()}`}
+        size="large"
+      >
+        <div className="calendar-modal-content">
           <div className="calendar-header">
             <button className="calendar-nav-btn" onClick={() => navigateMonth('prev')}>
               <i className="fas fa-chevron-left"></i>
@@ -202,7 +221,7 @@ const NutriCalendario = () => {
             {renderCalendar()}
           </div>
         </div>
-      </main>
+      </Modal>
 
       <Modal
         isOpen={dayModal.isOpen}

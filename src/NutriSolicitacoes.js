@@ -65,10 +65,6 @@ const NutriSolicitacoes = () => {
       <Header theme="nutri" links={headerLinks} />
       
       <main className="nutri-dashboard">
-        <Link to="/nutri-dashboard" className="btn btn-outline" style={{marginBottom: '1rem'}}>
-          Voltar ao Dashboard
-        </Link>
-        
         <div className="nutri-welcome">
           <h1 className="nutri-welcome-title">Solicitações Pendentes</h1>
           <p className="nutri-subtitle">Gerencie as solicitações de novos pacientes</p>

@@ -1,4 +1,55 @@
 /* Estilos do Calendário */
+.calendar-button-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.calendar-open-btn {
+  background: linear-gradient(135deg, var(--accent-green), var(--dark-green));
+  border: none;
+  border-radius: 20px;
+  padding: 2rem 3rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 280px;
+  text-align: center;
+}
+
+.calendar-open-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(76, 175, 80, 0.4);
+  background: linear-gradient(135deg, var(--dark-green), var(--accent-green));
+}
+
+.calendar-open-btn i {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-open-btn span {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.calendar-btn-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.calendar-modal-content {
+  width: 100%;
+  max-width: 900px;
+}
+
 .calendar-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
@@ -196,8 +247,32 @@
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
 }
 
+/* Modal grande para calendário */
+.modal.large {
+  max-width: 95vw;
+  width: 95vw;
+}
+
+.modal.large .modal-content {
+  max-width: none;
+  width: 100%;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
+  .calendar-open-btn {
+    padding: 1.5rem 2rem;
+    min-width: 240px;
+  }
+  
+  .calendar-open-btn i {
+    font-size: 2rem;
+  }
+  
+  .calendar-open-btn span {
+    font-size: 1.1rem;
+  }
+  
   .calendar-day {
     min-height: 80px;
     padding: 0.5rem;
@@ -218,4 +293,53 @@
   .day-preview {
     font-size: 0.6rem;
   }
+}
+
+/* Botão do Calendário */
+.calendar-button-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.calendar-open-btn {
+  background: linear-gradient(135deg, var(--accent-green), var(--dark-green));
+  border: none;
+  border-radius: 20px;
+  padding: 2rem 3rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 250px;
+}
+
+.calendar-open-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(76, 175, 80, 0.4);
+}
+
+.calendar-open-btn i {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-open-btn span {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.calendar-btn-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  text-align: center;
+}
+
+.calendar-modal-content {
+  max-width: 900px;
+  width: 100%;
 }
