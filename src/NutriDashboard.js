@@ -33,9 +33,12 @@ const NutriDashboard = () => {
         
         const pacientes = await pacientesAPI.getByNutricionista(user.Id || user.id);
         const nutricionistas = await nutricionistasAPI.getAll();
+        console.log('Todos os nutricionistas:', nutricionistas);
         
         setAcceptedPatients(pacientes);
-        setManagedNutricionists(nutricionistas.filter(n => n.Status === 'approved'));
+        const approvedNutris = nutricionistas.filter(n => (n.Status || n.status) === 'approved');
+        console.log('Nutricionistas aprovados:', approvedNutris);
+        setManagedNutricionists(approvedNutris);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       }
@@ -95,9 +98,17 @@ const NutriDashboard = () => {
   };
 
   const getFilteredNutris = () => {
-    const availableNutris = managedNutricionists.filter(n => 
-      (n.Status || n.status) === 'approved' && (n.Id || n.id) !== (currentUser?.Id || currentUser?.id)
-    );
+    console.log('managedNutricionists:', managedNutricionists);
+    console.log('currentUser:', currentUser);
+    
+    const availableNutris = managedNutricionists.filter(n => {
+      const isApproved = (n.Status || n.status) === 'approved';
+      const isDifferentUser = (n.Id || n.id) !== (currentUser?.Id || currentUser?.id);
+      console.log(`Nutricionista ${n.Nome || n.nome}: approved=${isApproved}, different=${isDifferentUser}`);
+      return isApproved && isDifferentUser;
+    });
+    
+    console.log('availableNutris:', availableNutris);
     
     if (!searchNutri) return availableNutris;
     

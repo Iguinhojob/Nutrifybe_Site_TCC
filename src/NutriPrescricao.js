@@ -30,7 +30,9 @@ const NutriPrescricao = () => {
         
         if (patient) {
           setCurrentPatient(patient);
-          setPrescription(patient.prescricaoSemanal || patient.PrescricaoSemanal || '');
+          const existingPrescription = patient.prescricaoSemanal || patient.PrescricaoSemanal || patient.prescricao_semanal || '';
+          console.log('Prescrição existente carregada:', existingPrescription);
+          setPrescription(existingPrescription);
         } else {
           alert('Paciente não encontrado.');
           navigate('/nutri-dashboard');
@@ -64,11 +66,11 @@ const NutriPrescricao = () => {
       console.log('Prescrição a salvar:', prescription);
       console.log('Tamanho da prescrição:', prescription.length);
       
-      const response = await pacientesAPI.update(patientId, {
-        prescricaoSemanal: prescription
-      });
+      const updateData = { prescricaoSemanal: prescription };
+      console.log('Dados sendo enviados para API:', updateData);
       
-      console.log('Resposta da API:', response);
+      const response = await pacientesAPI.update(patientId, updateData);
+      console.log('Resposta da API update:', response);
       console.log('=== FIM DEBUG ===');
       
       alert('Prescrição semanal salva com sucesso!');
@@ -77,7 +79,8 @@ const NutriPrescricao = () => {
       setCurrentPatient({
         ...currentPatient,
         prescricaoSemanal: prescription,
-        PrescricaoSemanal: prescription
+        PrescricaoSemanal: prescription,
+        prescricao_semanal: prescription
       });
       
     } catch (error) {

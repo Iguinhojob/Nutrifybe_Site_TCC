@@ -196,7 +196,10 @@ app.put('/api/pacientes/:id', async (req, res) => {
     let query = 'UPDATE Pacientes SET ';
     const updates = [];
     if (ativo !== undefined) updates.push(`ativo = ${ativo}`);
-    if (prescricaoSemanal !== undefined) updates.push(`prescricao_semanal = '${prescricaoSemanal.replace(/'/g, "''")}'`);
+    if (prescricaoSemanal !== undefined) {
+      const cleanPrescricao = prescricaoSemanal.replace(/'/g, "''");
+      updates.push(`prescricao_semanal = N'${cleanPrescricao}'`);
+    }
     if (nutricionistaId !== undefined) updates.push(`nutricionista_id = ${nutricionistaId}`);
     
     if (updates.length === 0) {
@@ -286,6 +289,17 @@ app.delete('/api/activityLog', async (req, res) => {
     await sql.connect(config);
     await sql.query('DELETE FROM ActivityLog');
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Debug endpoint
+app.get('/api/debug/pacientes', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const result = await sql.query('SELECT id, nome, prescricao_semanal FROM Pacientes');
+    res.json(result.recordset);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
