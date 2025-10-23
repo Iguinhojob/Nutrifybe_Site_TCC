@@ -45,6 +45,13 @@ const FichaPaciente = () => {
           return String(pacienteId) === String(id);
         });
         
+        // Garantir que todos os pacientes tenham calendário
+        if (data) {
+          if (!data.calendario) {
+            data.calendario = {};
+          }
+        }
+        
         console.log('Resultado da busca:', data);
         console.log('=== FIM DEBUG ===');
         setPaciente(data);
