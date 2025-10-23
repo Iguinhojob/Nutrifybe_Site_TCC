@@ -189,22 +189,28 @@ app.post('/api/pacientes', async (req, res) => {
 app.put('/api/pacientes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { ativo, prescricaoSemanal } = req.body;
+    const { ativo, prescricaoSemanal, nutricionistaId } = req.body;
+    console.log(`🔄 [${new Date().toLocaleString()}] UPDATING PACIENTE - ID: ${id}, Ativo: ${ativo}, Prescricao: ${prescricaoSemanal ? 'YES' : 'NO'}, NutricionistaId: ${nutricionistaId}`);
     await sql.connect(config);
     
     let query = 'UPDATE Pacientes SET ';
     const updates = [];
     if (ativo !== undefined) updates.push(`ativo = ${ativo}`);
     if (prescricaoSemanal !== undefined) updates.push(`prescricao_semanal = '${prescricaoSemanal.replace(/'/g, "''")}'`);
+    if (nutricionistaId !== undefined) updates.push(`nutricionista_id = ${nutricionistaId}`);
     
     if (updates.length === 0) {
+      console.log(`⚠️ [${new Date().toLocaleString()}] NO FIELDS TO UPDATE`);
       return res.status(400).json({ error: 'Nenhum campo para atualizar' });
     }
     
     query += updates.join(', ') + ` WHERE id = ${id}`;
+    console.log(`📊 [${new Date().toLocaleString()}] SQL QUERY: ${query}`);
     await sql.query(query);
+    console.log(`✅ [${new Date().toLocaleString()}] PACIENTE UPDATED SUCCESSFULLY`);
     res.json({ success: true });
   } catch (err) {
+    console.log(`🚨 [${new Date().toLocaleString()}] ERROR: ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 });

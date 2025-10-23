@@ -69,41 +69,42 @@ const NutriDashboard = () => {
 
   const handleSelectNutri = async (selectedNutriId) => {
     try {
-      const selectedNutri = managedNutricionists.find(n => n.id === selectedNutriId);
+      const selectedNutri = managedNutricionists.find(n => (n.Id || n.id) === selectedNutriId);
       if (!selectedNutri) return;
 
+      const patientId = selectNutriModal.patient.Id || selectNutriModal.patient.id;
+      console.log('Transferindo paciente ID:', patientId, 'para nutricionista ID:', selectedNutriId);
+
       // Atualizar paciente para novo nutricionista
-      await pacientesAPI.update(selectNutriModal.patient.id, {
-        ...selectNutriModal.patient,
-        nutricionistaId: selectedNutriId,
-        status: 'accepted'
+      await pacientesAPI.update(patientId, {
+        nutricionistaId: selectedNutriId
       });
 
       // Atualizar lista local
-      const updatedPatients = acceptedPatients.filter(p => p.id !== selectNutriModal.patient.id);
+      const updatedPatients = acceptedPatients.filter(p => (p.Id || p.id) !== patientId);
       setAcceptedPatients(updatedPatients);
 
-      alert(`Paciente ${selectNutriModal.patient.nome} transferido para ${selectedNutri.nome}.`);
+      alert(`Paciente ${selectNutriModal.patient.Nome || selectNutriModal.patient.nome} transferido para ${selectedNutri.Nome || selectedNutri.nome}.`);
       
       setSelectNutriModal({ isOpen: false, patient: null, reason: '' });
       setTransferReason('');
     } catch (error) {
       console.error('Erro ao transferir paciente:', error);
-      alert('Erro ao transferir paciente.');
+      alert('Erro ao transferir paciente: ' + error.message);
     }
   };
 
   const getFilteredNutris = () => {
     const availableNutris = managedNutricionists.filter(n => 
-      n.Status === 'approved' && (n.Id || n.id) !== (currentUser?.Id || currentUser?.id)
+      (n.Status || n.status) === 'approved' && (n.Id || n.id) !== (currentUser?.Id || currentUser?.id)
     );
     
     if (!searchNutri) return availableNutris;
     
     return availableNutris.filter(n => 
-      (n.Nome || n.nome).toLowerCase().includes(searchNutri.toLowerCase()) ||
-      (n.CRN || n.crn).toLowerCase().includes(searchNutri.toLowerCase()) ||
-      (n.Email || n.email).toLowerCase().includes(searchNutri.toLowerCase())
+      (n.Nome || n.nome || '').toLowerCase().includes(searchNutri.toLowerCase()) ||
+      (n.CRN || n.crn || '').toLowerCase().includes(searchNutri.toLowerCase()) ||
+      (n.Email || n.email || '').toLowerCase().includes(searchNutri.toLowerCase())
     );
   };
 
@@ -169,7 +170,7 @@ const NutriDashboard = () => {
       >
         <label htmlFor="transferReason">
           Por favor, descreva o motivo do encerramento e transferência do atendimento de{' '}
-          <strong>{transferModal.patient?.nome}</strong>:
+          <strong>{transferModal.patient?.Nome || transferModal.patient?.nome}</strong>:
         </label>
         <textarea
           id="transferReason"
@@ -188,16 +189,17 @@ const NutriDashboard = () => {
             className="btn btn-warning" 
             onClick={async () => {
               try {
-                await pacientesAPI.delete(transferModal.patient.id);
-                const updatedPatients = acceptedPatients.filter(p => p.id !== transferModal.patient.id);
+                const patientId = transferModal.patient.Id || transferModal.patient.id;
+                await pacientesAPI.delete(patientId);
+                const updatedPatients = acceptedPatients.filter(p => (p.Id || p.id) !== patientId);
                 setAcceptedPatients(updatedPatients);
                 
-                alert(`Atendimento de ${transferModal.patient.nome} foi encerrado definitivamente.`);
+                alert(`Atendimento de ${transferModal.patient.Nome || transferModal.patient.nome} foi encerrado definitivamente.`);
                 setTransferModal({ isOpen: false, patient: null });
                 setTransferReason('');
               } catch (error) {
                 console.error('Erro ao encerrar atendimento:', error);
-                alert('Erro ao encerrar atendimento.');
+                alert('Erro ao encerrar atendimento: ' + error.message);
               }
             }}
           >
@@ -211,7 +213,7 @@ const NutriDashboard = () => {
         onClose={() => setSelectNutriModal({ isOpen: false, patient: null, reason: '' })}
         title="Transferir Paciente para qual Nutricionista?"
       >
-        <p><strong>Paciente:</strong> {selectNutriModal.patient?.nome}</p>
+        <p><strong>Paciente:</strong> {selectNutriModal.patient?.Nome || selectNutriModal.patient?.nome}</p>
         <p><strong>Motivo:</strong> <em>{selectNutriModal.reason}</em></p>
         <hr style={{ margin: '15px 0' }} />
         
@@ -233,14 +235,14 @@ const NutriDashboard = () => {
             <p>Nenhum nutricionista disponível.</p>
           ) : (
             getFilteredNutris().map(nutri => (
-              <div key={nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '8px', marginBottom: '0.5rem'}}>
+              <div key={nutri.Id || nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '8px', marginBottom: '0.5rem'}}>
                 <div>
-                  <strong>{nutri.nome}</strong><br />
-                  <small>{nutri.email} (CRN: {nutri.crn})</small>
+                  <strong>{nutri.Nome || nutri.nome}</strong><br />
+                  <small>{nutri.Email || nutri.email} (CRN: {nutri.CRN || nutri.crn})</small>
                 </div>
                 <button
                   className="btn btn-primary"
-                  onClick={() => handleSelectNutri(nutri.id)}
+                  onClick={() => handleSelectNutri(nutri.Id || nutri.id)}
                 >
                   Selecionar
                 </button>
