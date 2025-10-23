@@ -46,20 +46,46 @@ const NutriPrescricao = () => {
   }, [id, navigate]);
 
   const handleSavePrescription = async () => {
-    if (!currentPatient) return;
+    if (!currentPatient) {
+      alert('Nenhum paciente carregado!');
+      return;
+    }
+
+    if (!prescription.trim()) {
+      alert('Por favor, digite uma prescrição antes de salvar.');
+      return;
+    }
 
     try {
       const patientId = currentPatient.Id || currentPatient.id;
-      console.log('Salvando prescrição para paciente ID:', patientId);
-      console.log('Prescrição:', prescription);
+      console.log('=== DEBUG PRESCRIÇÃO ===');
+      console.log('Paciente atual:', currentPatient);
+      console.log('ID do paciente:', patientId);
+      console.log('Prescrição a salvar:', prescription);
+      console.log('Tamanho da prescrição:', prescription.length);
       
-      await pacientesAPI.update(patientId, {
+      const response = await pacientesAPI.update(patientId, {
         prescricaoSemanal: prescription
       });
       
+      console.log('Resposta da API:', response);
+      console.log('=== FIM DEBUG ===');
+      
       alert('Prescrição semanal salva com sucesso!');
+      
+      // Atualizar o estado local
+      setCurrentPatient({
+        ...currentPatient,
+        prescricaoSemanal: prescription,
+        PrescricaoSemanal: prescription
+      });
+      
     } catch (error) {
-      console.error('Erro completo:', error);
+      console.error('=== ERRO COMPLETO ===');
+      console.error('Erro:', error);
+      console.error('Message:', error.message);
+      console.error('Stack:', error.stack);
+      console.error('=== FIM ERRO ===');
       alert('Erro ao salvar prescrição: ' + error.message);
     }
   };
