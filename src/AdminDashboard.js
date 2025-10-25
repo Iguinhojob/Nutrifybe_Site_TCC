@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { nutricionistasAPI, adminAPI } from './services/api';
 import api from './services/api';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import './css/style.css';
 const fundoImage = '/images/fundo_index.png';
 
