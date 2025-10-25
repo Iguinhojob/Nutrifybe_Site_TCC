@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const sql = require('mssql');
+const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(cors());
@@ -22,9 +23,17 @@ app.post('/api/nutricionistas/login', async (req, res) => {
   try {
     const { email, crn, senha } = req.body;
     await sql.connect(config);
-    const result = await sql.query`SELECT * FROM Nutricionistas WHERE email = ${email} AND crn = ${crn} AND senha = ${senha} AND status = 'approved' AND ativo = 1`;
+    const result = await sql.query`SELECT * FROM Nutricionistas WHERE email = ${email} AND crn = ${crn} AND status = 'approved' AND ativo = 1`;
+    
     if (result.recordset.length > 0) {
-      res.json({ success: true, nutricionista: result.recordset[0] });
+      const user = result.recordset[0];
+      const isValidPassword = await bcrypt.compare(senha, user.senha);
+      
+      if (isValidPassword) {
+        res.json({ success: true, nutricionista: user });
+      } else {
+        res.status(401).json({ success: false, message: 'Credenciais inválidas' });
+      }
     } else {
       res.status(401).json({ success: false, message: 'Credenciais inválidas' });
     }
@@ -78,8 +87,10 @@ app.put('/api/nutricionistas/:id', async (req, res) => {
 app.post('/api/nutricionistas', async (req, res) => {
   try {
     const { nome, email, crn, senha, status, ativo, telefone, especialidade } = req.body;
+    const hashedPassword = await bcrypt.hash(senha, 10);
+    
     await sql.connect(config);
-    await sql.query`INSERT INTO Nutricionistas (nome, email, crn, senha, status, ativo, telefone, especialidade, data_criacao) VALUES (${nome}, ${email}, ${crn}, ${senha}, ${status}, ${ativo}, ${telefone}, ${especialidade}, GETDATE())`;
+    await sql.query`INSERT INTO Nutricionistas (nome, email, crn, senha, status, ativo, telefone, especialidade, data_criacao) VALUES (${nome}, ${email}, ${crn}, ${hashedPassword}, ${status}, ${ativo}, ${telefone}, ${especialidade}, GETDATE())`;
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
