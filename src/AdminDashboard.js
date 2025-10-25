@@ -1360,7 +1360,11 @@ const AdminDashboard = () => {
                       const novaSenha = formData.get('novaSenha');
                       const confirmarSenha = formData.get('confirmarSenha');
                       
-                      if (senhaAtual !== currentAdmin?.senha) {
+                      // Verificar senha atual no servidor
+                      const admins = await adminAPI.getAll();
+                      const adminAtual = admins.find(a => a.id === currentAdmin.id);
+                      
+                      if (senhaAtual !== adminAtual?.senha) {
                         alert('Senha atual incorreta!');
                         return;
                       }
