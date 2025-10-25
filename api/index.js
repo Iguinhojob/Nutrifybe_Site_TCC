@@ -100,10 +100,23 @@ app.post('/api/nutricionistas', async (req, res) => {
 app.delete('/api/nutricionistas/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(`🗑️ [${new Date().toLocaleString()}] DELETING NUTRICIONISTA - ID: ${id}`);
     await sql.connect(config);
+    
+    // Verificar se tem pacientes vinculados
+    const pacientesResult = await sql.query`SELECT COUNT(*) as count FROM Pacientes WHERE nutricionista_id = ${id}`;
+    const pacientesCount = pacientesResult.recordset[0].count;
+    
+    if (pacientesCount > 0) {
+      console.log(`⚠️ [${new Date().toLocaleString()}] CANNOT DELETE - ${pacientesCount} patients linked`);
+      return res.status(400).json({ error: `Não é possível excluir. Este nutricionista tem ${pacientesCount} paciente(s) vinculado(s).` });
+    }
+    
     await sql.query`DELETE FROM Nutricionistas WHERE id = ${id}`;
+    console.log(`✅ [${new Date().toLocaleString()}] NUTRICIONISTA DELETED SUCCESSFULLY`);
     res.json({ success: true });
   } catch (err) {
+    console.log(`🚨 [${new Date().toLocaleString()}] ERROR: ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 });
