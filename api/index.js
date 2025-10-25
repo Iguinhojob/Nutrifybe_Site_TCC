@@ -71,15 +71,27 @@ app.put('/api/nutricionistas/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { status, ativo } = req.body;
+    console.log(`🔄 [${new Date().toLocaleString()}] UPDATING NUTRICIONISTA - ID: ${id}, Status: ${status}, Ativo: ${ativo}`);
+    
     await sql.connect(config);
     let query = 'UPDATE Nutricionistas SET ';
     const updates = [];
     if (status) updates.push(`status = '${status}'`);
     if (ativo !== undefined) updates.push(`ativo = ${ativo}`);
+    
+    if (updates.length === 0) {
+      console.log(`⚠️ [${new Date().toLocaleString()}] NO FIELDS TO UPDATE`);
+      return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    }
+    
     query += updates.join(', ') + ` WHERE id = ${id}`;
+    console.log(`📊 [${new Date().toLocaleString()}] SQL QUERY: ${query}`);
+    
     await sql.query(query);
+    console.log(`✅ [${new Date().toLocaleString()}] NUTRICIONISTA UPDATED SUCCESSFULLY`);
     res.json({ success: true });
   } catch (err) {
+    console.log(`🚨 [${new Date().toLocaleString()}] ERROR: ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 });
