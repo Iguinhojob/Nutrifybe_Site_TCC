@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Modal from './Modal';
-import { pacientesAPI, nutricionistasAPI, solicitacoesAPI } from './services/api';
+import { pacientesAPI, nutricionistasAPI } from './services/api';
 
 const NutriDashboard = () => {
   const [acceptedPatients, setAcceptedPatients] = useState([]);
@@ -75,41 +75,19 @@ const NutriDashboard = () => {
       const selectedNutri = managedNutricionists.find(n => (n.Id || n.id) === selectedNutriId);
       if (!selectedNutri) return;
 
-      const patient = selectNutriModal.patient;
-      const patientId = patient.Id || patient.id;
-      
-      console.log('=== TRANSFERÊNCIA DEBUG ===');
-      console.log('Paciente:', patient);
-      console.log('Nutricionista destino ID:', selectedNutriId);
-      console.log('Motivo:', selectNutriModal.reason);
-      
-      // Criar solicitação pendente com motivo da transferência
-      const solicitacao = {
-        nome: patient.Nome || patient.nome,
-        email: patient.Email || patient.email,
-        idade: patient.Idade || patient.idade,
-        peso: patient.Peso || patient.peso,
-        altura: patient.Altura || patient.altura,
-        objetivo: `TRANSFERÊNCIA: ${patient.Objetivo || patient.objetivo}`,
-        condicaoSaude: `Motivo da transferência: ${selectNutriModal.reason}. Condição anterior: ${patient.CondicaoSaude || patient.condicao_saude || 'Não informado'}`,
+      const patientId = selectNutriModal.patient.Id || selectNutriModal.patient.id;
+      console.log('Transferindo paciente ID:', patientId, 'para nutricionista ID:', selectedNutriId);
+
+      // Atualizar paciente para novo nutricionista
+      await pacientesAPI.update(patientId, {
         nutricionistaId: selectedNutriId
-      };
-      
-      console.log('Solicitação a ser criada:', solicitacao);
-      
-      const createResult = await solicitacoesAPI.create(solicitacao);
-      console.log('Resultado da criação:', createResult);
-      
-      // Remover paciente do nutricionista atual
-      const deleteResult = await pacientesAPI.delete(patientId);
-      console.log('Resultado da exclusão:', deleteResult);
+      });
 
       // Atualizar lista local
       const updatedPatients = acceptedPatients.filter(p => (p.Id || p.id) !== patientId);
       setAcceptedPatients(updatedPatients);
 
-      console.log('=== FIM DEBUG ===');
-      alert(`Paciente ${patient.Nome || patient.nome} foi transferido para ${selectedNutri.Nome || selectedNutri.nome} e aparecerá nas solicitações pendentes.`);
+      alert(`Paciente ${selectNutriModal.patient.Nome || selectNutriModal.patient.nome} transferido para ${selectedNutri.Nome || selectedNutri.nome}.`);
       
       setSelectNutriModal({ isOpen: false, patient: null, reason: '' });
       setTransferReason('');
