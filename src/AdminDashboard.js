@@ -109,8 +109,14 @@ const AdminDashboard = () => {
         updateData = { status: 'rejected' };
         addToActivityLog('Rejeitado', nutri.nome);
       } else if (action === 'delete') {
-        await nutricionistasAPI.delete(id);
-        addToActivityLog('Excluído', nutri.nome);
+        try {
+          await nutricionistasAPI.delete(id);
+          addToActivityLog('Excluído', nutri.nome);
+        } catch (error) {
+          console.error('Erro ao excluir nutricionista:', error);
+          alert('Erro ao excluir nutricionista: ' + error.message);
+          return;
+        }
       } else if (action === 'activate') {
         updateData = { ativo: 1 };
         addToActivityLog('Ativado', nutri.nome);
@@ -976,7 +982,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
               
-              <div style={{marginTop: '2rem', textAlign: 'center', display: 'flex', gap: '1rem', justifyContent: 'center'}}>
+              <div style={{marginTop: '2rem', textAlign: 'center'}}>
                 <button 
                   className="btn btn-primary"
                   onClick={() => {
@@ -1098,26 +1104,6 @@ const AdminDashboard = () => {
                   }}
                 >
                   📈 Exportar Relatório (PDF)
-                </button>
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    const data = {
-                      nutricionistas: managedNutricionists,
-                      pacientes: allPatients,
-                      atividades: activityLog,
-                      estatisticas: systemStats,
-                      dataExportacao: new Date().toLocaleString()
-                    };
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `relatorio-nutrifybe-${new Date().toISOString().split('T')[0]}.json`;
-                    a.click();
-                  }}
-                >
-                  Exportar JSON
                 </button>
               </div>
             </div>
