@@ -78,6 +78,11 @@ const NutriDashboard = () => {
       const patient = selectNutriModal.patient;
       const patientId = patient.Id || patient.id;
       
+      console.log('=== TRANSFERÊNCIA DEBUG ===');
+      console.log('Paciente:', patient);
+      console.log('Nutricionista destino ID:', selectedNutriId);
+      console.log('Motivo:', selectNutriModal.reason);
+      
       // Criar solicitação pendente com motivo da transferência
       const solicitacao = {
         nome: patient.Nome || patient.nome,
@@ -90,15 +95,20 @@ const NutriDashboard = () => {
         nutricionistaId: selectedNutriId
       };
       
-      await solicitacoesAPI.create(solicitacao);
+      console.log('Solicitação a ser criada:', solicitacao);
+      
+      const createResult = await solicitacoesAPI.create(solicitacao);
+      console.log('Resultado da criação:', createResult);
       
       // Remover paciente do nutricionista atual
-      await pacientesAPI.delete(patientId);
+      const deleteResult = await pacientesAPI.delete(patientId);
+      console.log('Resultado da exclusão:', deleteResult);
 
       // Atualizar lista local
       const updatedPatients = acceptedPatients.filter(p => (p.Id || p.id) !== patientId);
       setAcceptedPatients(updatedPatients);
 
+      console.log('=== FIM DEBUG ===');
       alert(`Paciente ${patient.Nome || patient.nome} foi transferido para ${selectedNutri.Nome || selectedNutri.nome} e aparecerá nas solicitações pendentes.`);
       
       setSelectNutriModal({ isOpen: false, patient: null, reason: '' });
