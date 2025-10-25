@@ -402,10 +402,12 @@ const AdminDashboard = () => {
                         <button 
                           className="nutri-action-btn btn-delete"
                           onClick={() => {
-                            handleNutriAction(consultResult.Id, 'delete');
-                            setConsultResult(null);
-                            setConsultMessage('');
-                            setConsultCrn('');
+                            if (window.confirm(`Tem certeza que deseja excluir o nutricionista ${consultResult.nome}?\n\nEsta ação não pode ser desfeita!`)) {
+                              handleNutriAction(consultResult.Id, 'delete');
+                              setConsultResult(null);
+                              setConsultMessage('');
+                              setConsultCrn('');
+                            }
                           }}
                         >
                           Excluir
@@ -598,7 +600,11 @@ const AdminDashboard = () => {
                           )}
                           <button 
                             style={{padding: '0.5rem 1rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer'}}
-                            onClick={() => handleNutriAction(nutri.id, 'delete')}
+                            onClick={() => {
+                              if (window.confirm(`Tem certeza que deseja excluir o nutricionista ${nutri.nome}?\n\nEsta ação não pode ser desfeita!`)) {
+                                handleNutriAction(nutri.id, 'delete');
+                              }
+                            }}
                           >
                             Excluir
                           </button>
@@ -890,7 +896,7 @@ const AdminDashboard = () => {
                         yPos = 20;
                       }
                       
-                      const nutri = managedNutricionists.find(n => n.Id === patient.NutricionistaId);
+                      const nutri = managedNutricionists.find(n => n.id === patient.nutricionista_id);
                       const status = patient.ativo === true ? 'ATIVO' : 'INATIVO';
                       const statusColor = patient.ativo === true ? [16, 185, 129] : [239, 68, 68];
                       
@@ -901,7 +907,7 @@ const AdminDashboard = () => {
                       // Nome e ID
                       doc.setFontSize(11);
                       doc.setFont(undefined, 'bold');
-                      doc.text(`${index + 1}. ${patient.Nome}`, 20, yPos);
+                      doc.text(`${index + 1}. ${patient.nome}`, 20, yPos);
                       doc.setTextColor(...statusColor);
                       doc.text(`[${status}]`, 150, yPos);
                       
@@ -910,13 +916,13 @@ const AdminDashboard = () => {
                       doc.setFont(undefined, 'normal');
                       doc.setFontSize(9);
                       yPos += 8;
-                      doc.text(`Email: ${patient.Email}`, 25, yPos);
+                      doc.text(`Email: ${patient.email}`, 25, yPos);
                       yPos += 6;
-                      doc.text(`Nutricionista: ${nutri?.Nome || 'Não atribuído'}`, 25, yPos);
+                      doc.text(`Nutricionista: ${nutri?.nome || 'Não atribuído'}`, 25, yPos);
                       yPos += 6;
-                      doc.text(`Objetivo: ${patient.Objetivo || 'Não informado'}`, 25, yPos);
+                      doc.text(`Objetivo: ${patient.objetivo || 'Não informado'}`, 25, yPos);
                       yPos += 6;
-                      doc.text(`Cadastro: ${new Date(patient.DataCadastro).toLocaleDateString()}`, 25, yPos);
+                      doc.text(`Cadastro: ${new Date(patient.data_criacao).toLocaleDateString()}`, 25, yPos);
                       yPos += 12;
                     });
                     
@@ -1042,12 +1048,12 @@ const AdminDashboard = () => {
                         doc.addPage();
                         yPos = 20;
                       }
-                      const statusColor = nutri.Status === 'approved' ? [34, 197, 94] : [239, 68, 68];
+                      const statusColor = nutri.status === 'approved' ? [34, 197, 94] : [239, 68, 68];
                       doc.setTextColor(0, 0, 0);
-                      doc.text(`${index + 1}. ${nutri.Nome}`, 20, yPos);
-                      doc.text(nutri.Email, 80, yPos);
+                      doc.text(`${index + 1}. ${nutri.nome}`, 20, yPos);
+                      doc.text(nutri.email, 80, yPos);
                       doc.setTextColor(...statusColor);
-                      doc.text(nutri.Status?.toUpperCase() || 'N/A', 150, yPos);
+                      doc.text(nutri.status?.toUpperCase() || 'N/A', 150, yPos);
                       yPos += 8;
                     });
                     
@@ -1071,8 +1077,8 @@ const AdminDashboard = () => {
                       }
                       const statusColor = patient.ativo === true ? [34, 197, 94] : [239, 68, 68];
                       doc.setTextColor(0, 0, 0);
-                      doc.text(`${index + 1}. ${patient.Nome}`, 20, yPos);
-                      doc.text(patient.Email, 80, yPos);
+                      doc.text(`${index + 1}. ${patient.nome}`, 20, yPos);
+                      doc.text(patient.email, 80, yPos);
                       doc.setTextColor(...statusColor);
                       doc.text(patient.ativo === true ? 'ATIVO' : 'INATIVO', 150, yPos);
                       yPos += 8;
