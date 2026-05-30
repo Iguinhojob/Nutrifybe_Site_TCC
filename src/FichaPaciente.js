@@ -7,6 +7,16 @@ const FichaPaciente = () => {
   const { id } = useParams();
   const [paciente, setPaciente] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isDark = document.body.classList.contains('dark-mode');
+  const dm = {
+    card:   isDark ? '#1e2d24' : '#f8fafc',
+    border: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
+    text:   isDark ? '#e0e0e0' : '#374151',
+    text2:  isDark ? '#aaa'    : '#6b7280',
+    warn:   isDark ? '#2d2010' : '#fef3c7',
+    warnBorder: isDark ? '#5a4010' : '#fbbf24',
+    warnText:   isDark ? '#fcd34d' : '#92400e',
+  };
 
 
 
@@ -89,56 +99,30 @@ const FichaPaciente = () => {
           
           <div style={{textAlign: 'center', marginBottom: '2rem'}}>
             <div style={{fontSize: '4rem', color: '#06b6d4', marginBottom: '1rem'}}>👤</div>
-            <h1 style={{color: '#374151', marginBottom: '0.5rem'}}>{paciente.nome}</h1>
-            <p style={{color: '#6b7280'}}>{paciente.email}</p>
+            <h1 style={{color: dm.text, marginBottom: '0.5rem'}}>{paciente.nome}</h1>
+            <p style={{color: dm.text2}}>{paciente.email}</p>
           </div>
 
-          <div className="patient-data-grid" style={{
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-            gap: '2rem',
-            marginBottom: '2rem'
-          }}>
-            <div style={{
-              background: '#f8fafc',
-              padding: '1.5rem',
-              borderRadius: '12px',
-              border: '1px solid #e2e8f0'
-            }}>
+          <div className="patient-data-grid" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '2rem'}}>
+            <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
               <h3 style={{color: '#06b6d4', marginBottom: '1rem'}}>Dados Pessoais</h3>
-              <p><strong>Idade:</strong> {paciente.idade} anos</p>
-              <p><strong>Peso:</strong> {paciente.peso} kg</p>
-              <p><strong>Altura:</strong> {paciente.altura ? (paciente.altura / 100).toFixed(2) : 'N/A'} m</p>
-              <p><strong>IMC:</strong> {paciente.peso && paciente.altura ? (paciente.peso / Math.pow(paciente.altura / 100, 2)).toFixed(1) : 'N/A'}</p>
+              <p style={{color: dm.text}}><strong>Idade:</strong> {paciente.idade} anos</p>
+              <p style={{color: dm.text}}><strong>Peso:</strong> {paciente.peso} kg</p>
+              <p style={{color: dm.text}}><strong>Altura:</strong> {paciente.altura ? (paciente.altura / 100).toFixed(2) : 'N/A'} m</p>
+              <p style={{color: dm.text}}><strong>IMC:</strong> {paciente.peso && paciente.altura ? (paciente.peso / Math.pow(paciente.altura / 100, 2)).toFixed(1) : 'N/A'}</p>
             </div>
 
-            <div style={{
-              background: '#f8fafc',
-              padding: '1.5rem',
-              borderRadius: '12px',
-              border: '1px solid #e2e8f0'
-            }}>
+            <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
               <h3 style={{color: '#06b6d4', marginBottom: '1rem'}}>Objetivos</h3>
-              <p><strong>Objetivo:</strong> {paciente.objetivo}</p>
-              <p><strong>Condição de Saúde:</strong> {paciente.condicao_saude || paciente.condicaoSaude}</p>
+              <p style={{color: dm.text}}><strong>Objetivo:</strong> {paciente.objetivo}</p>
+              <p style={{color: dm.text}}><strong>Condição de Saúde:</strong> {paciente.condicao_saude || paciente.condicaoSaude}</p>
             </div>
           </div>
 
-          <div style={{
-            background: '#fef3c7',
-            padding: '1.5rem',
-            borderRadius: '12px',
-            border: '1px solid #fbbf24',
-            textAlign: 'center',
-            marginBottom: '2rem'
-          }}>
-            <h3 style={{color: '#92400e', marginBottom: '1rem'}}>📱 Funcionalidade em Desenvolvimento</h3>
-            <p style={{color: '#92400e', marginBottom: '1rem'}}>
-              A ficha completa do paciente estará disponível no aplicativo móvel em breve.
-            </p>
-            <p style={{color: '#92400e', fontSize: '0.9rem'}}>
-              Por enquanto, você pode acessar as informações básicas e criar prescrições.
-            </p>
+          <div style={{background: dm.warn, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.warnBorder}`, textAlign: 'center', marginBottom: '2rem'}}>
+            <h3 style={{color: dm.warnText, marginBottom: '1rem'}}>📱 Funcionalidade em Desenvolvimento</h3>
+            <p style={{color: dm.warnText, marginBottom: '1rem'}}>A ficha completa do paciente estará disponível no aplicativo móvel em breve.</p>
+            <p style={{color: dm.warnText, fontSize: '0.9rem'}}>Por enquanto, você pode acessar as informações básicas e criar prescrições.</p>
           </div>
 
 

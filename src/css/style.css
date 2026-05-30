@@ -4563,7 +4563,199 @@ body.admin-theme nav ul li a.active {
     font-size: 0.9rem;
 }
 
-/* ── DARK MODE TOGGLE ── */
+/* ── DARK MODE - ADMIN DASHBOARD ── */
+body.dark-mode .public-theme .info-card {
+    background: #1a2a1f !important;
+    border-color: rgba(62, 181, 117, 0.2) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .public-theme [style*="background: white"],
+body.dark-mode .public-theme [style*="background: #fff"],
+body.dark-mode .public-theme [style*="background-color: white"] {
+    background: #1e2d24 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .public-theme [style*="background: #f9fafb"],
+body.dark-mode .public-theme [style*="background: #f8f8f8"],
+body.dark-mode .public-theme [style*="background: var(--gray-50)"] {
+    background: #172212 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .public-theme [style*="color: #374151"],
+body.dark-mode .public-theme [style*="color: #111827"],
+body.dark-mode .public-theme [style*="color: #333"] {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .public-theme [style*="color: #6b7280"],
+body.dark-mode .public-theme [style*="color: #9ca3af"] {
+    color: #aaa !important;
+}
+
+body.dark-mode .public-theme [style*="border: 1px solid #e5e7eb"],
+body.dark-mode .public-theme [style*="border: 1px solid #f3f4f6"] {
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+body.dark-mode .public-theme .btn-outline {
+    border-color: rgba(62, 181, 117, 0.4) !important;
+    color: #3eb575 !important;
+}
+
+body.dark-mode .public-theme .btn-outline:hover {
+    background: rgba(62, 181, 117, 0.15) !important;
+}
+
+body.dark-mode .public-theme .form-input,
+body.dark-mode .public-theme .form-textarea,
+body.dark-mode .public-theme .form-select {
+    background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(255,255,255,0.15) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .public-theme .form-label {
+    color: #aaa !important;
+}
+
+body.dark-mode .public-theme .nutri-list {
+    background: #1a2a1f !important;
+    border-color: rgba(62,181,117,0.15) !important;
+}
+
+body.dark-mode .public-theme .nutri-item {
+    border-color: rgba(255,255,255,0.06) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .public-theme .alert-success {
+    background: rgba(62, 181, 117, 0.15) !important;
+    color: #a7f3c0 !important;
+    border-color: rgba(62, 181, 117, 0.3) !important;
+}
+
+body.dark-mode .public-theme .alert-error {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #fca5a5 !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+}
+body.dark-mode.nutri-theme,
+body.dark-mode .nutri-theme {
+    background: linear-gradient(135deg, #0f1a14 0%, #1a2e1f 50%, #0f1a14 100%) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .nutri-theme header,
+body.dark-mode .admin-theme header {
+    background: rgba(15, 26, 20, 0.97) !important;
+}
+
+body.dark-mode .nutri-card,
+body.dark-mode .nutri-dashboard .nutri-card {
+    background: rgba(20, 35, 25, 0.95) !important;
+    border-color: rgba(62, 181, 117, 0.2) !important;
+}
+
+body.dark-mode .nutri-welcome-title,
+body.dark-mode .nutri-subtitle {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .patient-item {
+    background: rgba(25, 40, 30, 0.9) !important;
+    border-color: rgba(62, 181, 117, 0.15) !important;
+}
+
+body.dark-mode .patient-details h3 {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .patient-details p {
+    color: #aaa !important;
+}
+
+/* Admin dashboard dark mode */
+body.dark-mode .public-theme .info-card {
+    background: rgba(20, 30, 25, 0.9) !important;
+}
+
+body.dark-mode .public-theme .info-title {
+    color: #a7f3c0 !important;
+    -webkit-text-fill-color: #a7f3c0 !important;
+}
+
+/* Elementos inline com fundo branco/cinza claro */
+body.dark-mode [style*="background: white"],
+body.dark-mode [style*="background: #fff"],
+body.dark-mode [style*="background-color: white"],
+body.dark-mode [style*="background: rgb(255, 255, 255)"] {
+    background: #1e2d24 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode [style*="background: #f9fafb"],
+body.dark-mode [style*="background: var(--gray-50)"],
+body.dark-mode [style*="background: #f8f8f8"] {
+    background: #172212 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode [style*="color: #374151"],
+body.dark-mode [style*="color: #111827"],
+body.dark-mode [style*="color: #1f2937"],
+body.dark-mode [style*="color: #333"] {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode [style*="color: #6b7280"],
+body.dark-mode [style*="color: #9ca3af"] {
+    color: #aaa !important;
+}
+
+body.dark-mode [style*="border: 1px solid #e5e7eb"],
+body.dark-mode [style*="border: 1px solid #f3f4f6"],
+body.dark-mode [style*="border-bottom: 1px solid #f3f4f6"] {
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+body.dark-mode .form-input,
+body.dark-mode .form-textarea,
+body.dark-mode .form-select {
+    background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(255,255,255,0.15) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .form-label {
+    color: #aaa !important;
+}
+
+body.dark-mode .nutri-list {
+    background: #1a2a1f !important;
+    border-color: rgba(62,181,117,0.15) !important;
+}
+
+body.dark-mode .nutri-item {
+    border-color: rgba(255,255,255,0.06) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .modal-content {
+    background: #1e2d24 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .modal-title {
+    color: #a7f3c0 !important;
+}
+
+body.dark-mode .dark-mode-toggle {
+    background: rgba(255,255,255,0.1) !important;
+    border-color: rgba(255,255,255,0.2) !important;
+}
 .dark-mode-toggle {
     position: absolute;
     left: 1rem;

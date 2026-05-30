@@ -19,6 +19,18 @@ const NutriCalendario = () => {
     notas: '',
     status: 'planejado'
   });
+  const isDark = document.body.classList.contains('dark-mode');
+  const dm = {
+    card:      isDark ? '#1e2d24' : 'rgba(255,255,255,0.95)',
+    dayBg:     isDark ? '#172212' : 'white',
+    dayHover:  isDark ? '#1e3a1e' : '#f0fdf4',
+    header:    isDark ? '#1a3a20' : '#f3f4f6',
+    headerText:isDark ? '#e0e0e0' : '#374151',
+    gridBg:    isDark ? '#0f1a0f' : '#e5e7eb',
+    legend:    isDark ? '#1a2a1f' : '#f3f4f6',
+    legendText:isDark ? '#e0e0e0' : '#374151',
+    text2:     isDark ? '#aaa'    : '#6b7280',
+  };
 
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Início' },
@@ -71,10 +83,7 @@ const NutriCalendario = () => {
     
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(
-        <div key={`empty-${i}`} style={{
-          background: '#f9fafb',
-          minHeight: '100px'
-        }}></div>
+        <div key={`empty-${i}`} style={{background: dm.dayBg, minHeight: '100px'}}></div>
       );
     }
     
@@ -88,7 +97,7 @@ const NutriCalendario = () => {
           key={day}
           onClick={() => openDayModal(currentDateStr)}
           style={{
-            background: isToday ? '#4ade80' : 'white',
+          background: isToday ? '#4ade80' : dm.dayBg,
             minHeight: window.innerWidth < 768 ? '60px' : '100px',
             padding: window.innerWidth < 768 ? '0.5rem' : '0.75rem',
             cursor: 'pointer',
@@ -96,19 +105,19 @@ const NutriCalendario = () => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            color: isToday ? 'white' : '#374151',
+            color: isToday ? 'white' : dm.headerText,
             transition: 'all 0.3s ease',
             border: isToday ? '2px solid #22c55e' : 'none'
           }}
           onMouseEnter={(e) => {
             if (!isToday) {
-              e.target.style.background = '#f0fdf4';
+              e.target.style.background = dm.dayHover;
               e.target.style.transform = 'translateY(-2px)';
             }
           }}
           onMouseLeave={(e) => {
             if (!isToday) {
-              e.target.style.background = 'white';
+              e.target.style.background = dm.dayBg;
               e.target.style.transform = 'translateY(0)';
             }
           }}
@@ -131,7 +140,7 @@ const NutriCalendario = () => {
           {dayInfo && dayInfo.alimentacao && (
             <div style={{
               fontSize: '0.7rem',
-              color: isToday ? 'rgba(255,255,255,0.8)' : '#6b7280',
+              color: isToday ? 'rgba(255,255,255,0.8)' : dm.text2,
               lineHeight: 1.3,
               overflow: 'hidden'
             }}>
@@ -248,14 +257,7 @@ const NutriCalendario = () => {
           <h1 className="info-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '20px',
-          padding: window.innerWidth < 768 ? '1rem' : '2rem',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-          maxWidth: '900px',
-          width: '100%'
-        }}>
+        <div style={{background: dm.card, borderRadius: '20px', padding: window.innerWidth < 768 ? '1rem' : '2rem', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', maxWidth: '900px', width: '100%'}}>
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -304,20 +306,13 @@ const NutriCalendario = () => {
             display: 'grid',
             gridTemplateColumns: 'repeat(7, 1fr)',
             gap: '2px',
-            background: '#e5e7eb',
+            background: dm.gridBg,
             borderRadius: '16px',
             overflow: 'hidden',
             width: '100%'
           }}>
             {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-              <div key={day} style={{
-                background: '#f3f4f6',
-                padding: '1rem',
-                textAlign: 'center',
-                fontWeight: 600,
-                color: '#374151',
-                fontSize: '0.9rem'
-              }}>{day}</div>
+              <div key={day} style={{background: dm.header, padding: '1rem', textAlign: 'center', fontWeight: 600, color: dm.headerText, fontSize: '0.9rem'}}>{day}</div>
             ))}
             {renderCalendar()}
           </div>
@@ -366,8 +361,8 @@ const NutriCalendario = () => {
           </button>
         </div>
         
-        <div style={{marginTop: '1rem', padding: '1rem', background: '#f3f4f6', borderRadius: '8px'}}>
-          <h4 style={{margin: '0 0 0.5rem 0', color: '#374151'}}>Legenda:</h4>
+        <div style={{marginTop: '1rem', padding: '1rem', background: dm.legend, borderRadius: '8px'}}>
+          <h4 style={{margin: '0 0 0.5rem 0', color: dm.legendText}}>Legenda:</h4>
           <div style={{display: 'flex', gap: '1rem', fontSize: '0.9rem', flexWrap: 'wrap'}}>
             <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
               <div style={{width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#10b981'}}></div>

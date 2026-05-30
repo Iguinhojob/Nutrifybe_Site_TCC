@@ -1,6 +1,16 @@
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://nutrifybe.vercel.app'
-  : 'http://localhost:3001';
+const isCodespaces = typeof window !== 'undefined' && window.location.hostname.includes('app.github.dev');
+
+const API_BASE_URL = isCodespaces
+  ? `https://${window.location.hostname.replace('-3000', '-3001')}`
+  : process.env.NODE_ENV === 'production'
+    ? 'https://nutrifybe.vercel.app'
+    : 'http://localhost:3001';
+
+const isJsonServer = process.env.NODE_ENV !== 'production';
+
+const endpoint = (path) => isJsonServer
+  ? path.replace('/api/', '/')
+  : path;
 
 // Funções auxiliares
 const handleResponse = async (response) => {
@@ -10,13 +20,12 @@ const handleResponse = async (response) => {
   return await response.json();
 };
 
-const apiRequest = async (endpoint, options = {}) => {
-  // Validar endpoint para prevenir SSRF
-  if (!endpoint.startsWith('/') || endpoint.includes('..')) {
+const apiRequest = async (path, options = {}) => {
+  if (!path.startsWith('/') || path.includes('..')) {
     throw new Error('Invalid endpoint');
   }
-  
-  const url = `${API_BASE_URL}${endpoint}`;
+
+  const url = `${API_BASE_URL}${endpoint(path)}`;
   console.log('API Request:', url);
   
   const config = {
@@ -50,19 +59,23 @@ export const nutricionistasAPI = {
   }),
   login: async (email, crn, senha) => {
     try {
+      if (isJsonServer) {
+        const nutris = await apiRequest('/api/nutricionistas');
+        const nutri = nutris.find(n => n.email === email && n.crn === crn && n.senha === senha);
+        if (!nutri) return null;
+        if (nutri.status !== 'approved') throw new Error('PENDING_APPROVAL');
+        if (nutri.ativo === false || nutri.ativo === 0) throw new Error('ACCOUNT_INACTIVE');
+        return nutri;
+      }
       const response = await apiRequest('/api/nutricionistas/login', {
         method: 'POST',
         body: JSON.stringify({ email, crn, senha }),
       });
-      
-      if (response.success) {
-        return response.nutricionista;
-      }
+      if (response.success) return response.nutricionista;
       return null;
     } catch (error) {
-      if (error.message.includes('401')) {
-        return null;
-      }
+      if (error.message === 'PENDING_APPROVAL' || error.message === 'ACCOUNT_INACTIVE') throw error;
+      if (error.message.includes('401')) return null;
       throw error;
     }
   }
@@ -159,7 +172,7 @@ export const adminAPI = {
   getAll: () => apiRequest('/api/admin'),
   login: async (email, senha) => {
     const admins = await apiRequest('/api/admin');
-    return admins.find(a => a.email === email && a.senha === senha);
+    return admins.find(a => a.email === email && a.senha === senha) || null;
   },
   create: (data) => apiRequest('/api/admin', {
     method: 'POST',

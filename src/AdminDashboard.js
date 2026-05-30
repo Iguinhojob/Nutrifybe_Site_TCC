@@ -27,6 +27,19 @@ const AdminDashboard = () => {
   const [activityLog, setActivityLog] = useState([]);
   const [allAdmins, setAllAdmins] = useState([]);
   const navigate = useNavigate();
+  const isDark = document.body.classList.contains('dark-mode');
+
+  const dm = {
+    card:    isDark ? '#1e2d24' : 'white',
+    card2:   isDark ? '#172212' : '#f9fafb',
+    card3:   isDark ? '#172212' : 'var(--gray-50)',
+    border:  isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb',
+    border2: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6',
+    text:    isDark ? '#e0e0e0' : '#374151',
+    text2:   isDark ? '#aaa'    : '#6b7280',
+    input:   isDark ? '#1a2a1f' : 'white',
+    inputBorder: isDark ? 'rgba(255,255,255,0.15)' : '#d1d5db',
+  };
 
   const reloadData = async () => {
     try {
@@ -470,7 +483,7 @@ const AdminDashboard = () => {
           
           {activeTab === 'manage' && (
             <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', marginBottom: '2rem'}}>
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
+              <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
                 <h3 style={{color: '#10b981', marginBottom: '1rem', fontSize: '1.2rem'}}>Adicionar Nutricionista</h3>
                 <form onSubmit={handleAddNutri}>
                   {addMessage && (
@@ -531,7 +544,7 @@ const AdminDashboard = () => {
                 </form>
               </div>
 
-              <div style={{background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
+              <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
                 <h3 style={{color: '#10b981', marginBottom: '1rem', fontSize: '1.2rem'}}>Nutricionistas ({getFilteredNutris.length})</h3>
                 
                 <div style={{marginBottom: '1rem', display: 'flex', gap: '1rem'}}>
@@ -540,12 +553,12 @@ const AdminDashboard = () => {
                     placeholder="Buscar..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{flex: 1, padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '6px'}}
+                    style={{flex: 1, padding: '0.5rem', border: `1px solid ${dm.inputBorder}`, borderRadius: '6px', background: dm.input, color: dm.text}}
                   />
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    style={{padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '6px'}}
+                    style={{padding: '0.5rem', border: `1px solid ${dm.inputBorder}`, borderRadius: '6px', background: dm.input, color: dm.text}}
                   >
                     <option value="all">Todos</option>
                     <option value="pending">Pendentes</option>
@@ -556,13 +569,13 @@ const AdminDashboard = () => {
                 
                 <div style={{maxHeight: '400px', overflowY: 'auto'}}>
                   {getFilteredNutris.length === 0 ? (
-                    <div style={{textAlign: 'center', color: '#6b7280', padding: '2rem'}}>Nenhum nutricionista encontrado</div>
+                    <div style={{textAlign: 'center', color: dm.text2, padding: '2rem'}}>Nenhum nutricionista encontrado</div>
                   ) : (
                     getFilteredNutris.map(nutri => (
-                      <div key={nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'white', borderRadius: '8px', marginBottom: '0.5rem', border: '1px solid #e5e7eb'}}>
+                      <div key={nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: dm.card, borderRadius: '8px', marginBottom: '0.5rem', border: `1px solid ${dm.border}`}}>
                         <div>
-                          <div style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{nutri.nome}</div>
-                          <div style={{color: '#6b7280', fontSize: '0.9rem'}}>{nutri.email} • CRN: {nutri.crn}</div>
+                          <div style={{fontWeight: 'bold', fontSize: '1.1rem', color: dm.text}}>{nutri.nome}</div>
+                          <div style={{color: dm.text2, fontSize: '0.9rem'}}>{nutri.email} • CRN: {nutri.crn}</div>
                         </div>
                         <div style={{display: 'flex', gap: '0.5rem', alignItems: 'center'}}>
                           <span style={{
@@ -746,12 +759,12 @@ const AdminDashboard = () => {
           )}
           
           {activeTab === 'patients' && (
-            <div style={{background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
+            <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem'}}>
                 <h3 style={{color: '#10b981', margin: 0, fontSize: '1.2rem'}}>Pacientes ({allPatients.length})</h3>
                 <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-                  <span style={{color: '#6b7280', fontSize: '0.9rem'}}>Ativos: {allPatients.filter(p => p.ativo === true).length}</span>
-                  <span style={{color: '#6b7280', fontSize: '0.9rem'}}>Inativos: {allPatients.filter(p => p.ativo !== true).length}</span>
+                  <span style={{color: dm.text2, fontSize: '0.9rem'}}>Ativos: {allPatients.filter(p => p.ativo === true).length}</span>
+                  <span style={{color: dm.text2, fontSize: '0.9rem'}}>Inativos: {allPatients.filter(p => p.ativo !== true).length}</span>
                 </div>
               </div>
               
@@ -762,13 +775,13 @@ const AdminDashboard = () => {
                   allPatients.map(patient => {
                     const nutri = managedNutricionists.find(n => n.id === patient.nutricionista_id);
                     return (
-                      <div key={patient.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: patient.ativo === true ? '#f9fafb' : '#fef2f2', borderRadius: '8px', marginBottom: '0.5rem', border: `1px solid ${patient.ativo === true ? '#e5e7eb' : '#fecaca'}`}}>
+                      <div key={patient.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: patient.ativo === true ? dm.card2 : (isDark ? '#2d1a1a' : '#fef2f2'), borderRadius: '8px', marginBottom: '0.5rem', border: `1px solid ${patient.ativo === true ? dm.border : (isDark ? '#5a2a2a' : '#fecaca')}`}}>
                         <div style={{flex: 1}}>
                           <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem'}}>
-                            <div style={{fontWeight: 'bold', fontSize: '1.1rem', color: patient.ativo === true ? '#111827' : '#6b7280'}}>{patient.nome}</div>
-                            <div style={{fontSize: '0.8rem', color: '#6b7280'}}>#{patient.id}</div>
+                            <div style={{fontWeight: 'bold', fontSize: '1.1rem', color: patient.ativo === true ? dm.text : dm.text2}}>{patient.nome}</div>
+                            <div style={{fontSize: '0.8rem', color: dm.text2}}>#{patient.id}</div>
                           </div>
-                          <div style={{color: '#6b7280', fontSize: '0.85rem', lineHeight: '1.4'}}>
+                          <div style={{color: dm.text2, fontSize: '0.85rem', lineHeight: '1.4'}}>
                             📧 {patient.email}
                             <br />
                             👩‍⚕️ {nutri?.nome || 'Sem nutricionista'} • 🎯 {patient.objetivo}
@@ -956,28 +969,27 @@ const AdminDashboard = () => {
               <h3 style={{color: 'var(--accent-green)', marginBottom: '1.5rem', textAlign: 'center'}}>Relatórios do Sistema</h3>
               
               <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem'}}>
-                <div style={{padding: '1.5rem', background: 'white', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-                  <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Resumo Geral</h4>
+                <div style={{padding: '1.5rem', background: dm.card, borderRadius: '12px', border: `1px solid ${dm.border}`}}>
+                  <h4 style={{margin: '0 0 1rem 0', color: dm.text}}>Resumo Geral</h4>
                   <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Total de Nutricionistas: <strong>{managedNutricionists.length}</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Nutricionistas Ativos: <strong>{systemStats.nutricionistasAtivos}</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Total de Pacientes: <strong>{systemStats.totalPacientes}</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Pacientes Ativos: <strong>{systemStats.pacientesAtivos}</strong></li>
-                    <li style={{padding: '0.5rem 0'}}>Solicitações Pendentes: <strong>{systemStats.solicitacoesPendentes}</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Total de Nutricionistas: <strong>{managedNutricionists.length}</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Nutricionistas Ativos: <strong>{systemStats.nutricionistasAtivos}</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Total de Pacientes: <strong>{systemStats.totalPacientes}</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Pacientes Ativos: <strong>{systemStats.pacientesAtivos}</strong></li>
+                    <li style={{padding: '0.5rem 0', color: dm.text}}>Solicitações Pendentes: <strong>{systemStats.solicitacoesPendentes}</strong></li>
                   </ul>
                 </div>
                 
-                <div style={{padding: '1.5rem', background: 'white', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-                  <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Atividades Recentes</h4>
+                <div style={{padding: '1.5rem', background: dm.card, borderRadius: '12px', border: `1px solid ${dm.border}`}}>
+                  <h4 style={{margin: '0 0 1rem 0', color: dm.text}}>Atividades Recentes</h4>
                   <div style={{maxHeight: '200px', overflowY: 'auto'}}>
                     {activityLog.slice(0, 5).map(activity => (
-                      <div key={activity.id} style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>
-                        <small><strong>{activity.action}</strong> - {activity.nutriName}</small>
+                      <div key={activity.id} style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`}}>
+                        <small style={{color: dm.text}}><strong>{activity.action}</strong> - {activity.nutriName}</small>
                         <br />
-                        <small style={{color: '#6b7280'}}>{new Date(activity.timestamp).toLocaleString()}</small>
+                        <small style={{color: dm.text2}}>{new Date(activity.timestamp).toLocaleString()}</small>
                       </div>
-                    ))
-                  }
+                    ))}
                   </div>
                 </div>
               </div>
@@ -1110,12 +1122,12 @@ const AdminDashboard = () => {
           )}
           
           {activeTab === 'admins' && (
-            <div style={{background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
+            <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
               <h3 style={{color: '#10b981', marginBottom: '1.5rem', fontSize: '1.2rem'}}>Gerenciar Administradores ({allAdmins.length})</h3>
               
               <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem'}}>
-                <div style={{background: '#f9fafb', padding: '1.5rem', borderRadius: '8px'}}>
-                  <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Adicionar Admin</h4>
+                <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px'}}>
+                  <h4 style={{margin: '0 0 1rem 0', color: dm.text}}>Adicionar Admin</h4>
                   <form onSubmit={async (e) => {
                     e.preventDefault();
                     const formData = new FormData(e.target);
@@ -1155,14 +1167,14 @@ const AdminDashboard = () => {
                 <div>
                   <div style={{maxHeight: '400px', overflowY: 'auto'}}>
                     {allAdmins.length === 0 ? (
-                      <div style={{textAlign: 'center', color: '#6b7280', padding: '2rem'}}>Nenhum admin encontrado</div>
+                      <div style={{textAlign: 'center', color: dm.text2, padding: '2rem'}}>Nenhum admin encontrado</div>
                     ) : (
                       allAdmins.map(admin => (
-                        <div key={admin.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: '#f9fafb', borderRadius: '8px', marginBottom: '0.5rem', border: '1px solid #e5e7eb'}}>
+                        <div key={admin.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: dm.card2, borderRadius: '8px', marginBottom: '0.5rem', border: `1px solid ${dm.border}`}}>
                           <div>
-                            <div style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{admin.nome}</div>
-                            <div style={{color: '#6b7280', fontSize: '0.9rem'}}>{admin.email}</div>
-                            <div style={{color: '#6b7280', fontSize: '0.8rem'}}>{new Date(admin.dataCriacao).toLocaleDateString()}</div>
+                            <div style={{fontWeight: 'bold', fontSize: '1.1rem', color: dm.text}}>{admin.nome}</div>
+                            <div style={{color: dm.text2, fontSize: '0.9rem'}}>{admin.email}</div>
+                            <div style={{color: dm.text2, fontSize: '0.8rem'}}>{new Date(admin.dataCriacao).toLocaleDateString()}</div>
                           </div>
                           {admin.id !== currentAdmin?.id && allAdmins.length > 1 ? (
                             <button 
@@ -1188,7 +1200,7 @@ const AdminDashboard = () => {
                               <span style={{padding: '0.5rem 1rem', background: '#9ca3af', color: 'white', borderRadius: '6px', fontSize: '0.8rem', cursor: 'not-allowed'}}>
                                 {admin.id === currentAdmin?.id ? '🚫 Você mesmo' : '🚫 Último admin'}
                               </span>
-                              <small style={{color: '#6b7280', fontSize: '0.7rem', textAlign: 'center'}}>
+                              <small style={{color: dm.text2, fontSize: '0.7rem', textAlign: 'center'}}>
                                 {admin.id === currentAdmin?.id ? 'Não pode se excluir' : 'Deve ter pelo menos 1 admin'}
                               </small>
                             </div>
@@ -1203,7 +1215,7 @@ const AdminDashboard = () => {
           )}
           
           {activeTab === 'profile' && (
-            <div style={{background: 'white', padding: '2rem', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
+            <div style={{background: dm.card, padding: '2rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
               <h3 style={{color: '#10b981', marginBottom: '2rem', fontSize: '1.4rem', textAlign: 'center'}}>Meu Perfil</h3>
               
               <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '3rem', alignItems: 'start'}}>
@@ -1296,17 +1308,17 @@ const AdminDashboard = () => {
                       </div>
                     )}
                   </div>
-                  <h4 style={{margin: '0 0 0.5rem 0', color: '#374151'}}>{currentAdmin?.nome}</h4>
-                  <p style={{color: '#6b7280', fontSize: '0.9rem', margin: '0 0 0.5rem 0'}}>Administrador</p>
-                  <div style={{background: '#f3f4f6', padding: '0.75rem', borderRadius: '6px', fontSize: '0.8rem', color: '#6b7280'}}>
+                  <h4 style={{margin: '0 0 0.5rem 0', color: dm.text}}>{currentAdmin?.nome}</h4>
+                  <p style={{color: dm.text2, fontSize: '0.9rem', margin: '0 0 0.5rem 0'}}>Administrador</p>
+                  <div style={{background: dm.card2, padding: '0.75rem', borderRadius: '6px', fontSize: '0.8rem', color: dm.text2}}>
                     <div style={{marginBottom: '0.25rem'}}><strong>Email:</strong> {currentAdmin?.email}</div>
                     <div><strong>ID:</strong> #{currentAdmin?.id}</div>
                   </div>
                 </div>
                 
                 <div>
-                  <div style={{background: '#f9fafb', padding: '1.5rem', borderRadius: '8px', marginBottom: '1.5rem'}}>
-                    <h5 style={{margin: '0 0 1rem 0', color: '#374151'}}>Editar Informações</h5>
+                  <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px', marginBottom: '1.5rem'}}>
+                    <h5 style={{margin: '0 0 1rem 0', color: dm.text}}>Editar Informações</h5>
                     <form onSubmit={async (e) => {
                       e.preventDefault();
                       const formData = new FormData(e.target);
@@ -1335,16 +1347,16 @@ const AdminDashboard = () => {
                         <label className="form-label">Email</label>
                         <input type="email" name="email" className="form-input" defaultValue={currentAdmin?.email} required />
                       </div>
-                      <div style={{display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderTop: '1px solid #e5e7eb', marginTop: '1rem', paddingTop: '1rem'}}>
-                        <span style={{fontWeight: '500', color: '#374151'}}>Membro desde:</span>
-                        <span style={{color: '#6b7280'}}>{new Date(currentAdmin?.dataCriacao).toLocaleDateString()}</span>
+                      <div style={{display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderTop: `1px solid ${dm.border}`, marginTop: '1rem', paddingTop: '1rem'}}>
+                        <span style={{fontWeight: '500', color: dm.text}}>Membro desde:</span>
+                        <span style={{color: dm.text2}}>{new Date(currentAdmin?.dataCriacao).toLocaleDateString()}</span>
                       </div>
                       <button type="submit" className="btn btn-primary" style={{width: '100%', marginTop: '1rem'}}>Salvar Alterações</button>
                     </form>
                   </div>
                   
-                  <div style={{background: '#f9fafb', padding: '1.5rem', borderRadius: '8px'}}>
-                    <h5 style={{margin: '0 0 1rem 0', color: '#374151'}}>Alterar Senha</h5>
+                  <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px'}}>
+                    <h5 style={{margin: '0 0 1rem 0', color: dm.text}}>Alterar Senha</h5>
                     <form onSubmit={async (e) => {
                       e.preventDefault();
                       const formData = new FormData(e.target);
@@ -1407,8 +1419,8 @@ const AdminDashboard = () => {
               <h3 style={{color: 'var(--accent-green)', marginBottom: '1.5rem', textAlign: 'center'}}>Configurações do Sistema</h3>
               
               <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem'}}>
-                <div style={{padding: '1.5rem', background: 'white', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-                  <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Manutenção</h4>
+                <div style={{padding: '1.5rem', background: dm.card, borderRadius: '12px', border: `1px solid ${dm.border}`}}>
+                  <h4 style={{margin: '0 0 1rem 0', color: dm.text}}>Manutenção</h4>
                   <button 
                     className="btn btn-warning"
                     style={{width: '100%', marginBottom: '1rem'}}
@@ -1444,14 +1456,14 @@ const AdminDashboard = () => {
                   </button>
                 </div>
                 
-                <div style={{padding: '1.5rem', background: 'white', borderRadius: '12px', border: '1px solid #e5e7eb'}}>
-                  <h4 style={{margin: '0 0 1rem 0', color: '#374151'}}>Informações do Sistema</h4>
+                <div style={{padding: '1.5rem', background: dm.card, borderRadius: '12px', border: `1px solid ${dm.border}`}}>
+                  <h4 style={{margin: '0 0 1rem 0', color: dm.text}}>Informações do Sistema</h4>
                   <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Versão: <strong>2.0.0</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Banco: <strong>SQL Server</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Servidor: <strong>SQL Server Somee.com</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6'}}>Status: <strong style={{color: 'green'}}>Online</strong></li>
-                    <li style={{padding: '0.5rem 0'}}>Administrador: <strong>admin@nutrifybe.com</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Versão: <strong>2.0.0</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Banco: <strong>SQL Server</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Servidor: <strong>SQL Server Somee.com</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Status: <strong style={{color: 'green'}}>Online</strong></li>
+                    <li style={{padding: '0.5rem 0', color: dm.text}}>Administrador: <strong>admin@nutrifybe.com</strong></li>
                   </ul>
                 </div>
               </div>

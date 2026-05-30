@@ -12,8 +12,14 @@ const NutriDashboard = () => {
   const [transferReason, setTransferReason] = useState('');
   const [searchNutri, setSearchNutri] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
-
   const navigate = useNavigate();
+  const isDark = document.body.classList.contains('dark-mode');
+  const dm = {
+    card:   isDark ? '#1e2d24' : 'white',
+    border: isDark ? 'rgba(255,255,255,0.08)' : '#ddd',
+    text:   isDark ? '#e0e0e0' : '#333',
+    text2:  isDark ? '#aaa'    : '#666',
+  };
 
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Início' },
@@ -246,10 +252,10 @@ const NutriDashboard = () => {
             <p>Nenhum nutricionista disponível.</p>
           ) : (
             getFilteredNutris().map(nutri => (
-              <div key={nutri.Id || nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '8px', marginBottom: '0.5rem'}}>
+              <div key={nutri.Id || nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', border: `1px solid ${dm.border}`, borderRadius: '8px', marginBottom: '0.5rem', background: dm.card}}>
                 <div>
-                  <strong>{nutri.Nome || nutri.nome}</strong><br />
-                  <small>{nutri.Email || nutri.email} (CRN: {nutri.CRN || nutri.crn})</small>
+                  <strong style={{color: dm.text}}>{nutri.Nome || nutri.nome}</strong><br />
+                  <small style={{color: dm.text2}}>{nutri.Email || nutri.email} (CRN: {nutri.CRN || nutri.crn})</small>
                 </div>
                 <button
                   className="btn btn-primary"
