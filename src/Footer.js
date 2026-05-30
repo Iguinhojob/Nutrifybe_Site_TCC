@@ -18,14 +18,14 @@ const Footer = () => {
           marginBottom: '2rem'
         }}>
           <div>
-            <h4 style={{color: '#22d3ee', marginBottom: '1rem'}}>Nutrifybe</h4>
+            <h4 style={{marginBottom: '1rem', fontFamily: 'Poppins, sans-serif', fontWeight: 800, fontSize: '1.4rem', letterSpacing: '-0.5px'}}><span style={{color: '#22d3ee'}}>Nutri</span><span style={{color: '#c4b5fd'}}>fybe</span></h4>
             <p style={{fontSize: '0.9rem', opacity: '0.8'}}>
               Sistema de gestão nutricional desenvolvido por estudantes do ITB.
             </p>
           </div>
           
           <div>
-            <h4 style={{color: '#22d3ee', marginBottom: '1rem'}}>Links Úteis</h4>
+            <h4 style={{color: '#c4b5fd', marginBottom: '1rem'}}>Links Úteis</h4>
             <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
               <Link to="/sobre-nos" style={{color: 'white', textDecoration: 'none', fontSize: '0.9rem'}}>Sobre Nós</Link>
               <Link to="/suporte" style={{color: 'white', textDecoration: 'none', fontSize: '0.9rem'}}>Suporte</Link>
@@ -33,7 +33,7 @@ const Footer = () => {
           </div>
           
           <div>
-            <h4 style={{color: '#22d3ee', marginBottom: '1rem'}}>Legal</h4>
+            <h4 style={{color: '#c4b5fd', marginBottom: '1rem'}}>Legal</h4>
             <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
               <Link to="/termos-uso" style={{color: 'white', textDecoration: 'none', fontSize: '0.9rem'}}>Termos de Uso</Link>
               <Link to="/politica-privacidade" style={{color: 'white', textDecoration: 'none', fontSize: '0.9rem'}}>Política de Privacidade</Link>

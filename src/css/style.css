@@ -4563,12 +4563,431 @@ body.admin-theme nav ul li a.active {
     font-size: 0.9rem;
 }
 
-/* Sobrescrever o fundo da tela inicial */
+/* ── DARK MODE TOGGLE ── */
+.dark-mode-toggle {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 8px;
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    z-index: 1002;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(0,0,0,0.15);
+}
+
+.public-theme .dark-mode-toggle {
+    background: rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.1);
+}
+
+body.nutri-theme .dark-mode-toggle,
+body.admin-theme .dark-mode-toggle {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.25);
+}
+
+/* ── DARK MODE GLOBAL ── */
+body.dark-mode .public-theme,
+body.dark-mode.public-theme {
+    background-color: #1a1a1a !important;
+    background-image:
+        repeating-linear-gradient(
+            120deg,
+            rgba(255,255,255,0.03) 0px,
+            rgba(255,255,255,0.03) 1px,
+            transparent 1px,
+            transparent 60px
+        ),
+        repeating-linear-gradient(
+            60deg,
+            rgba(255,255,255,0.02) 0px,
+            rgba(255,255,255,0.02) 1px,
+            transparent 1px,
+            transparent 60px
+        ) !important;
+}
+
+body.dark-mode .public-theme header {
+    background: rgba(26, 26, 26, 0.95) !important;
+    border-bottom-color: rgba(255,255,255,0.08) !important;
+}
+
+body.dark-mode .public-theme nav ul li a {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .public-theme nav ul li a:hover,
+body.dark-mode .public-theme nav ul li a.active {
+    background: rgba(62, 181, 117, 0.15) !important;
+    color: #3eb575 !important;
+}
+
+body.dark-mode .public-theme .form-card {
+    background: rgba(30, 50, 38, 0.7) !important;
+    border-color: rgba(62, 181, 117, 0.2) !important;
+}
+
+body.dark-mode .public-theme .form-title {
+    color: #a7f3c0 !important;
+    -webkit-text-fill-color: #a7f3c0 !important;
+}
+
+body.dark-mode .public-theme .form-subtitle,
+body.dark-mode .public-theme .form-body .form-label {
+    color: #86c9a0 !important;
+}
+
+body.dark-mode .public-theme .form-body .form-input,
+body.dark-mode .public-theme .form-body .form-textarea,
+body.dark-mode .public-theme .form-body .form-select {
+    background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(62, 181, 117, 0.25) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .public-theme .link-container {
+    background: rgba(30, 50, 38, 0.4) !important;
+    border-color: rgba(62, 181, 117, 0.15) !important;
+}
+
+body.dark-mode .public-theme .link-text {
+    color: #86c9a0 !important;
+}
+
+body.dark-mode .public-theme .link-highlight {
+    color: #3eb575 !important;
+    -webkit-text-fill-color: #3eb575 !important;
+}
+
+body.dark-mode .public-theme .info-card {
+    background: rgba(30, 50, 38, 0.6) !important;
+    border-color: rgba(62, 181, 117, 0.2) !important;
+}
+
+body.dark-mode .public-theme .info-title {
+    color: #a7f3c0 !important;
+    -webkit-text-fill-color: #a7f3c0 !important;
+}
+
+body.dark-mode .public-theme .info-text {
+    color: #86c9a0 !important;
+}
+
+body.dark-mode .public-theme .team-title,
+body.dark-mode .public-theme .faq-title {
+    color: #3eb575 !important;
+}
+
+body.dark-mode .public-theme .team-member {
+    background: rgba(62, 181, 117, 0.1) !important;
+    color: #a7f3c0 !important;
+}
+
+body.dark-mode .public-theme .faq-item {
+    background: rgba(62, 181, 117, 0.08) !important;
+    border-color: rgba(62, 181, 117, 0.15) !important;
+}
+
+body.dark-mode .public-theme .faq-question {
+    color: #a7f3c0 !important;
+}
+
+body.dark-mode .public-theme .faq-answer {
+    color: #86c9a0 !important;
+}
+
+body.dark-mode .public-theme .contact-item {
+    background: rgba(62, 181, 117, 0.08) !important;
+    border-color: rgba(62, 181, 117, 0.15) !important;
+}
+
+body.dark-mode .public-theme .contact-text {
+    color: #86c9a0 !important;
+}
+
+body.dark-mode .public-theme .support-link {
+    color: #3eb575 !important;
+}
+
+/* home-wrapper dark mode */
+body.dark-mode .home-wrapper {
+    background-color: #1a1a1a !important;
+}
+
+body.dark-mode .home-wrapper header {
+    background: rgba(26, 26, 26, 0.95) !important;
+    border-bottom-color: rgba(255,255,255,0.08) !important;
+}
+
+body.dark-mode .home-wrapper nav ul li a {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .home-hero-title {
+    color: #f0f0f0 !important;
+}
+
+body.dark-mode .home-hero-desc {
+    color: #aaa !important;
+}
+
+body.dark-mode .home-features {
+    background: #111 !important;
+    border-top-color: rgba(255,255,255,0.06) !important;
+}
+
+body.dark-mode .home-feature-card {
+    background: rgba(62, 181, 117, 0.08) !important;
+    border-color: rgba(62, 181, 117, 0.15) !important;
+}
+
+body.dark-mode .home-feature-title {
+    color: #a7f3c0 !important;
+}
+
+body.dark-mode .home-feature-text {
+    color: #86c9a0 !important;
+}
+
+body.dark-mode .hbtn-login {
+    background: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
 .public-theme {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%) !important;
+    background-color: #f7f6f2 !important;
+    background-image:
+        repeating-linear-gradient(
+            120deg,
+            rgba(180, 170, 140, 0.07) 0px,
+            rgba(180, 170, 140, 0.07) 1px,
+            transparent 1px,
+            transparent 60px
+        ),
+        repeating-linear-gradient(
+            60deg,
+            rgba(180, 170, 140, 0.05) 0px,
+            rgba(180, 170, 140, 0.05) 1px,
+            transparent 1px,
+            transparent 60px
+        ) !important;
+    background-attachment: local !important;
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+}
+
+.public-theme::before,
+.public-theme::after {
+    display: none !important;
+}
+
+/* Header off-white nas páginas públicas */
+.public-theme header {
+    background: rgba(247, 246, 242, 0.92) !important;
+    backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+    box-shadow: 0 1px 12px rgba(0,0,0,0.06) !important;
+}
+
+.public-theme .logo {
+    display: none !important;
+}
+
+.public-theme .logo-text .nutri-part {
+    color: #22d3ee !important;
+    text-shadow: 0 0 10px rgba(34, 211, 238, 0.5) !important;
+}
+
+.public-theme .logo-text .fybe-part {
+    color: #c4b5fd !important;
+    text-shadow: 0 0 10px rgba(196, 181, 253, 0.5) !important;
+}
+
+.public-theme nav ul li a {
+    color: #1a1a1a !important;
+    text-shadow: none !important;
+    font-weight: 500;
+    font-size: 0.95rem !important;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: 8px !important;
+}
+
+.public-theme nav ul li a:hover,
+.public-theme nav ul li a.active {
+    background: rgba(45, 122, 79, 0.1) !important;
+    color: #2d7a4f !important;
+    transform: none !important;
+    box-shadow: none !important;
+    font-size: 0.95rem !important;
+    border-radius: 8px !important;
+}
+
+.public-theme .mobile-menu-toggle span {
+    background: #1a1a1a !important;
+    box-shadow: none !important;
+}
+
+/* Cards de formulário no tema off-white */
+.public-theme .form-card {
+    background: rgba(220, 242, 228, 0.55) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(62, 181, 117, 0.25) !important;
+    box-shadow: 0 8px 32px rgba(62, 181, 117, 0.1) !important;
+    animation: none !important;
+}
+
+.public-theme .form-card::before,
+.public-theme .form-card::after {
+    display: none !important;
+}
+
+.public-theme .form-title {
+    color: #1a4a2e !important;
+    -webkit-text-fill-color: #1a4a2e !important;
+    text-shadow: none !important;
+}
+
+.public-theme .form-subtitle {
+    color: #3a5a45 !important;
+    text-shadow: none !important;
+}
+
+.public-theme .form-body .form-label {
+    color: #2a4a35 !important;
+    text-shadow: none !important;
+}
+
+.public-theme .form-body .form-input:focus,
+.public-theme .form-body .form-textarea:focus,
+.public-theme .form-body .form-select:focus {
+    border-color: #3eb575 !important;
+    box-shadow: 0 0 0 3px rgba(62, 181, 117, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+.public-theme .form-message.success {
+    background: rgba(62, 181, 117, 0.15) !important;
+    color: #1a4a2e !important;
+    border-color: rgba(62, 181, 117, 0.3) !important;
+}
+
+.public-theme .form-message.error {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #7f1d1d !important;
+    border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+.public-theme .link-container {
+    background: rgba(180, 230, 195, 0.2) !important;
+    border: 1px solid rgba(62, 181, 117, 0.15) !important;
+    color: #333 !important;
+}
+
+.public-theme .link-text {
+    color: #3a5a45 !important;
+    text-shadow: none !important;
+}
+
+.public-theme .link-highlight {
+    color: #1e5c38 !important;
+    -webkit-text-fill-color: #1e5c38 !important;
+    text-shadow: none !important;
+}
+
+/* Cards de info (Sobre Nós, Suporte) */
+.public-theme .info-card {
+    background: rgba(220, 242, 228, 0.5) !important;
+    border: 1px solid rgba(62, 181, 117, 0.18) !important;
+    box-shadow: 0 8px 32px rgba(62, 181, 117, 0.08) !important;
+}
+
+.public-theme .info-title {
+    color: #1a4a2e !important;
+    -webkit-text-fill-color: #1a4a2e !important;
+    background: none !important;
+}
+
+.public-theme .info-text {
+    color: #2e4a38 !important;
+}
+
+.public-theme .team-title,
+.public-theme .faq-title {
+    color: #1e5c38 !important;
+}
+
+.public-theme .team-member {
+    color: #1a4a2e !important;
+    background: rgba(180, 230, 195, 0.3) !important;
+    border-left-color: #3eb575 !important;
+}
+
+.public-theme .faq-item {
+    background: rgba(180, 230, 195, 0.2) !important;
+    border-color: rgba(62, 181, 117, 0.2) !important;
+}
+
+.public-theme .faq-question {
+    color: #1a4a2e !important;
+}
+
+.public-theme .faq-answer {
+    color: #3a5a45 !important;
+}
+
+.public-theme .faq-number {
+    background: #3eb575 !important;
+}
+
+.public-theme .contact-item {
+    background: rgba(180, 230, 195, 0.2) !important;
+    border-color: rgba(62, 181, 117, 0.2) !important;
+}
+
+.public-theme .contact-icon {
+    color: #1e5c38 !important;
+}
+
+.public-theme .contact-text {
+    color: #2e4a38 !important;
+}
+
+.public-theme .support-link {
+    color: #1e5c38 !important;
+}
+
+/* Back arrow no tema off-white */
+.public-theme .back-arrow {
+    background: rgba(255,255,255,0.9) !important;
+    color: #333 !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+}
+
+.public-theme .back-arrow:hover {
+    color: #4f46e5 !important;
+}
+
+@media (max-width: 768px) {
+    .public-theme nav ul {
+        background: rgba(247, 246, 242, 0.98) !important;
+        border-top: 1px solid rgba(0,0,0,0.07);
+    }
+    .public-theme nav ul li a {
+        color: #1a1a1a !important;
+    }
 }
 
 /* Melhorar o título com gradiente e brilho */
