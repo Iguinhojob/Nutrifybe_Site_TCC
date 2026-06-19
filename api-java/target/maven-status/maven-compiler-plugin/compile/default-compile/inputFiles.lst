@@ -1,0 +1,16 @@
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/repository/ActivityLogRepository.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/controller/AdminController.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/config/CorsConfig.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/repository/PacienteRepository.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/model/SolicitacaoPendente.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/controller/NutricionistasController.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/model/Paciente.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/repository/NutricionistaRepository.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/model/Nutricionista.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/repository/SolicitacaoPendenteRepository.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/controller/SolicitacoesController.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/model/ActivityLog.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/model/Admin.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/controller/PacientesController.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/NutribyeApplication.java
+/workspaces/Nutrifybe_Site_TCC/api-java/src/main/java/com/nutrifybe/repository/AdminRepository.java

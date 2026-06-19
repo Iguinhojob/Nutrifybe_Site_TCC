@@ -1,0 +1,17 @@
+com/nutrifybe/model/ActivityLog.class
+com/nutrifybe/repository/PacienteRepository.class
+com/nutrifybe/config/CorsConfig.class
+com/nutrifybe/repository/AdminRepository.class
+com/nutrifybe/repository/SolicitacaoPendenteRepository.class
+com/nutrifybe/model/Nutricionista.class
+com/nutrifybe/model/Paciente.class
+com/nutrifybe/config/CorsConfig$1.class
+com/nutrifybe/repository/ActivityLogRepository.class
+com/nutrifybe/controller/SolicitacoesController.class
+com/nutrifybe/controller/NutricionistasController.class
+com/nutrifybe/NutribyeApplication.class
+com/nutrifybe/model/Admin.class
+com/nutrifybe/model/SolicitacaoPendente.class
+com/nutrifybe/repository/NutricionistaRepository.class
+com/nutrifybe/controller/PacientesController.class
+com/nutrifybe/controller/AdminController.class
