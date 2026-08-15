@@ -6,11 +6,9 @@ const API_BASE_URL = isCodespaces
     ? 'https://nutrifybe.vercel.app'
     : 'http://localhost:3001';
 
-const isJsonServer = process.env.NODE_ENV !== 'production';
+const isJsonServer = false;
 
-const endpoint = (path) => isJsonServer
-  ? path.replace('/api/', '/')
-  : path;
+const endpoint = (path) => path;
 
 // Funções auxiliares
 const handleResponse = async (response) => {

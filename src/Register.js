@@ -69,7 +69,7 @@ const Register = () => {
         crn: crn,
         senha: senha,
         status: 'pending',
-        ativo: true,
+        ativo: 1,
         telefone: '',
         especialidade: ''
       });
