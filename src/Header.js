@@ -137,17 +137,20 @@ const Header = ({ theme = 'public', links = [] }) => {
   return (
     <header className={theme === 'nutri' ? 'nutri-theme' : theme === 'admin' ? 'admin-theme' : ''}>
       <div className="container">
-        <Link to="/" className="logo">
-          <span className="logo-text">
-            <span className="nutri-part">Nutri</span><span className="fybe-part">fybe</span>
-          </span>
-        </Link>
+        {theme !== 'nutri' && (
+          <Link to="/" className="logo">
+            <span className="logo-text">
+              <span className="nutri-part">Nutri</span><span className="fybe-part">fybe</span>
+            </span>
+          </Link>
+        )}
 
         <button
           onClick={toggleDarkMode}
           className="dark-mode-toggle"
           aria-label="Alternar modo escuro"
           title={darkMode ? 'Modo claro' : 'Modo escuro'}
+          style={theme === 'nutri' ? { position: 'absolute', right: '115px', top: '50%', transform: 'translateY(-50%)' } : {}}
         >
           {darkMode ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -162,7 +165,7 @@ const Header = ({ theme = 'public', links = [] }) => {
               <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
             </svg>
           ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={theme === 'nutri' || theme === 'admin' ? 'white' : '#6366f1'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
             </svg>
           )}
@@ -225,55 +228,40 @@ const Header = ({ theme = 'public', links = [] }) => {
             
             {profileDropdown && (
               <div style={{
-                position: 'absolute',
-                right: '10px',
-                top: '70px',
-                width: '350px',
-                background: 'white',
-                borderRadius: '12px',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-                zIndex: '9999',
-                padding: '20px',
-                border: '1px solid #e0e0e0'
+                position: 'absolute', right: '10px', top: '70px',
+                background: 'white', borderRadius: '12px',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                zIndex: '9999', overflow: 'hidden',
+                border: '1px solid #e0e0e0', minWidth: '200px'
               }}>
-                <div style={{textAlign: 'center', marginBottom: '15px'}}>
-                  <div style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    margin: '0 auto 10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '3px solid var(--secondary-cyan)',
-                    overflow: 'hidden'
-                  }}>
-                    {formData.foto ? (
-                      <img 
-                        src={formData.foto} 
-                        alt="Foto do perfil" 
-                        style={{width: '100%', height: '100%', objectFit: 'cover'}}
-                      />
-                    ) : (
-                      <i className="fas fa-user" style={{fontSize: '2rem', color: '#ccc'}}></i>
-                    )}
+                <div style={{ padding: '1rem', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {formData.foto
+                      ? <img src={formData.foto} alt="Foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <i className="fas fa-user" style={{ color: '#06b6d4' }}></i>
+                    }
                   </div>
-
-                  <input type="file" accept="image/*" onChange={handleImageUpload} style={{display: 'none'}} id="foto-upload-header" />
-                  <label htmlFor="foto-upload-header" style={{background: 'var(--secondary-cyan)', color: 'white', padding: '5px 15px', borderRadius: '20px', cursor: 'pointer', fontSize: '0.9rem'}}>Alterar Foto</label>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem', color: '#1e293b' }}>{formData.nome}</p>
+                    <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>{formData.especialidade || 'Nutricionista'}</p>
+                  </div>
                 </div>
-                
-                <div style={{marginBottom: '10px'}}>
-                  <input type="text" name="nome" value={formData.nome} onChange={handleInputChange} placeholder="Nome" style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px'}} />
-                  <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Email" style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px'}} />
-                  <input type="tel" name="telefone" value={formData.telefone} onChange={handleInputChange} placeholder="Telefone" style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px'}} />
-                  <input type="text" name="especialidade" value={formData.especialidade} onChange={handleInputChange} placeholder="Especialidade" style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '6px'}} />
-                </div>
-                
-                <div style={{display: 'flex', gap: '10px'}}>
-                  <button onClick={handleSave} style={{flex: 1, background: 'var(--secondary-cyan)', color: 'white', border: 'none', padding: '10px', borderRadius: '6px', cursor: 'pointer'}}>Salvar</button>
-                  <button onClick={() => setProfileDropdown(false)} style={{flex: 1, background: '#f0f0f0', color: '#666', border: 'none', padding: '10px', borderRadius: '6px', cursor: 'pointer'}}>Fechar</button>
-                </div>
+                <Link to="/nutri-perfil" onClick={() => setProfileDropdown(false)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem 1rem', color: '#374151', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <i className="fas fa-user-edit" style={{ color: '#06b6d4', width: '16px' }}></i>
+                  Editar Perfil
+                </Link>
+                <button onClick={() => setProfileDropdown(false)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem 1rem', color: '#374151', background: 'none', border: 'none', width: '100%', fontSize: '0.9rem', fontWeight: 500, cursor: 'pointer', borderTop: '1px solid #f0f0f0', transition: 'background 0.15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <i className="fas fa-times" style={{ color: '#94a3b8', width: '16px' }}></i>
+                  Fechar
+                </button>
               </div>
             )}
           </>

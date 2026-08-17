@@ -59,6 +59,12 @@ public class NutricionistasController {
         return repository.findById(id).map(nutri -> {
             if (body.containsKey("status")) nutri.setStatus((String) body.get("status"));
             if (body.containsKey("ativo")) nutri.setAtivo((Integer) body.get("ativo"));
+            if (body.containsKey("nome")) nutri.setNome((String) body.get("nome"));
+            if (body.containsKey("email")) nutri.setEmail((String) body.get("email"));
+            if (body.containsKey("telefone")) nutri.setTelefone((String) body.get("telefone"));
+            if (body.containsKey("especialidade")) nutri.setEspecialidade((String) body.get("especialidade"));
+            if (body.containsKey("descricao")) nutri.setDescricao((String) body.get("descricao"));
+            if (body.containsKey("foto")) nutri.setFoto((String) body.get("foto"));
             repository.save(nutri);
             return ResponseEntity.ok(Map.of("success", true));
         }).orElse(ResponseEntity.notFound().build());

@@ -17,6 +17,10 @@ public class Nutricionista {
     private Integer ativo;
     private String telefone;
     private String especialidade;
+    private String descricao;
+
+    @Column(columnDefinition = "TEXT")
+    private String foto;
 
     @Column(name = "data_criacao")
     private String dataCriacao;
@@ -38,5 +42,9 @@ public class Nutricionista {
     public void setTelefone(String telefone) { this.telefone = telefone; }
     public String getEspecialidade() { return especialidade; }
     public void setEspecialidade(String especialidade) { this.especialidade = especialidade; }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public String getFoto() { return foto; }
+    public void setFoto(String foto) { this.foto = foto; }
     public String getDataCriacao() { return dataCriacao; }
 }
