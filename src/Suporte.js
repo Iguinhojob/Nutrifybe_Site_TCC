@@ -15,7 +15,7 @@ const Suporte = () => {
   ];
 
   return (
-    <div className="public-theme" style={{backgroundImage: `url(${fundoImage})`}}>
+    <div className="public-theme">
       <Header theme="public" links={headerLinks} />
       
       <main className="info-section">

@@ -21,7 +21,7 @@ const NutriPerfil = () => {
 
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Dashboard' },
-    { href: '/nutri-solicitacoes', text: 'SolicitaÃ§Ãµes' },
+    { href: '/nutri-solicitacoes', text: 'Solicitações' },
     { href: '/', text: 'Sair', onClick: () => { localStorage.removeItem('currentUser'); navigate('/'); } }
   ];
 
@@ -120,7 +120,7 @@ const NutriPerfil = () => {
             borderRadius: '24px 24px 0 0', padding: '2.5rem 2.5rem 4rem',
             position: 'relative', overflow: 'hidden'
           }}>
-            {/* DecoraÃ§Ã£o de fundo */}
+            {/* Decoração de fundo */}
             <div style={{
               position: 'absolute', top: '-40px', right: '-40px',
               width: '200px', height: '200px', borderRadius: '50%',
@@ -165,7 +165,7 @@ const NutriPerfil = () => {
                   {formData.nome || 'Nutricionista'}
                 </h1>
                 <p style={{ color: 'rgba(255,255,255,0.9)', margin: '0.25rem 0 0', fontSize: '1rem', fontWeight: 500 }}>
-                  {formData.especialidade || 'Especialidade nÃ£o informada'}
+                  {formData.especialidade || 'Especialidade não informada'}
                 </p>
                 {crn && (
                   <span style={{
@@ -179,7 +179,7 @@ const NutriPerfil = () => {
                 )}
               </div>
 
-              {/* BotÃ£o voltar */}
+              {/* Botão voltar */}
               <button onClick={() => navigate('/nutri-dashboard')} style={{
                 background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)',
                 color: 'white', borderRadius: '10px', padding: '0.5rem 1rem',
@@ -191,7 +191,7 @@ const NutriPerfil = () => {
             </div>
           </div>
 
-          {/* Card de formulÃ¡rio */}
+          {/* Card de formulário */}
           <div style={{
             background: isDark ? '#181A1D' : 'white',
             borderRadius: '0 0 24px 24px',
@@ -200,7 +200,7 @@ const NutriPerfil = () => {
             padding: '2.5rem', marginTop: '-1px'
           }}>
 
-            {/* Stats rÃ¡pidos */}
+            {/* Stats rápidos */}
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2.5rem', flexWrap: 'wrap' }}>
               {[
                 { icon: 'fa-envelope', label: 'Email', value: formData.email || 'â€”' },
@@ -225,7 +225,7 @@ const NutriPerfil = () => {
             <div style={{ borderTop: `1px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, paddingTop: '2rem' }}>
               <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: isDark ? '#F1F1F3' : '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <i className="fas fa-edit" style={{ color: isDark ? '#8B6FCF' : '#06b6d4' }}></i>
-                Editar InformaÃ§Ãµes
+                Editar Informações
               </h2>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
@@ -301,7 +301,7 @@ const NutriPerfil = () => {
                 </p>
               </div>
 
-              {/* BotÃ£o salvar */}
+              {/* Botão salvar */}
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', gap: '1rem' }}>
                 <button onClick={() => navigate('/nutri-dashboard')} style={{
                   padding: '0.875rem 1.75rem', borderRadius: '10px',
@@ -321,7 +321,7 @@ const NutriPerfil = () => {
                 }}>
                   {loading
                     ? <><i className="fas fa-spinner fa-spin"></i> Salvando...</>
-                    : <><i className="fas fa-save"></i> Salvar AlteraÃ§Ãµes</>
+                    : <><i className="fas fa-save"></i> Salvar Alterações</>
                   }
                 </button>
               </div>

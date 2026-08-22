@@ -4956,8 +4956,11 @@ body.dark-mode .dark-mode-toggle {
 /* â”€â”€ Tema pÃºblico (pÃ¡ginas de login, registro, sobre, suporte) â”€â”€ */
 body.dark-mode .public-theme,
 body.dark-mode.public-theme {
-    background-color: var(--dm-bg) !important;
-    background-image: none !important;
+    background-color: #0F1012 !important;
+    background-image:
+        radial-gradient(ellipse at 10% 20%, rgba(124,58,237,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(76,29,149,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(167,139,250,0.05) 0%, transparent 60%) !important;
 }
 
 body.dark-mode .public-theme header {

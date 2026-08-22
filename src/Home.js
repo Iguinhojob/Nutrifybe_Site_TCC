@@ -18,22 +18,11 @@ const Home = () => {
       <style>{`
         .home-wrapper {
           min-height: 100vh;
-          background-color: #f7f6f2;
+          background-color: #f0f4ff;
           background-image:
-            repeating-linear-gradient(
-              120deg,
-              rgba(180, 170, 140, 0.07) 0px,
-              rgba(180, 170, 140, 0.07) 1px,
-              transparent 1px,
-              transparent 60px
-            ),
-            repeating-linear-gradient(
-              60deg,
-              rgba(180, 170, 140, 0.05) 0px,
-              rgba(180, 170, 140, 0.05) 1px,
-              transparent 1px,
-              transparent 60px
-            );
+            radial-gradient(ellipse at 10% 20%, rgba(99,102,241,0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 90% 80%, rgba(6,182,212,0.07) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(167,139,250,0.05) 0%, transparent 60%);
           font-family: 'Inter', 'Poppins', sans-serif;
           position: relative;
           overflow-x: hidden;
@@ -41,10 +30,10 @@ const Home = () => {
 
         /* ── HEADER OVERRIDE ── */
         .home-wrapper header {
-          background: rgba(247, 246, 242, 0.92) !important;
-          backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(0,0,0,0.07);
-          box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+          background: rgba(255,255,255,0.85) !important;
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(99,102,241,0.1);
+          box-shadow: 0 2px 20px rgba(99,102,241,0.08);
         }
 
         .home-wrapper .logo {
@@ -52,7 +41,7 @@ const Home = () => {
         }
 
         .home-wrapper nav ul li a {
-          color: #1a1a1a !important;
+          color: #3730a3 !important;
           font-weight: 500;
           font-size: 0.95rem;
           text-shadow: none !important;
@@ -63,8 +52,8 @@ const Home = () => {
 
         .home-wrapper nav ul li a:hover,
         .home-wrapper nav ul li a.active {
-          background: rgba(45, 122, 79, 0.1) !important;
-          color: #2d7a4f !important;
+          background: rgba(99,102,241,0.1) !important;
+          color: #4338ca !important;
           transform: none;
           box-shadow: none;
         }
@@ -88,28 +77,51 @@ const Home = () => {
         }
 
         .home-hero-title {
-          font-family: 'Georgia', 'Times New Roman', serif;
-          font-size: clamp(2.2rem, 4vw, 3.4rem);
-          font-weight: 700;
-          color: #1a1a1a;
-          line-height: 1.15;
+          font-family: 'Inter', 'Poppins', sans-serif;
+          font-size: clamp(2.2rem, 4vw, 3.6rem);
+          font-weight: 800;
+          color: #1a1a2e;
+          line-height: 1.1;
           margin: 0;
+          letter-spacing: -0.02em;
         }
 
-        .home-hero-title .brand-name .nutri-part {
-          color: #22d3ee;
+        .home-hero-title .brand-name {
+          display: block;
+          background: linear-gradient(135deg, #6366f1, #22d3ee, #a78bfa);
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: titleGradient 4s ease-in-out infinite;
         }
 
-        .home-hero-title .brand-name .fybe-part {
-          color: #c4b5fd;
+        @keyframes titleGradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
         }
 
         .home-hero-desc {
           font-size: 1.05rem;
-          color: #4a4a4a;
-          line-height: 1.75;
+          color: #4b5563;
+          line-height: 1.8;
           max-width: 480px;
           margin: 0;
+        }
+
+        .home-hero-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(167,139,250,0.1));
+          border: 1px solid rgba(99,102,241,0.2);
+          border-radius: 999px;
+          padding: 0.35rem 0.9rem;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #4338ca;
+          letter-spacing: 0.03em;
+          width: fit-content;
         }
 
         .home-hero-buttons {
@@ -141,37 +153,41 @@ const Home = () => {
         }
 
         .hbtn-consult {
-          background: #3eb575;
+          background: linear-gradient(135deg, #6366f1, #818cf8);
           color: #fff;
-          box-shadow: 0 4px 14px rgba(62, 181, 117, 0.35);
+          box-shadow: 0 4px 18px rgba(99,102,241,0.4);
         }
 
         .hbtn-consult:hover {
-          background: #2d9e62;
-          box-shadow: 0 8px 22px rgba(62, 181, 117, 0.45);
+          background: linear-gradient(135deg, #4f46e5, #6366f1);
+          box-shadow: 0 8px 28px rgba(99,102,241,0.55);
+          transform: translateY(-3px);
         }
 
         .hbtn-nutri {
-          background: #1e5c38;
+          background: linear-gradient(135deg, #0891b2, #06b6d4);
           color: #fff;
-          box-shadow: 0 4px 14px rgba(30, 92, 56, 0.3);
+          box-shadow: 0 4px 18px rgba(6,182,212,0.35);
         }
 
         .hbtn-nutri:hover {
-          background: #174d2f;
-          box-shadow: 0 8px 22px rgba(30, 92, 56, 0.4);
+          background: linear-gradient(135deg, #0e7490, #0891b2);
+          box-shadow: 0 8px 28px rgba(6,182,212,0.5);
+          transform: translateY(-3px);
         }
 
         .hbtn-login {
-          background: #fff;
-          color: #1a1a1a;
-          border: 1.5px solid #d0d0d0;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          background: rgba(255,255,255,0.8);
+          color: #3730a3;
+          border: 1.5px solid rgba(99,102,241,0.25);
+          box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+          backdrop-filter: blur(10px);
         }
 
         .hbtn-login:hover {
-          border-color: #aaa;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+          border-color: rgba(99,102,241,0.5);
+          box-shadow: 0 6px 20px rgba(99,102,241,0.15);
+          transform: translateY(-2px);
         }
 
         .hbtn-icon {
@@ -189,11 +205,17 @@ const Home = () => {
 
         .mascote-bg-circle {
           position: absolute;
-          width: 420px;
-          height: 420px;
+          width: 440px;
+          height: 440px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(62,181,117,0.12) 0%, rgba(62,181,117,0.03) 70%, transparent 100%);
+          background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, rgba(167,139,250,0.06) 50%, transparent 100%);
           z-index: 0;
+          animation: pulseCircle 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseCircle {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.06); opacity: 1; }
         }
 
         .mascote-img {
@@ -202,7 +224,7 @@ const Home = () => {
           max-width: 380px;
           width: 100%;
           animation: mascoteFloat 4s ease-in-out infinite;
-          filter: drop-shadow(0 20px 40px rgba(0,0,0,0.12));
+          filter: drop-shadow(0 20px 40px rgba(99,102,241,0.2)) drop-shadow(0 0 60px rgba(167,139,250,0.15));
         }
 
         @keyframes mascoteFloat {
@@ -213,13 +235,15 @@ const Home = () => {
         /* floating decorative elements */
         .float-badge {
           position: absolute;
-          background: #fff;
+          background: rgba(255,255,255,0.85);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(99,102,241,0.15);
           border-radius: 14px;
           padding: 0.6rem 1rem;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+          box-shadow: 0 8px 24px rgba(99,102,241,0.12);
           font-size: 0.85rem;
           font-weight: 600;
-          color: #1a1a1a;
+          color: #3730a3;
           display: flex;
           align-items: center;
           gap: 0.4rem;
@@ -252,27 +276,37 @@ const Home = () => {
 
         .arc-decoration {
           position: absolute;
-          border: 2px solid rgba(138, 100, 200, 0.2);
+          border: 1.5px solid rgba(99,102,241,0.18);
           border-radius: 50%;
           z-index: 0;
         }
 
         .arc-1 {
-          width: 180px;
-          height: 180px;
+          width: 200px;
+          height: 200px;
           top: 5%;
           left: 5%;
           border-style: dashed;
-          animation: arcSpin 20s linear infinite;
+          border-color: rgba(99,102,241,0.2);
+          animation: arcSpin 22s linear infinite;
         }
 
         .arc-2 {
-          width: 100px;
-          height: 100px;
+          width: 110px;
+          height: 110px;
           bottom: 10%;
           right: 8%;
-          border-color: rgba(62, 181, 117, 0.25);
-          animation: arcSpin 15s linear infinite reverse;
+          border-color: rgba(6,182,212,0.25);
+          animation: arcSpin 16s linear infinite reverse;
+        }
+
+        .arc-3 {
+          width: 60px;
+          height: 60px;
+          top: 30%;
+          left: 15%;
+          border-color: rgba(167,139,250,0.3);
+          animation: arcSpin 10s linear infinite;
         }
 
         @keyframes arcSpin {
@@ -282,52 +316,84 @@ const Home = () => {
 
         /* ── FEATURES STRIP ── */
         .home-features {
-          background: #fff;
-          border-top: 1px solid rgba(0,0,0,0.06);
-          padding: 3.5rem 3rem;
+          background: linear-gradient(180deg, #fff 0%, #f0f4ff 100%);
+          border-top: 1px solid rgba(99,102,241,0.08);
+          padding: 4rem 3rem;
+          position: relative;
+        }
+
+        .home-features-title {
+          text-align: center;
+          font-size: 1.6rem;
+          font-weight: 800;
+          color: #1a1a2e;
+          margin-bottom: 2.5rem;
+          letter-spacing: -0.02em;
+        }
+
+        .home-features-title span {
+          background: linear-gradient(135deg, #6366f1, #22d3ee);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .home-features-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 2rem;
-          max-width: 1200px;
+          gap: 1.5rem;
+          max-width: 1100px;
           margin: 0 auto;
         }
 
         .home-feature-card {
-          background: rgba(180, 230, 195, 0.18);
-          border-radius: 16px;
-          padding: 1.75rem;
+          background: rgba(255,255,255,0.9);
+          border-radius: 20px;
+          padding: 2rem 1.5rem;
           text-align: center;
-          border: 1px solid rgba(62, 181, 117, 0.2);
-          backdrop-filter: blur(8px);
-          transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+          border: 1px solid rgba(99,102,241,0.1);
+          backdrop-filter: blur(10px);
+          transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .home-feature-card::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #6366f1, #22d3ee, #a78bfa);
+          opacity: 0;
+          transition: opacity 0.3s;
         }
 
         .home-feature-card:hover {
-          transform: translateY(-4px);
-          background: rgba(180, 230, 195, 0.28);
-          box-shadow: 0 10px 28px rgba(139, 111, 207, 0.15);
-          border-color: rgba(139, 111, 207, 0.3);
+          transform: translateY(-6px);
+          box-shadow: 0 16px 40px rgba(99,102,241,0.15);
+          border-color: rgba(99,102,241,0.25);
+        }
+
+        .home-feature-card:hover::before {
+          opacity: 1;
         }
 
         .home-feature-icon {
-          font-size: 2.2rem;
-          margin-bottom: 0.75rem;
+          font-size: 2.4rem;
+          margin-bottom: 1rem;
           display: block;
         }
 
         .home-feature-title {
           font-size: 1rem;
           font-weight: 700;
-          color: #1a4a2e;
-          margin-bottom: 0.4rem;
+          color: #1a1a2e;
+          margin-bottom: 0.5rem;
         }
 
         .home-feature-text {
           font-size: 0.875rem;
-          color: #3a5a45;
+          color: #6b7280;
           line-height: 1.6;
         }
 
@@ -356,13 +422,15 @@ const Home = () => {
         /* ── DARK MODE ── */
         body.dark-mode .home-wrapper {
           background-color: #0F1012 !important;
-          background-image: none !important;
+          background-image:
+            radial-gradient(ellipse at 10% 20%, rgba(124,58,237,0.12) 0%, transparent 50%),
+            radial-gradient(ellipse at 90% 80%, rgba(76,29,149,0.08) 0%, transparent 50%) !important;
         }
 
         body.dark-mode .home-wrapper header {
           background: linear-gradient(135deg, #4C1D95, #7C3AED) !important;
-          border-bottom: 1px solid rgba(124, 58, 237, 0.3) !important;
-          box-shadow: 0 2px 20px rgba(124, 58, 237, 0.4) !important;
+          border-bottom: 1px solid rgba(124,58,237,0.3) !important;
+          box-shadow: 0 2px 20px rgba(124,58,237,0.4) !important;
         }
 
         body.dark-mode .home-wrapper nav ul li a {
@@ -372,7 +440,7 @@ const Home = () => {
 
         body.dark-mode .home-wrapper nav ul li a:hover,
         body.dark-mode .home-wrapper nav ul li a.active {
-          background: rgba(167, 139, 250, 0.2) !important;
+          background: rgba(167,139,250,0.2) !important;
           color: #C4B5FD !important;
         }
 
@@ -380,63 +448,91 @@ const Home = () => {
           color: #F1F1F3 !important;
         }
 
+        body.dark-mode .home-hero-title .brand-name {
+          background: linear-gradient(135deg, #A78BFA, #22d3ee, #C4B5FD) !important;
+          background-size: 200% 200% !important;
+          -webkit-background-clip: text !important;
+          -webkit-text-fill-color: transparent !important;
+          background-clip: text !important;
+          animation: titleGradient 4s ease-in-out infinite !important;
+        }
+
         body.dark-mode .home-hero-desc {
           color: #9B9DA5 !important;
         }
 
+        body.dark-mode .home-hero-tag {
+          background: rgba(124,58,237,0.15) !important;
+          border-color: rgba(167,139,250,0.3) !important;
+          color: #C4B5FD !important;
+        }
+
         body.dark-mode .hbtn-consult {
           background: linear-gradient(135deg, #7C3AED, #A78BFA) !important;
-          box-shadow: 0 4px 14px rgba(124, 58, 237, 0.45) !important;
+          box-shadow: 0 4px 18px rgba(124,58,237,0.5) !important;
         }
 
         body.dark-mode .hbtn-consult:hover {
           background: linear-gradient(135deg, #6D28D9, #8B5CF6) !important;
-          box-shadow: 0 8px 22px rgba(124, 58, 237, 0.6) !important;
+          box-shadow: 0 8px 28px rgba(124,58,237,0.65) !important;
         }
 
         body.dark-mode .hbtn-nutri {
-          background: #4C1D95 !important;
-          box-shadow: 0 4px 14px rgba(76, 29, 149, 0.5) !important;
+          background: linear-gradient(135deg, #4C1D95, #6D28D9) !important;
+          box-shadow: 0 4px 18px rgba(76,29,149,0.5) !important;
         }
 
         body.dark-mode .hbtn-nutri:hover {
-          background: #3B0764 !important;
-          box-shadow: 0 8px 22px rgba(76, 29, 149, 0.65) !important;
+          background: linear-gradient(135deg, #3B0764, #4C1D95) !important;
+          box-shadow: 0 8px 28px rgba(76,29,149,0.65) !important;
         }
 
         body.dark-mode .hbtn-login {
-          background: #202228 !important;
+          background: rgba(32,34,40,0.9) !important;
           color: #F1F1F3 !important;
-          border-color: #2A2D32 !important;
+          border-color: rgba(167,139,250,0.2) !important;
           box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
         }
 
         body.dark-mode .hbtn-login:hover {
-          border-color: #8B6FCF !important;
-          box-shadow: 0 6px 18px rgba(139, 111, 207, 0.2) !important;
+          border-color: rgba(167,139,250,0.5) !important;
+          box-shadow: 0 6px 20px rgba(124,58,237,0.25) !important;
         }
 
         body.dark-mode .float-badge {
-          background: #181A1D !important;
-          color: #F1F1F3 !important;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+          background: rgba(24,26,29,0.9) !important;
+          border-color: rgba(167,139,250,0.2) !important;
+          color: #C4B5FD !important;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
         }
 
         body.dark-mode .mascote-bg-circle {
-          background: radial-gradient(circle, rgba(139,111,207,0.1) 0%, rgba(139,111,207,0.03) 70%, transparent 100%) !important;
+          background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, rgba(76,29,149,0.08) 50%, transparent 100%) !important;
+        }
+
+        body.dark-mode .mascote-img {
+          filter: drop-shadow(0 20px 40px rgba(124,58,237,0.35)) drop-shadow(0 0 80px rgba(167,139,250,0.2)) !important;
         }
 
         body.dark-mode .arc-decoration {
-          border-color: rgba(139, 111, 207, 0.2) !important;
+          border-color: rgba(167,139,250,0.15) !important;
         }
 
         body.dark-mode .arc-2 {
-          border-color: rgba(76, 175, 122, 0.2) !important;
+          border-color: rgba(34,211,238,0.15) !important;
+        }
+
+        body.dark-mode .arc-3 {
+          border-color: rgba(196,181,253,0.2) !important;
         }
 
         body.dark-mode .home-features {
-          background: #0F1012 !important;
+          background: linear-gradient(180deg, #0F1012 0%, #111318 100%) !important;
           border-top: 1px solid #2A2D32 !important;
+        }
+
+        body.dark-mode .home-features-title {
+          color: #F1F1F3 !important;
         }
 
         body.dark-mode .home-feature-card {
@@ -446,8 +542,8 @@ const Home = () => {
 
         body.dark-mode .home-feature-card:hover {
           background: #202228 !important;
-          box-shadow: 0 10px 28px rgba(139, 111, 207, 0.25) !important;
-          border-color: #8B6FCF !important;
+          box-shadow: 0 16px 40px rgba(124,58,237,0.2) !important;
+          border-color: rgba(167,139,250,0.3) !important;
         }
 
         body.dark-mode .home-feature-title {
@@ -464,11 +560,10 @@ const Home = () => {
       <main className="home-hero">
         {/* LEFT */}
         <div className="home-hero-left">
+          <div className="home-hero-tag">✨ Plataforma Nutricional Inteligente</div>
           <h1 className="home-hero-title">
             Seja Bem Vindo Ao{' '}
-            <span className="brand-name">
-              <span className="nutri-part">Nutri</span><span className="fybe-part">fybe</span>
-            </span>
+            <span className="brand-name">NutriFybe</span>
           </h1>
           <p className="home-hero-desc">
             Uma solução inovadora que une tecnologia e cuidado humano. Nossa plataforma oferece
@@ -492,6 +587,7 @@ const Home = () => {
         <div className="home-hero-right">
           <div className="arc-decoration arc-1"></div>
           <div className="arc-decoration arc-2"></div>
+          <div className="arc-decoration arc-3"></div>
           <div className="mascote-bg-circle"></div>
 
           <img
@@ -513,6 +609,7 @@ const Home = () => {
       </main>
 
       <section className="home-features">
+        <h2 className="home-features-title">Tudo que você precisa em <span>um só lugar</span></h2>
         <div className="home-features-grid">
           <div className="home-feature-card">
             <span className="home-feature-icon">🏥</span>
