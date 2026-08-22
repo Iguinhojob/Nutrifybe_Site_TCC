@@ -1,8 +1,8 @@
-/* Importação das fontes do Google Fonts */
+﻿/* ImportaÃ§Ã£o das fontes do Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    /* Paleta de cores harmônica e moderna */
+    /* Paleta de cores harmÃ´nica e moderna */
     --primary-purple: #6366f1;
     --primary-purple-light: #818cf8;
     --primary-purple-dark: #4f46e5;
@@ -31,7 +31,7 @@
     --light-green: #f0fdf4;
     --dark-green: #166534;
     
-    /* Cores de fundo temáticas */
+    /* Cores de fundo temÃ¡ticas */
     --bg-gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --bg-gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --bg-gradient-nutri: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -48,7 +48,7 @@
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     
-    /* Transições */
+    /* TransiÃ§Ãµes */
     --transition-fast: 0.15s ease-in-out;
     --transition-normal: 0.3s ease-in-out;
     --transition-slow: 0.5s ease-in-out;
@@ -163,7 +163,7 @@ img {
     display: block;
 }
 
-/* Utilitários */
+/* UtilitÃ¡rios */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -257,7 +257,7 @@ header .container {
     text-shadow: 0 0 10px rgba(196, 181, 253, 0.5);
 }
 
-/* Navegação principal */
+/* NavegaÃ§Ã£o principal */
 nav {
     display: flex;
     align-items: center;
@@ -403,7 +403,7 @@ nav ul li a.active {
 }
 
 /* ========================================
-   SISTEMA DE BOTÕES MODERNO
+   SISTEMA DE BOTÃ•ES MODERNO
 ======================================== */
 .btn {
     display: inline-flex;
@@ -438,7 +438,7 @@ nav ul li a.active {
     transform: none !important;
 }
 
-/* Tamanhos dos botões */
+/* Tamanhos dos botÃµes */
 .btn-sm {
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
@@ -454,7 +454,7 @@ nav ul li a.active {
     font-size: 1.25rem;
 }
 
-/* Variações de cor */
+/* VariaÃ§Ãµes de cor */
 .btn-primary {
     background: linear-gradient(135deg, 
         #667eea 0%, 
@@ -531,7 +531,7 @@ nav ul li a.active {
     box-shadow: var(--shadow-lg);
 }
 
-/* Botão outline */
+/* BotÃ£o outline */
 .btn-outline {
     background: transparent;
     border: 2px solid var(--primary-purple);
@@ -545,7 +545,7 @@ nav ul li a.active {
     box-shadow: var(--shadow-lg);
 }
 
-/* Botão ghost */
+/* BotÃ£o ghost */
 .btn-ghost {
     background: rgba(255, 255, 255, 0.1);
     color: var(--white);
@@ -580,12 +580,12 @@ nav ul li a.active {
     z-index: 2;
 }
 
-/* Botão de largura total */
+/* BotÃ£o de largura total */
 .btn-full {
     width: 100%;
 }
 
-/* Grupo de botões */
+/* Grupo de botÃµes */
 .btn-group {
     display: flex;
     gap: 0.75rem;
@@ -643,7 +643,7 @@ nav ul li a.active {
     opacity: 1;
 }
 
-/* Variações de card */
+/* VariaÃ§Ãµes de card */
 .card-glass {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
@@ -692,7 +692,7 @@ nav ul li a.active {
     max-width: 800px;
 }
 
-/* Card com animação flutuante */
+/* Card com animaÃ§Ã£o flutuante */
 .card-float {
     animation: cardFloat 6s ease-in-out infinite;
 }
@@ -818,7 +818,7 @@ body.admin-theme .card {
 }
 
 /* ========================================
-   SISTEMA DE INPUTS E FORMULÁRIOS
+   SISTEMA DE INPUTS E FORMULÃRIOS
 ======================================== */
 .form-group {
     margin-bottom: 1.5rem;
@@ -887,7 +887,7 @@ body.public-theme .form-label {
     appearance: none;
 }
 
-/* Estados de validação */
+/* Estados de validaÃ§Ã£o */
 .form-input.is-valid,
 .form-textarea.is-valid,
 .form-select.is-valid {
@@ -984,7 +984,7 @@ body.public-theme .form-check-label {
     flex: 1;
 }
 
-/* Input com ícone */
+/* Input com Ã­cone */
 .form-input-group {
     position: relative;
 }
@@ -1093,7 +1093,7 @@ body.public-theme .form-check-label {
     left: 0;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--primary-purple), var(--secondary-cyan));
+    background: linear-gradient(90deg, var(--primary-purple), var(--primary-purple-light));
     transition: width 0.3s ease;
 }
 
@@ -1176,7 +1176,7 @@ body.public-theme .link-highlight {
 }
 
 /* ========================================
-   UTILITÁRIOS DE TEXTO
+   UTILITÃRIOS DE TEXTO
 ======================================== */
 .text-center { text-align: center; }
 .text-left { text-align: left; }
@@ -1222,7 +1222,7 @@ body.public-theme .link-highlight {
 }
 
 /* ========================================
-   ELEMENTOS DE NAVEGAÇÃO
+   ELEMENTOS DE NAVEGAÃ‡ÃƒO
 ======================================== */
 .back-arrow {
     display: inline-flex;
@@ -1252,7 +1252,7 @@ body.public-theme .link-highlight {
 }
 
 /* ========================================
-   TEMA PÚBLICO E HERO SECTION
+   TEMA PÃšBLICO E HERO SECTION
 ======================================== */
 body.public-theme {
     background: var(--bg-gradient-primary);
@@ -1566,7 +1566,7 @@ body.public-theme::before {
 }
 
 /* ========================================
-   PÁGINAS DE FORMULÁRIO
+   PÃGINAS DE FORMULÃRIO
 ======================================== */
 .form-section {
     display: flex;
@@ -1774,7 +1774,7 @@ body.public-theme::before {
 }
 
 /* ========================================
-   PÁGINAS DE INFORMAÇÃO (SOBRE NÓS, SUPORTE)
+   PÃGINAS DE INFORMAÃ‡ÃƒO (SOBRE NÃ“S, SUPORTE)
 ======================================== */
 .info-section {
     display: flex;
@@ -1807,10 +1807,7 @@ body.public-theme::before {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, 
-        rgba(102, 126, 234, 0.8), 
-        rgba(6, 182, 212, 0.8), 
-        rgba(16, 185, 129, 0.8));
+    background: linear-gradient(90deg, var(--primary-purple), var(--primary-purple-light), #c4b5fd);
     border-radius: 28px 28px 0 0;
 }
 
@@ -1820,7 +1817,7 @@ body.public-theme::before {
     color: var(--gray-900);
     margin-bottom: 2rem;
     text-align: center;
-    background: linear-gradient(135deg, var(--primary-purple), var(--secondary-cyan));
+    background: linear-gradient(135deg, var(--primary-purple), var(--primary-purple-light));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1843,7 +1840,7 @@ body.public-theme::before {
 .team-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: var(--secondary-cyan);
+    color: var(--primary-purple);
     margin-bottom: 1.5rem;
     text-align: left;
 }
@@ -1881,7 +1878,7 @@ body.public-theme::before {
 .faq-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: var(--secondary-cyan);
+    color: var(--primary-purple);
     margin-bottom: 2rem;
     text-align: left;
 }
@@ -2032,9 +2029,9 @@ body.nutri-theme::before {
         radial-gradient(circle at 40% 40%, rgba(79, 172, 254, 0.1) 0%, transparent 50%);
 }
 
-/* Header do nutricionista já definido no sistema moderno */
+/* Header do nutricionista jÃ¡ definido no sistema moderno */
 
-/* -- Estilos Específicos para o Dashboard do Nutricionista (nutri_dashboard.html) -- */
+/* -- Estilos EspecÃ­ficos para o Dashboard do Nutricionista (nutri_dashboard.html) -- */
 .nutri-main-content {
     display: flex;
     flex-direction: column;
@@ -2104,9 +2101,9 @@ body.nutri-theme::before {
     width: 100%;
 }
 
-/* ... (código CSS anterior) ... */
+/* ... (cÃ³digo CSS anterior) ... */
 
-/* Estilo para um item de paciente (será adicionado via JS) */
+/* Estilo para um item de paciente (serÃ¡ adicionado via JS) */
 .patient-item {
     display: flex;
     align-items: center;
@@ -2152,8 +2149,8 @@ body.nutri-theme::before {
 .patient-info {
     display: flex;
     align-items: center;
-    gap: 15px; /* Espaço entre ícone e detalhes */
-    flex-grow: 1; /* Permite que as informações do paciente ocupem o espaço disponível */
+    gap: 15px; /* EspaÃ§o entre Ã­cone e detalhes */
+    flex-grow: 1; /* Permite que as informaÃ§Ãµes do paciente ocupem o espaÃ§o disponÃ­vel */
 }
 
 .patient-icon {
@@ -2180,7 +2177,7 @@ body.nutri-theme::before {
     margin: 0;
 }
 
-/* Estilo para o botão "Encerrar Atendimento" no Dashboard (ao lado do Ver Ficha) */
+/* Estilo para o botÃ£o "Encerrar Atendimento" no Dashboard (ao lado do Ver Ficha) */
 .btn-end-service-dashboard {
     background-color: var(--accent-red);
     color: var(--white);
@@ -2237,9 +2234,9 @@ body.nutri-theme::before {
     left: 100%;
 }
 
-/* ... (responsividade e código CSS posterior) ... */
+/* ... (responsividade e cÃ³digo CSS posterior) ... */
 
-/* Responsividade básica para o dashboard do nutri */
+/* Responsividade bÃ¡sica para o dashboard do nutri */
 @media (max-width: 768px) {
     .nutri-welcome-title {
         font-size: 2em;
@@ -2293,11 +2290,11 @@ body.nutri-theme::before {
     }
 }
 
-/* -- Estilos Específicos para a Página de Solicitações Pendentes (nutri_solicitacoes.html) -- */
+/* -- Estilos EspecÃ­ficos para a PÃ¡gina de SolicitaÃ§Ãµes Pendentes (nutri_solicitacoes.html) -- */
 /* Reutiliza muitos estilos de nutri_dashboard, mas ajusta o layout do card */
 .nutri-main-content .content-card.nutri-card {
-    position: relative; /* Necessário para posicionar a seta de voltar */
-    padding-top: 50px; /* Espaço para a seta */
+    position: relative; /* NecessÃ¡rio para posicionar a seta de voltar */
+    padding-top: 50px; /* EspaÃ§o para a seta */
 }
 
 .back-arrow {
@@ -2313,15 +2310,15 @@ body.nutri-theme::before {
     color: var(--primary-purple-dark);
 }
 
-/* Estilo para um item de solicitação pendente */
+/* Estilo para um item de solicitaÃ§Ã£o pendente */
 .pending-request-item {
     display: flex;
-    flex-direction: column; /* Coloca os elementos em coluna para melhor organização */
-    align-items: center; /* Centraliza horizontalmente o conteúdo do item */
+    flex-direction: column; /* Coloca os elementos em coluna para melhor organizaÃ§Ã£o */
+    align-items: center; /* Centraliza horizontalmente o conteÃºdo do item */
     width: 100%;
     padding: 20px;
     border-bottom: 1px solid #eee;
-    margin-bottom: 20px; /* Espaço entre as solicitações */
+    margin-bottom: 20px; /* EspaÃ§o entre as solicitaÃ§Ãµes */
 }
 
 .pending-request-item:last-child {
@@ -2330,7 +2327,7 @@ body.nutri-theme::before {
 }
 
 .request-info {
-    text-align: center; /* Centraliza o texto das informações do paciente */
+    text-align: center; /* Centraliza o texto das informaÃ§Ãµes do paciente */
     margin-bottom: 15px;
 }
 
@@ -2351,18 +2348,18 @@ body.nutri-theme::before {
 }
 
 .request-info p strong {
-    color: #333; /* Negrito para os títulos das informações */
+    color: #333; /* Negrito para os tÃ­tulos das informaÃ§Ãµes */
 }
 
 .request-icon {
-    font-size: 4em; /* Ícone do usuário grande */
+    font-size: 4em; /* Ãcone do usuÃ¡rio grande */
     color: #777;
     margin-bottom: 15px;
 }
 
 .request-actions {
     display: flex;
-    gap: 20px; /* Espaço entre os botões */
+    gap: 20px; /* EspaÃ§o entre os botÃµes */
     margin-top: 10px;
 }
 
@@ -2434,17 +2431,17 @@ body.nutri-theme::before {
     left: 100%;
 }
 
-/* Garante que a mensagem "Não há solicitações pendentes" esteja centralizada */
+/* Garante que a mensagem "NÃ£o hÃ¡ solicitaÃ§Ãµes pendentes" esteja centralizada */
 .content-card.nutri-card #noPendingRequestsMessage {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     opacity: 0.6;
-    width: auto; /* Ajusta a largura para o conteúdo, não 100% */
+    width: auto; /* Ajusta a largura para o conteÃºdo, nÃ£o 100% */
 }
 
-/* Responsividade para tela de solicitações */
+/* Responsividade para tela de solicitaÃ§Ãµes */
 @media (max-width: 600px) {
     .request-actions {
         flex-direction: column;
@@ -2466,18 +2463,18 @@ body.nutri-theme::before {
     }
 }
 
-/* -- Estilos Específicos para a Ficha de Paciente e Prescrição (nutri_prescricao.html) -- */
+/* -- Estilos EspecÃ­ficos para a Ficha de Paciente e PrescriÃ§Ã£o (nutri_prescricao.html) -- */
 .patient-details-section {
     width: 100%;
-    text-align: center; /* Centraliza o ícone e nome do paciente */
+    text-align: center; /* Centraliza o Ã­cone e nome do paciente */
     padding-bottom: 20px;
-    border-bottom: 1px solid #eee; /* Linha separadora entre detalhes e prescrição */
+    border-bottom: 1px solid #eee; /* Linha separadora entre detalhes e prescriÃ§Ã£o */
     margin-bottom: 20px;
 }
 
 .patient-details-section .request-icon {
-    /* Reutiliza o estilo do ícone da solicitação */
-    font-size: 4em; /* Ícone do usuário grande */
+    /* Reutiliza o estilo do Ã­cone da solicitaÃ§Ã£o */
+    font-size: 4em; /* Ãcone do usuÃ¡rio grande */
     color: #777;
     margin-bottom: 10px;
 }
@@ -2502,7 +2499,7 @@ body.nutri-theme::before {
 }
 
 .patient-details-section p strong {
-    color: #333; /* Negrito para os títulos das informações */
+    color: #333; /* Negrito para os tÃ­tulos das informaÃ§Ãµes */
 }
 
 .calendar-link {
@@ -2523,7 +2520,7 @@ body.nutri-theme::before {
 
 .prescription-section {
     width: 100%;
-    text-align: left; /* Alinha o título "Prescrição" à esquerda */
+    text-align: left; /* Alinha o tÃ­tulo "PrescriÃ§Ã£o" Ã  esquerda */
 }
 
 .prescription-title {
@@ -2602,7 +2599,7 @@ body.nutri-theme::before {
     left: 100%;
 }
 
-/* Responsividade para a tela de prescrição */
+/* Responsividade para a tela de prescriÃ§Ã£o */
 @media (max-width: 768px) {
     .patient-details-section p {
         padding-left: 5%;
@@ -2632,7 +2629,7 @@ body.nutri-theme::before {
     }
 }
 
-/* Tema claro - correções para melhor contraste */
+/* Tema claro - correÃ§Ãµes para melhor contraste */
 body:not(.public-theme):not(.nutri-theme):not(.admin-theme) {
     background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
     color: var(--gray-800);
@@ -2695,10 +2692,10 @@ body:not(.public-theme):not(.nutri-theme):not(.admin-theme) .form-label {
     }
 }
 
-/* -- Estilos Específicos para o Calendário do Paciente (nutri_calendario.html) -- */
+/* -- Estilos EspecÃ­ficos para o CalendÃ¡rio do Paciente (nutri_calendario.html) -- */
 .content-card.calendar-card {
-    min-height: 600px; /* Altura mínima para o calendário */
-    align-items: center; /* Centraliza o conteúdo principal do calendário */
+    min-height: 600px; /* Altura mÃ­nima para o calendÃ¡rio */
+    align-items: center; /* Centraliza o conteÃºdo principal do calendÃ¡rio */
 }
 
 .calendar-header {
@@ -2736,9 +2733,9 @@ body:not(.public-theme):not(.nutri-theme):not(.admin-theme) .form-label {
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr); /* 7 colunas para os dias da semana */
-    gap: 10px; /* Espaço entre os dias */
+    gap: 10px; /* EspaÃ§o entre os dias */
     width: 100%;
-    max-width: 700px; /* Largura máxima para a grade do calendário */
+    max-width: 700px; /* Largura mÃ¡xima para a grade do calendÃ¡rio */
     margin-bottom: 20px;
 }
 
@@ -2926,7 +2923,7 @@ body:not(.public-theme):not(.nutri-theme):not(.admin-theme) .form-label {
     transform: translateY(-2px);
 }
 
-/* Responsividade para o calendário */
+/* Responsividade para o calendÃ¡rio */
 @media (max-width: 768px) {
     .calendar-grid {
         gap: 5px;
@@ -3187,7 +3184,7 @@ main.admin-login-main {
     border: 1px solid #b8dacc;
 }
 
-/* -- Estilos Específicos para o Dashboard do Administrador (admin_dashboard.html) -- */
+/* -- Estilos EspecÃ­ficos para o Dashboard do Administrador (admin_dashboard.html) -- */
 .admin-main-content {
     display: flex;
     flex-direction: column;
@@ -3221,9 +3218,9 @@ main.admin-login-main {
 
 .dashboard-sections {
     display: flex;
-    flex-wrap: wrap; /* Permite que as seções quebrem linha */
-    gap: 30px; /* Espaço entre as seções */
-    justify-content: center; /* Centraliza as seções */
+    flex-wrap: wrap; /* Permite que as seÃ§Ãµes quebrem linha */
+    gap: 30px; /* EspaÃ§o entre as seÃ§Ãµes */
+    justify-content: center; /* Centraliza as seÃ§Ãµes */
 }
 
 .admin-section {
@@ -3388,9 +3385,9 @@ main.admin-login-main {
     }
 }
 
-/* -- Estilo para o Botão de Fechar/Sair do Admin (X ou Seta) -- */
+/* -- Estilo para o BotÃ£o de Fechar/Sair do Admin (X ou Seta) -- */
 .admin-dashboard-container {
-    position: relative; /* Torna o container um ponto de referência para posicionamento absoluto */
+    position: relative; /* Torna o container um ponto de referÃªncia para posicionamento absoluto */
 }
 
 .admin-close-btn {
@@ -3409,7 +3406,7 @@ main.admin-login-main {
     transform: rotate(90deg);
 }
 
-/* Ajustes na responsividade para o botão de fechar */
+/* Ajustes na responsividade para o botÃ£o de fechar */
 @media (max-width: 768px) {
     .admin-close-btn {
         font-size: 1.5em;
@@ -3418,12 +3415,12 @@ main.admin-login-main {
     }
 }
 
-/* -- Estilos Específicos para o Modal de Seleção de Nutricionista -- */
+/* -- Estilos EspecÃ­ficos para o Modal de SeleÃ§Ã£o de Nutricionista -- */
 .nutri-selection-list {
     margin-top: 20px;
     border: 1px solid #eee;
     border-radius: 10px;
-    max-height: 300px; /* Altura máxima para rolar */
+    max-height: 300px; /* Altura mÃ¡xima para rolar */
     overflow-y: auto;
     background-color: #f9f9f9;
     padding: 10px;
@@ -3686,7 +3683,7 @@ body.nutri-theme nav ul li a.active {
     box-shadow: var(--shadow-lg);
 }
 
-/* Mensagem quando não há pacientes */
+/* Mensagem quando nÃ£o hÃ¡ pacientes */
 .no-patients-message {
     text-align: center;
     color: var(--gray-500);
@@ -3700,7 +3697,7 @@ body.nutri-theme nav ul li a.active {
     width: 100%;
 }
 
-/* Solicitações pendentes */
+/* SolicitaÃ§Ãµes pendentes */
 .pending-requests {
     display: flex;
     flex-direction: column;
@@ -3783,7 +3780,7 @@ body.nutri-theme nav ul li a.active {
     box-shadow: var(--shadow-lg);
 }
 
-/* Prescrição */
+/* PrescriÃ§Ã£o */
 .prescription-section {
     margin-top: 2rem;
 }
@@ -4081,7 +4078,7 @@ body.admin-theme::before {
     transform: translateY(-1px);
 }
 
-/* Botão de fechar admin */
+/* BotÃ£o de fechar admin */
 .admin-close-btn {
     position: absolute;
     top: 1.5rem;
@@ -4196,7 +4193,7 @@ body.admin-theme::before {
 }
 
 /* ========================================
-   ANIMAÇÕES E EFEITOS ESPECIAIS
+   ANIMAÃ‡Ã•ES E EFEITOS ESPECIAIS
 ======================================== */
 @keyframes fadeInUp {
     from {
@@ -4290,7 +4287,7 @@ body.admin-theme::before {
 }
 
 
-/* Temas específicos para navbar */
+/* Temas especÃ­ficos para navbar */
 body.nutri-theme nav ul li a:hover,
 body.nutri-theme nav ul li a.active {
     background: linear-gradient(135deg, var(--secondary-cyan), var(--secondary-cyan-light));
@@ -4302,7 +4299,7 @@ body.admin-theme nav ul li a.active {
     background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
     color: var(--white);
 }
-/* Temas específicos para navbar */
+/* Temas especÃ­ficos para navbar */
 body.nutri-theme header {
     background: linear-gradient(135deg, rgba(6, 182, 212, 0.9), rgba(16, 185, 129, 0.9));
 }
@@ -4319,7 +4316,7 @@ body.admin-theme .mobile-menu-toggle span {
     background: var(--white);
 }
 
-/* Correções específicas para temas e menu mobile */
+/* CorreÃ§Ãµes especÃ­ficas para temas e menu mobile */
 body.nutri-theme .mobile-menu-toggle span,
 body.admin-theme .mobile-menu-toggle span,
 body.public-theme .mobile-menu-toggle span {
@@ -4369,7 +4366,7 @@ body.public-theme nav ul {
 }
 
 
-/* Correções finais para navbar redonda e temas */
+/* CorreÃ§Ãµes finais para navbar redonda e temas */
 body.nutri-theme header {
     background: linear-gradient(135deg, rgba(6, 182, 212, 0.95), rgba(16, 185, 129, 0.95)) !important;
 }
@@ -4409,7 +4406,7 @@ body.admin-theme nav ul li a.active {
 }
 
 
-/* Espaçamento maior para botões do registro_sucesso */
+/* EspaÃ§amento maior para botÃµes do registro_sucesso */
 .form-actions {
     gap: 3rem !important;
 }
@@ -4422,7 +4419,7 @@ body.admin-theme nav ul li a.active {
 }
 
 /* ========================================
-   ANIMAÇÕES PARA TELA INICIAL DINÂMICA
+   ANIMAÃ‡Ã•ES PARA TELA INICIAL DINÃ‚MICA
 ======================================== */
 .floating-particles {
     position: absolute;
@@ -4563,199 +4560,7 @@ body.admin-theme nav ul li a.active {
     font-size: 0.9rem;
 }
 
-/* ── DARK MODE - ADMIN DASHBOARD ── */
-body.dark-mode .public-theme .info-card {
-    background: #1a2a1f !important;
-    border-color: rgba(62, 181, 117, 0.2) !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .public-theme [style*="background: white"],
-body.dark-mode .public-theme [style*="background: #fff"],
-body.dark-mode .public-theme [style*="background-color: white"] {
-    background: #1e2d24 !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .public-theme [style*="background: #f9fafb"],
-body.dark-mode .public-theme [style*="background: #f8f8f8"],
-body.dark-mode .public-theme [style*="background: var(--gray-50)"] {
-    background: #172212 !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .public-theme [style*="color: #374151"],
-body.dark-mode .public-theme [style*="color: #111827"],
-body.dark-mode .public-theme [style*="color: #333"] {
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .public-theme [style*="color: #6b7280"],
-body.dark-mode .public-theme [style*="color: #9ca3af"] {
-    color: #aaa !important;
-}
-
-body.dark-mode .public-theme [style*="border: 1px solid #e5e7eb"],
-body.dark-mode .public-theme [style*="border: 1px solid #f3f4f6"] {
-    border-color: rgba(255,255,255,0.08) !important;
-}
-
-body.dark-mode .public-theme .btn-outline {
-    border-color: rgba(62, 181, 117, 0.4) !important;
-    color: #3eb575 !important;
-}
-
-body.dark-mode .public-theme .btn-outline:hover {
-    background: rgba(62, 181, 117, 0.15) !important;
-}
-
-body.dark-mode .public-theme .form-input,
-body.dark-mode .public-theme .form-textarea,
-body.dark-mode .public-theme .form-select {
-    background: rgba(255,255,255,0.07) !important;
-    border-color: rgba(255,255,255,0.15) !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .public-theme .form-label {
-    color: #aaa !important;
-}
-
-body.dark-mode .public-theme .nutri-list {
-    background: #1a2a1f !important;
-    border-color: rgba(62,181,117,0.15) !important;
-}
-
-body.dark-mode .public-theme .nutri-item {
-    border-color: rgba(255,255,255,0.06) !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .public-theme .alert-success {
-    background: rgba(62, 181, 117, 0.15) !important;
-    color: #a7f3c0 !important;
-    border-color: rgba(62, 181, 117, 0.3) !important;
-}
-
-body.dark-mode .public-theme .alert-error {
-    background: rgba(239, 68, 68, 0.15) !important;
-    color: #fca5a5 !important;
-    border-color: rgba(239, 68, 68, 0.3) !important;
-}
-body.dark-mode.nutri-theme,
-body.dark-mode .nutri-theme {
-    background: linear-gradient(135deg, #0f1a14 0%, #1a2e1f 50%, #0f1a14 100%) !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .nutri-theme header,
-body.dark-mode .admin-theme header {
-    background: rgba(15, 26, 20, 0.97) !important;
-}
-
-body.dark-mode .nutri-card,
-body.dark-mode .nutri-dashboard .nutri-card {
-    background: rgba(20, 35, 25, 0.95) !important;
-    border-color: rgba(62, 181, 117, 0.2) !important;
-}
-
-body.dark-mode .nutri-welcome-title,
-body.dark-mode .nutri-subtitle {
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .patient-item {
-    background: rgba(25, 40, 30, 0.9) !important;
-    border-color: rgba(62, 181, 117, 0.15) !important;
-}
-
-body.dark-mode .patient-details h3 {
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .patient-details p {
-    color: #aaa !important;
-}
-
-/* Admin dashboard dark mode */
-body.dark-mode .public-theme .info-card {
-    background: rgba(20, 30, 25, 0.9) !important;
-}
-
-body.dark-mode .public-theme .info-title {
-    color: #a7f3c0 !important;
-    -webkit-text-fill-color: #a7f3c0 !important;
-}
-
-/* Elementos inline com fundo branco/cinza claro */
-body.dark-mode [style*="background: white"],
-body.dark-mode [style*="background: #fff"],
-body.dark-mode [style*="background-color: white"],
-body.dark-mode [style*="background: rgb(255, 255, 255)"] {
-    background: #1e2d24 !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode [style*="background: #f9fafb"],
-body.dark-mode [style*="background: var(--gray-50)"],
-body.dark-mode [style*="background: #f8f8f8"] {
-    background: #172212 !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode [style*="color: #374151"],
-body.dark-mode [style*="color: #111827"],
-body.dark-mode [style*="color: #1f2937"],
-body.dark-mode [style*="color: #333"] {
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode [style*="color: #6b7280"],
-body.dark-mode [style*="color: #9ca3af"] {
-    color: #aaa !important;
-}
-
-body.dark-mode [style*="border: 1px solid #e5e7eb"],
-body.dark-mode [style*="border: 1px solid #f3f4f6"],
-body.dark-mode [style*="border-bottom: 1px solid #f3f4f6"] {
-    border-color: rgba(255,255,255,0.08) !important;
-}
-
-body.dark-mode .form-input,
-body.dark-mode .form-textarea,
-body.dark-mode .form-select {
-    background: rgba(255,255,255,0.07) !important;
-    border-color: rgba(255,255,255,0.15) !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .form-label {
-    color: #aaa !important;
-}
-
-body.dark-mode .nutri-list {
-    background: #1a2a1f !important;
-    border-color: rgba(62,181,117,0.15) !important;
-}
-
-body.dark-mode .nutri-item {
-    border-color: rgba(255,255,255,0.06) !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .modal-content {
-    background: #1e2d24 !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .modal-title {
-    color: #a7f3c0 !important;
-}
-
-body.dark-mode .dark-mode-toggle {
-    background: rgba(255,255,255,0.1) !important;
-    border-color: rgba(255,255,255,0.2) !important;
-}
+/* placeholder dark-mode removed */
 .dark-mode-toggle {
     position: absolute;
     left: 1rem;
@@ -4790,174 +4595,7 @@ body.admin-theme .dark-mode-toggle {
     border-color: rgba(255,255,255,0.25);
 }
 
-/* ── DARK MODE GLOBAL ── */
-body.dark-mode .public-theme,
-body.dark-mode.public-theme {
-    background-color: #1a1a1a !important;
-    background-image:
-        repeating-linear-gradient(
-            120deg,
-            rgba(255,255,255,0.03) 0px,
-            rgba(255,255,255,0.03) 1px,
-            transparent 1px,
-            transparent 60px
-        ),
-        repeating-linear-gradient(
-            60deg,
-            rgba(255,255,255,0.02) 0px,
-            rgba(255,255,255,0.02) 1px,
-            transparent 1px,
-            transparent 60px
-        ) !important;
-}
-
-body.dark-mode .public-theme header {
-    background: rgba(26, 26, 26, 0.95) !important;
-    border-bottom-color: rgba(255,255,255,0.08) !important;
-}
-
-body.dark-mode .public-theme nav ul li a {
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .public-theme nav ul li a:hover,
-body.dark-mode .public-theme nav ul li a.active {
-    background: rgba(62, 181, 117, 0.15) !important;
-    color: #3eb575 !important;
-}
-
-body.dark-mode .public-theme .form-card {
-    background: rgba(30, 50, 38, 0.7) !important;
-    border-color: rgba(62, 181, 117, 0.2) !important;
-}
-
-body.dark-mode .public-theme .form-title {
-    color: #a7f3c0 !important;
-    -webkit-text-fill-color: #a7f3c0 !important;
-}
-
-body.dark-mode .public-theme .form-subtitle,
-body.dark-mode .public-theme .form-body .form-label {
-    color: #86c9a0 !important;
-}
-
-body.dark-mode .public-theme .form-body .form-input,
-body.dark-mode .public-theme .form-body .form-textarea,
-body.dark-mode .public-theme .form-body .form-select {
-    background: rgba(255,255,255,0.07) !important;
-    border-color: rgba(62, 181, 117, 0.25) !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .public-theme .link-container {
-    background: rgba(30, 50, 38, 0.4) !important;
-    border-color: rgba(62, 181, 117, 0.15) !important;
-}
-
-body.dark-mode .public-theme .link-text {
-    color: #86c9a0 !important;
-}
-
-body.dark-mode .public-theme .link-highlight {
-    color: #3eb575 !important;
-    -webkit-text-fill-color: #3eb575 !important;
-}
-
-body.dark-mode .public-theme .info-card {
-    background: rgba(30, 50, 38, 0.6) !important;
-    border-color: rgba(62, 181, 117, 0.2) !important;
-}
-
-body.dark-mode .public-theme .info-title {
-    color: #a7f3c0 !important;
-    -webkit-text-fill-color: #a7f3c0 !important;
-}
-
-body.dark-mode .public-theme .info-text {
-    color: #86c9a0 !important;
-}
-
-body.dark-mode .public-theme .team-title,
-body.dark-mode .public-theme .faq-title {
-    color: #3eb575 !important;
-}
-
-body.dark-mode .public-theme .team-member {
-    background: rgba(62, 181, 117, 0.1) !important;
-    color: #a7f3c0 !important;
-}
-
-body.dark-mode .public-theme .faq-item {
-    background: rgba(62, 181, 117, 0.08) !important;
-    border-color: rgba(62, 181, 117, 0.15) !important;
-}
-
-body.dark-mode .public-theme .faq-question {
-    color: #a7f3c0 !important;
-}
-
-body.dark-mode .public-theme .faq-answer {
-    color: #86c9a0 !important;
-}
-
-body.dark-mode .public-theme .contact-item {
-    background: rgba(62, 181, 117, 0.08) !important;
-    border-color: rgba(62, 181, 117, 0.15) !important;
-}
-
-body.dark-mode .public-theme .contact-text {
-    color: #86c9a0 !important;
-}
-
-body.dark-mode .public-theme .support-link {
-    color: #3eb575 !important;
-}
-
-/* home-wrapper dark mode */
-body.dark-mode .home-wrapper {
-    background-color: #1a1a1a !important;
-}
-
-body.dark-mode .home-wrapper header {
-    background: rgba(26, 26, 26, 0.95) !important;
-    border-bottom-color: rgba(255,255,255,0.08) !important;
-}
-
-body.dark-mode .home-wrapper nav ul li a {
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .home-hero-title {
-    color: #f0f0f0 !important;
-}
-
-body.dark-mode .home-hero-desc {
-    color: #aaa !important;
-}
-
-body.dark-mode .home-features {
-    background: #111 !important;
-    border-top-color: rgba(255,255,255,0.06) !important;
-}
-
-body.dark-mode .home-feature-card {
-    background: rgba(62, 181, 117, 0.08) !important;
-    border-color: rgba(62, 181, 117, 0.15) !important;
-}
-
-body.dark-mode .home-feature-title {
-    color: #a7f3c0 !important;
-}
-
-body.dark-mode .home-feature-text {
-    color: #86c9a0 !important;
-}
-
-body.dark-mode .hbtn-login {
-    background: #2a2a2a !important;
-    color: #e0e0e0 !important;
-    border-color: #444 !important;
-}
+/* placeholder dark-mode-global removed */
 .public-theme {
     background-color: #f7f6f2 !important;
     background-image:
@@ -4986,7 +4624,7 @@ body.dark-mode .hbtn-login {
     display: none !important;
 }
 
-/* Header off-white nas páginas públicas */
+/* Header off-white nas pÃ¡ginas pÃºblicas */
 .public-theme header {
     background: rgba(247, 246, 242, 0.92) !important;
     backdrop-filter: blur(16px) !important;
@@ -5032,7 +4670,7 @@ body.dark-mode .hbtn-login {
     box-shadow: none !important;
 }
 
-/* Cards de formulário no tema off-white */
+/* Cards de formulÃ¡rio no tema off-white */
 .public-theme .form-card {
     background: rgba(220, 242, 228, 0.55) !important;
     backdrop-filter: blur(20px) !important;
@@ -5099,7 +4737,7 @@ body.dark-mode .hbtn-login {
     text-shadow: none !important;
 }
 
-/* Cards de info (Sobre Nós, Suporte) */
+/* Cards de info (Sobre NÃ³s, Suporte) */
 .public-theme .info-card {
     background: rgba(220, 242, 228, 0.5) !important;
     border: 1px solid rgba(62, 181, 117, 0.18) !important;
@@ -5161,6 +4799,20 @@ body.dark-mode .hbtn-login {
     color: #1e5c38 !important;
 }
 
+.public-theme .btn-primary {
+    background: linear-gradient(135deg, var(--secondary-cyan), var(--secondary-cyan-light)) !important;
+    box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4) !important;
+}
+
+.public-theme .btn-primary:hover {
+    background: linear-gradient(135deg, var(--secondary-cyan-dark), var(--secondary-cyan)) !important;
+    box-shadow: 0 12px 30px rgba(6, 182, 212, 0.55) !important;
+}
+
+.public-theme .link::after {
+    background: linear-gradient(90deg, var(--secondary-cyan), var(--secondary-cyan-light)) !important;
+}
+
 /* Back arrow no tema off-white */
 .public-theme .back-arrow {
     background: rgba(255,255,255,0.9) !important;
@@ -5182,7 +4834,7 @@ body.dark-mode .hbtn-login {
     }
 }
 
-/* Melhorar o título com gradiente e brilho */
+/* Melhorar o tÃ­tulo com gradiente e brilho */
 .hero-title {
     background: linear-gradient(45deg, #fff, #e0e7ff, #fff) !important;
     -webkit-background-clip: text !important;
@@ -5197,8 +4849,875 @@ body.dark-mode .hbtn-login {
     to { text-shadow: 0 0 30px rgba(255, 255, 255, 0.5); }
 }
 
-/* Melhorar a descrição */
+/* Melhorar a descriÃ§Ã£o */
 .hero-description {
     max-width: 600px !important;
     margin: 0 auto 2rem !important;
+}
+
+/* ========================================
+   DARK MODE â€” NUTRIFYBE
+   Paleta: 75% #0F1012/#181A1D, 15% texto claro, 10% roxo/verde sutil
+======================================== */
+
+/* TransiÃ§Ã£o suave em todos os elementos */
+body,
+body *,
+body *::before,
+body *::after {
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* â”€â”€ VariÃ¡veis Dark Mode â”€â”€ */
+body.dark-mode {
+    --dm-bg:          #0F1012;
+    --dm-card:        #181A1D;
+    --dm-card-raised: #202228;
+    --dm-border:      #2A2D32;
+    --dm-text:        #F1F1F3;
+    --dm-text-muted:  #9B9DA5;
+    --dm-purple:      #A78BFA;
+    --dm-purple-soft: #5E4B85;
+    --dm-green:       #4CAF7A;
+}
+
+/* â”€â”€ Base â”€â”€ */
+body.dark-mode {
+    background: var(--dm-bg) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode::before {
+    background:
+        radial-gradient(circle at 20% 80%, rgba(94, 75, 133, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(76, 175, 122, 0.05) 0%, transparent 50%) !important;
+}
+
+/* â”€â”€ Header â”€â”€ */
+body.dark-mode header,
+body.dark-mode.nutri-theme header,
+body.dark-mode.admin-theme header,
+body.dark-mode .nutri-theme header,
+body.dark-mode .admin-theme header {
+    background: linear-gradient(135deg, #4C1D95, #7C3AED) !important;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.3) !important;
+    box-shadow: 0 2px 20px rgba(124, 58, 237, 0.4) !important;
+}
+
+body.dark-mode nav ul li a {
+    color: var(--dm-text) !important;
+    text-shadow: none !important;
+}
+
+body.dark-mode nav ul li a:hover,
+body.dark-mode nav ul li a.active {
+    background: rgba(167, 139, 250, 0.2) !important;
+    color: #C4B5FD !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode.nutri-theme nav ul li a:hover,
+body.dark-mode.nutri-theme nav ul li a.active,
+body.dark-mode .nutri-theme nav ul li a:hover,
+body.dark-mode .nutri-theme nav ul li a.active {
+    background: rgba(167, 139, 250, 0.2) !important;
+    color: #C4B5FD !important;
+}
+
+body.dark-mode.admin-theme nav ul li a:hover,
+body.dark-mode.admin-theme nav ul li a.active,
+body.dark-mode .admin-theme nav ul li a:hover,
+body.dark-mode .admin-theme nav ul li a.active {
+    background: rgba(167, 139, 250, 0.2) !important;
+    color: #C4B5FD !important;
+}
+
+/* Menu mobile dark */
+@media (max-width: 768px) {
+    body.dark-mode nav ul {
+        background: rgba(24, 26, 29, 0.98) !important;
+        border-top: 1px solid var(--dm-border) !important;
+    }
+    body.dark-mode nav ul li a {
+        color: var(--dm-text) !important;
+    }
+}
+
+/* â”€â”€ BotÃ£o dark mode toggle â”€â”€ */
+body.dark-mode .dark-mode-toggle {
+    background: rgba(255,255,255,0.08) !important;
+    border-color: var(--dm-border) !important;
+}
+
+/* â”€â”€ Tema pÃºblico (pÃ¡ginas de login, registro, sobre, suporte) â”€â”€ */
+body.dark-mode .public-theme,
+body.dark-mode.public-theme {
+    background-color: var(--dm-bg) !important;
+    background-image: none !important;
+}
+
+body.dark-mode .public-theme header {
+    background: linear-gradient(135deg, #4C1D95, #7C3AED) !important;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.3) !important;
+}
+
+body.dark-mode .public-theme nav ul li a {
+    color: var(--dm-text) !important;
+    text-shadow: none !important;
+}
+
+body.dark-mode .public-theme nav ul li a:hover,
+body.dark-mode .public-theme nav ul li a.active {
+    background: rgba(139, 111, 207, 0.15) !important;
+    color: var(--dm-text) !important;
+}
+
+/* Form card pÃºblico */
+body.dark-mode .public-theme .form-card {
+    background: var(--dm-card) !important;
+    border: 1px solid var(--dm-border) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+    animation: none !important;
+}
+
+body.dark-mode .public-theme .form-card::before,
+body.dark-mode .public-theme .form-card::after {
+    display: none !important;
+}
+
+body.dark-mode .public-theme .form-title {
+    color: var(--dm-text) !important;
+    -webkit-text-fill-color: var(--dm-text) !important;
+    text-shadow: none !important;
+}
+
+body.dark-mode .public-theme .form-subtitle {
+    color: var(--dm-text-muted) !important;
+    text-shadow: none !important;
+}
+
+body.dark-mode .public-theme .form-body .form-label {
+    color: var(--dm-text-muted) !important;
+    text-shadow: none !important;
+}
+
+body.dark-mode .public-theme .form-body .form-input,
+body.dark-mode .public-theme .form-body .form-textarea,
+body.dark-mode .public-theme .form-body .form-select {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .public-theme .form-body .form-input:focus,
+body.dark-mode .public-theme .form-body .form-textarea:focus,
+body.dark-mode .public-theme .form-body .form-select:focus {
+    border-color: var(--dm-purple) !important;
+    box-shadow: 0 0 0 3px rgba(139, 111, 207, 0.15) !important;
+}
+
+body.dark-mode .public-theme .form-body .form-input::placeholder,
+body.dark-mode .public-theme .form-body .form-textarea::placeholder {
+    color: var(--dm-text-muted) !important;
+}
+
+/* Link container */
+body.dark-mode .public-theme .link-container {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .public-theme .link-text {
+    color: var(--dm-text-muted) !important;
+    text-shadow: none !important;
+}
+
+body.dark-mode .public-theme .link-highlight {
+    color: var(--dm-purple) !important;
+    -webkit-text-fill-color: var(--dm-purple) !important;
+    text-shadow: none !important;
+}
+
+/* Info card (Sobre NÃ³s, Suporte) */
+body.dark-mode .public-theme .info-card {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+}
+
+body.dark-mode .public-theme .info-title {
+    color: var(--dm-text) !important;
+    -webkit-text-fill-color: var(--dm-text) !important;
+    background: none !important;
+}
+
+body.dark-mode .public-theme .info-text {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .public-theme .team-title,
+body.dark-mode .public-theme .faq-title {
+    color: var(--dm-purple) !important;
+}
+
+body.dark-mode .public-theme .team-member {
+    background: var(--dm-card-raised) !important;
+    color: var(--dm-text) !important;
+    border-left-color: var(--dm-purple) !important;
+}
+
+body.dark-mode .public-theme .faq-item {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .public-theme .faq-question {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .public-theme .faq-answer {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .public-theme .faq-number {
+    background: var(--dm-purple) !important;
+}
+
+body.dark-mode .public-theme .contact-item {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .public-theme .contact-icon {
+    color: var(--dm-purple) !important;
+}
+
+body.dark-mode .public-theme .contact-text {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .public-theme .support-link {
+    color: var(--dm-purple) !important;
+}
+
+/* Alertas semÃ¢nticos */
+body.dark-mode .alert-success {
+    background: rgba(76, 175, 122, 0.12) !important;
+    color: #86efb8 !important;
+    border-color: rgba(76, 175, 122, 0.25) !important;
+}
+
+body.dark-mode .alert-error {
+    background: rgba(239, 68, 68, 0.12) !important;
+    color: #fca5a5 !important;
+    border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+body.dark-mode .alert-warning {
+    background: rgba(245, 158, 11, 0.12) !important;
+    color: #fcd34d !important;
+    border-color: rgba(245, 158, 11, 0.25) !important;
+}
+
+body.dark-mode .alert-info {
+    background: rgba(139, 111, 207, 0.12) !important;
+    color: #c4b5fd !important;
+    border-color: rgba(139, 111, 207, 0.25) !important;
+}
+
+/* â”€â”€ Tema Nutricionista â”€â”€ */
+body.dark-mode.nutri-theme,
+body.dark-mode .nutri-theme {
+    background: var(--dm-bg) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .nutri-card {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
+}
+
+body.dark-mode .nutri-welcome-title {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .nutri-subtitle {
+    color: var(--dm-text-muted) !important;
+}
+
+/* Pacientes */
+body.dark-mode .patient-item {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .patient-item:hover {
+    border-color: var(--dm-green) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+}
+
+body.dark-mode .patient-details h3 {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .patient-details p {
+    color: var(--dm-text-muted) !important;
+}
+
+/* SolicitaÃ§Ãµes */
+body.dark-mode .request-item {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .request-item:hover {
+    border-color: var(--dm-green) !important;
+}
+
+body.dark-mode .request-info h3 {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .request-info p {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .request-icon {
+    color: var(--dm-text-muted) !important;
+}
+
+/* PrescriÃ§Ã£o */
+body.dark-mode .prescription-textarea {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .prescription-textarea:focus {
+    border-color: var(--dm-green) !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 122, 0.15) !important;
+}
+
+body.dark-mode .prescription-textarea::placeholder {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .prescription-title {
+    color: var(--dm-green) !important;
+}
+
+/* â”€â”€ Tema Admin â”€â”€ */
+body.dark-mode.admin-theme,
+body.dark-mode .admin-theme {
+    background: var(--dm-bg) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .admin-dashboard-container {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
+}
+
+body.dark-mode .admin-title {
+    color: var(--dm-text) !important;
+    -webkit-text-fill-color: var(--dm-text) !important;
+    background: none !important;
+}
+
+body.dark-mode .admin-subtitle {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .admin-section {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .admin-section:hover {
+    border-color: var(--dm-purple) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25) !important;
+}
+
+body.dark-mode .admin-section h3 {
+    color: var(--dm-purple) !important;
+}
+
+body.dark-mode .nutri-list {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .nutri-item {
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .nutri-item:hover {
+    background: var(--dm-card-raised) !important;
+}
+
+body.dark-mode .nutri-info strong {
+    color: var(--dm-purple) !important;
+}
+
+/* â”€â”€ Inputs e formulÃ¡rios globais â”€â”€ */
+body.dark-mode .form-input,
+body.dark-mode .form-textarea,
+body.dark-mode .form-select {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .form-input:focus,
+body.dark-mode .form-textarea:focus,
+body.dark-mode .form-select:focus {
+    border-color: var(--dm-purple) !important;
+    box-shadow: 0 0 0 3px rgba(139, 111, 207, 0.15) !important;
+    background: var(--dm-card-raised) !important;
+}
+
+body.dark-mode .form-input::placeholder,
+body.dark-mode .form-textarea::placeholder {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .form-label {
+    color: var(--dm-text-muted) !important;
+}
+
+/* â”€â”€ Cards globais â”€â”€ */
+body.dark-mode .card {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .card-solid {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .card-title {
+    color: var(--dm-text) !important;
+    -webkit-text-fill-color: var(--dm-text) !important;
+    background: none !important;
+}
+
+body.dark-mode .card-subtitle {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .card-text {
+    color: var(--dm-text-muted) !important;
+}
+
+/* â”€â”€ Modal â”€â”€ */
+body.dark-mode .modal-content {
+    background: var(--dm-card) !important;
+    border: 1px solid var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .modal-title {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .modal-body label {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .modal-textarea,
+body.dark-mode .modal-select {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .modal-textarea:focus,
+body.dark-mode .modal-select:focus {
+    border-color: var(--dm-green) !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 122, 0.15) !important;
+}
+
+body.dark-mode .close-button {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode .close-button:hover {
+    color: var(--dm-text) !important;
+}
+
+/* â”€â”€ CalendÃ¡rio â”€â”€ */
+body.dark-mode .calendar-card {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .calendar-header {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .calendar-header h2 {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .calendar-grid {
+    background: var(--dm-border) !important;
+}
+
+body.dark-mode .day-name {
+    background: var(--dm-card-raised) !important;
+    color: var(--dm-text-muted) !important;
+    border-bottom-color: var(--dm-border) !important;
+}
+
+body.dark-mode .calendar-day {
+    background: var(--dm-card) !important;
+    color: var(--dm-text) !important;
+    border-color: transparent !important;
+}
+
+body.dark-mode .calendar-day:hover:not(.empty-day) {
+    background: var(--dm-card-raised) !important;
+    border-color: var(--dm-green) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+body.dark-mode .calendar-day.current-date {
+    background: var(--dm-purple-soft) !important;
+    border-color: var(--dm-purple) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .calendar-day.current-date .day-number {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .empty-day {
+    background: var(--dm-bg) !important;
+}
+
+body.dark-mode .day-number {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode .day-preview {
+    color: var(--dm-text-muted) !important;
+}
+
+/* Indicadores de status mantÃªm cores semÃ¢nticas */
+body.dark-mode .status-cumprido { background-color: var(--dm-green) !important; }
+body.dark-mode .status-parcialmente-cumprido { background-color: #d97706 !important; }
+body.dark-mode .status-nao-cumprido { background-color: #dc2626 !important; }
+body.dark-mode .status-planejado { background-color: var(--dm-text-muted) !important; }
+
+/* â”€â”€ Elementos inline com style direto â”€â”€ */
+body.dark-mode [style*="background: white"],
+body.dark-mode [style*="background: #fff"],
+body.dark-mode [style*="background-color: white"],
+body.dark-mode [style*="background: rgb(255, 255, 255)"] {
+    background: var(--dm-card) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode [style*="background: #f9fafb"],
+body.dark-mode [style*="background: #f8fafc"],
+body.dark-mode [style*="background: #f8f8f8"],
+body.dark-mode [style*="background: var(--gray-50)"] {
+    background: var(--dm-card-raised) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode [style*="color: #374151"],
+body.dark-mode [style*="color: #111827"],
+body.dark-mode [style*="color: #1f2937"],
+body.dark-mode [style*="color: #1e293b"],
+body.dark-mode [style*="color: #333"] {
+    color: var(--dm-text) !important;
+}
+
+body.dark-mode [style*="color: #6b7280"],
+body.dark-mode [style*="color: #64748b"],
+body.dark-mode [style*="color: #9ca3af"],
+body.dark-mode [style*="color: #94a3b8"] {
+    color: var(--dm-text-muted) !important;
+}
+
+body.dark-mode [style*="border: 1px solid #e2e8f0"],
+body.dark-mode [style*="border: 1px solid #e5e7eb"],
+body.dark-mode [style*="border: 1px solid #f3f4f6"],
+body.dark-mode [style*="border-bottom: 1px solid #f3f4f6"],
+body.dark-mode [style*="border-top: 1px solid #e2e8f0"] {
+    border-color: var(--dm-border) !important;
+}
+
+/* Scrollbar dark */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: var(--dm-card) !important;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: var(--dm-border) !important;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: var(--dm-purple-soft) !important;
+}
+
+/* SeleÃ§Ã£o de texto dark */
+body.dark-mode ::selection {
+    background: rgba(139, 111, 207, 0.3) !important;
+    color: var(--dm-text) !important;
+}
+
+
+/* ── Botões roxos no Dark Mode ── */
+body.dark-mode .btn-primary {
+    background: linear-gradient(135deg, #8B6FCF, #5E4B85) !important;
+    box-shadow: 0 8px 25px rgba(139, 111, 207, 0.35) !important;
+    animation: none !important;
+}
+
+body.dark-mode .btn-primary:hover {
+    background: linear-gradient(135deg, #7c5fc0, #4a3a6e) !important;
+    box-shadow: 0 12px 30px rgba(139, 111, 207, 0.5) !important;
+}
+
+body.dark-mode .btn-secondary {
+    background: linear-gradient(135deg, #5E4B85, #8B6FCF) !important;
+    box-shadow: 0 4px 14px rgba(94, 75, 133, 0.35) !important;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: linear-gradient(135deg, #4a3a6e, #7c5fc0) !important;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #8B6FCF !important;
+    color: #8B6FCF !important;
+    background: transparent !important;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: rgba(139, 111, 207, 0.15) !important;
+    color: #c4b5fd !important;
+}
+
+body.dark-mode .btn-ghost {
+    background: rgba(139, 111, 207, 0.1) !important;
+    color: #F1F1F3 !important;
+}
+
+body.dark-mode .btn-ghost:hover {
+    background: rgba(139, 111, 207, 0.2) !important;
+}
+
+/* Botões de ação que mantêm semântica */
+body.dark-mode .btn-success {
+    background: linear-gradient(135deg, #4CAF7A, #3a9e6a) !important;
+    box-shadow: 0 4px 14px rgba(76, 175, 122, 0.3) !important;
+}
+
+body.dark-mode .btn-danger {
+    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3) !important;
+}
+
+body.dark-mode .btn-warning {
+    background: linear-gradient(135deg, #d97706, #b45309) !important;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3) !important;
+}
+
+/* Botões específicos do nutricionista */
+body.dark-mode .btn-view-patient,
+body.dark-mode .view-patient-button {
+    background: linear-gradient(135deg, #8B6FCF, #5E4B85) !important;
+    box-shadow: 0 4px 16px rgba(139, 111, 207, 0.3) !important;
+}
+
+body.dark-mode .btn-view-patient:hover,
+body.dark-mode .view-patient-button:hover {
+    background: linear-gradient(135deg, #7c5fc0, #4a3a6e) !important;
+    box-shadow: 0 8px 25px rgba(139, 111, 207, 0.5) !important;
+}
+
+body.dark-mode .btn-save-prescription {
+    background: linear-gradient(135deg, #8B6FCF, #5E4B85) !important;
+    box-shadow: 0 4px 20px rgba(139, 111, 207, 0.4) !important;
+}
+
+body.dark-mode .btn-save-prescription:hover {
+    background: linear-gradient(135deg, #7c5fc0, #4a3a6e) !important;
+    box-shadow: 0 8px 30px rgba(139, 111, 207, 0.5) !important;
+}
+
+body.dark-mode #saveDayDetailsBtn {
+    background: #5E4B85 !important;
+}
+
+body.dark-mode #saveDayDetailsBtn:hover {
+    background: #8B6FCF !important;
+}
+
+/* Admin login card */
+body.dark-mode .admin-login-card .btn-primary.admin-btn {
+    background: linear-gradient(135deg, #8B6FCF, #5E4B85) !important;
+}
+
+
+
+
+/* ── Roxo vibrante — override das variáveis ── */
+body.dark-mode {
+    --dm-purple:      #A78BFA;
+    --dm-purple-soft: #7C3AED;
+}
+
+/* Borda do nutri-card roxa e vibrante no dark mode */
+body.dark-mode .nutri-card::before {
+    background: linear-gradient(90deg, #A78BFA, #7C3AED, #C4B5FD) !important;
+}
+
+/* Header roxo vibrante */
+body.dark-mode header,
+body.dark-mode.nutri-theme header,
+body.dark-mode.admin-theme header,
+body.dark-mode .nutri-theme header,
+body.dark-mode .admin-theme header {
+    background: linear-gradient(135deg, #4C1D95, #7C3AED) !important;
+    box-shadow: 0 2px 20px rgba(124, 58, 237, 0.4) !important;
+}
+
+/* Botões primários mais vibrantes */
+body.dark-mode .btn-primary {
+    background: linear-gradient(135deg, #7C3AED, #A78BFA) !important;
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45) !important;
+}
+
+body.dark-mode .btn-primary:hover {
+    background: linear-gradient(135deg, #6D28D9, #8B5CF6) !important;
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.6) !important;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #A78BFA !important;
+    color: #A78BFA !important;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: rgba(167, 139, 250, 0.15) !important;
+    color: #C4B5FD !important;
+}
+
+/* Form-card borda vibrante */
+body.dark-mode .public-theme .form-card {
+    border: 1px solid #7C3AED !important;
+    box-shadow: 0 8px 32px rgba(124, 58, 237, 0.25), 0 0 0 1px rgba(167, 139, 250, 0.1) !important;
+}
+
+/* Botão salvar prescrição */
+body.dark-mode .btn-save-prescription {
+    background: linear-gradient(135deg, #7C3AED, #A78BFA) !important;
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.45) !important;
+}
+
+body.dark-mode .btn-save-prescription:hover {
+    background: linear-gradient(135deg, #6D28D9, #8B5CF6) !important;
+    box-shadow: 0 8px 30px rgba(124, 58, 237, 0.6) !important;
+}
+
+/* Botão ver paciente */
+body.dark-mode .btn-view-patient,
+body.dark-mode .view-patient-button {
+    background: linear-gradient(135deg, #7C3AED, #A78BFA) !important;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4) !important;
+}
+
+body.dark-mode .btn-view-patient:hover,
+body.dark-mode .view-patient-button:hover {
+    background: linear-gradient(135deg, #6D28D9, #8B5CF6) !important;
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.55) !important;
+}
+
+/* Links e destaques roxos */
+body.dark-mode .public-theme .link-highlight {
+    color: #A78BFA !important;
+    -webkit-text-fill-color: #A78BFA !important;
+}
+
+body.dark-mode .public-theme .support-link {
+    color: #A78BFA !important;
+}
+
+body.dark-mode .link::after {
+    background: linear-gradient(90deg, var(--dm-purple), #C4B5FD) !important;
+}
+
+/* Nav hover vibrante */
+body.dark-mode nav ul li a:hover,
+body.dark-mode nav ul li a.active {
+    background: rgba(167, 139, 250, 0.2) !important;
+    color: #C4B5FD !important;
+}
+
+/* Foco nos inputs */
+body.dark-mode .form-input:focus,
+body.dark-mode .form-textarea:focus,
+body.dark-mode .form-select:focus {
+    border-color: #A78BFA !important;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2) !important;
+}
+
+/* Calendário dia atual */
+body.dark-mode .calendar-day.current-date {
+    background: #4C1D95 !important;
+    border-color: #A78BFA !important;
+}
+
+/* Scrollbar roxa vibrante */
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #7C3AED, #A78BFA) !important;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #6D28D9, #8B5CF6) !important;
+}
+
+/* Seleção de texto */
+body.dark-mode ::selection {
+    background: rgba(167, 139, 250, 0.35) !important;
+    color: #F1F1F3 !important;
+}
+
+/* Home — botões dark mode vibrantes */
+body.dark-mode .hbtn-consult {
+    background: #7C3AED !important;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.45) !important;
+}
+
+body.dark-mode .hbtn-consult:hover {
+    background: #6D28D9 !important;
+    box-shadow: 0 8px 22px rgba(124, 58, 237, 0.6) !important;
+}
+
+body.dark-mode .hbtn-nutri {
+    background: #4C1D95 !important;
+    box-shadow: 0 4px 14px rgba(76, 29, 149, 0.5) !important;
+}
+
+body.dark-mode .hbtn-nutri:hover {
+    background: #3B0764 !important;
+    box-shadow: 0 8px 22px rgba(76, 29, 149, 0.65) !important;
+}
+
+/* NutriPerfil hero roxo vibrante */
+body.dark-mode .nutri-theme .nutri-card::before {
+    background: linear-gradient(90deg, #A78BFA, #7C3AED, #C4B5FD) !important;
 }

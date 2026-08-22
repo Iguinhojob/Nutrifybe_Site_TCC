@@ -13,7 +13,8 @@
 }
 
 .modal-content {
-  background: white !important;
+  background: white;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease !important;
   padding: 2rem !important;
   border-radius: 12px !important;
   max-width: 500px !important;
@@ -29,10 +30,10 @@
   right: 15px !important;
   font-size: 24px !important;
   cursor: pointer !important;
-  color: #666 !important;
+  color: #666;
 }
 
 .modal-title {
   margin-bottom: 1rem !important;
-  color: #333 !important;
+  color: #333;
 }

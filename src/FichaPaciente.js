@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from './Header';
 import { pacientesAPI } from './services/api';
@@ -23,7 +23,7 @@ const FichaPaciente = () => {
 
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Dashboard' },
-    { href: '/nutri-solicitacoes', text: 'Solicitações' },
+    { href: '/nutri-solicitacoes', text: 'SolicitaÃ§Ãµes' },
     { href: '/', text: 'Sair', onClick: () => localStorage.removeItem('currentUser') }
   ];
 
@@ -43,7 +43,7 @@ const FichaPaciente = () => {
           return String(pacienteId) === String(id);
         });
         
-        // Garantir que todos os pacientes tenham calendário
+        // Garantir que todos os pacientes tenham calendÃ¡rio
         if (data) {
           if (!data.calendario) {
             data.calendario = {};
@@ -79,7 +79,7 @@ const FichaPaciente = () => {
       <div className="nutri-theme">
         <Header theme="nutri" links={headerLinks} />
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh'}}>
-          <p>Paciente não encontrado</p>
+          <p>Paciente nÃ£o encontrado</p>
           <p style={{fontSize: '0.9rem', color: '#666'}}>ID buscado: {id}</p>
           <p style={{fontSize: '0.9rem', color: '#666'}}>Verifique o console para mais detalhes</p>
         </div>
@@ -98,7 +98,7 @@ const FichaPaciente = () => {
           </Link>
           
           <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-            <div style={{fontSize: '4rem', color: '#06b6d4', marginBottom: '1rem'}}>👤</div>
+            <div style={{fontSize: '4rem', color: '#06b6d4', marginBottom: '1rem'}}>ðŸ‘¤</div>
             <h1 style={{color: dm.text, marginBottom: '0.5rem'}}>{paciente.nome}</h1>
             <p style={{color: dm.text2}}>{paciente.email}</p>
           </div>
@@ -115,14 +115,14 @@ const FichaPaciente = () => {
             <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
               <h3 style={{color: '#06b6d4', marginBottom: '1rem'}}>Objetivos</h3>
               <p style={{color: dm.text}}><strong>Objetivo:</strong> {paciente.objetivo}</p>
-              <p style={{color: dm.text}}><strong>Condição de Saúde:</strong> {paciente.condicao_saude || paciente.condicaoSaude}</p>
+              <p style={{color: dm.text}}><strong>CondiÃ§Ã£o de SaÃºde:</strong> {paciente.condicao_saude || paciente.condicaoSaude}</p>
             </div>
           </div>
 
           <div style={{background: dm.warn, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.warnBorder}`, textAlign: 'center', marginBottom: '2rem'}}>
-            <h3 style={{color: dm.warnText, marginBottom: '1rem'}}>📱 Funcionalidade em Desenvolvimento</h3>
-            <p style={{color: dm.warnText, marginBottom: '1rem'}}>A ficha completa do paciente estará disponível no aplicativo móvel em breve.</p>
-            <p style={{color: dm.warnText, fontSize: '0.9rem'}}>Por enquanto, você pode acessar as informações básicas e criar prescrições.</p>
+            <h3 style={{color: dm.warnText, marginBottom: '1rem'}}>ðŸ“± Funcionalidade em Desenvolvimento</h3>
+            <p style={{color: dm.warnText, marginBottom: '1rem'}}>A ficha completa do paciente estarÃ¡ disponÃ­vel no aplicativo mÃ³vel em breve.</p>
+            <p style={{color: dm.warnText, fontSize: '0.9rem'}}>Por enquanto, vocÃª pode acessar as informaÃ§Ãµes bÃ¡sicas e criar prescriÃ§Ãµes.</p>
           </div>
 
 
@@ -132,13 +132,13 @@ const FichaPaciente = () => {
               to={`/nutri-prescricao/${paciente.Id || paciente.id}`}
               className="btn btn-primary btn-lg"
             >
-              <span style={{fontSize: '1rem', marginRight: '0.5rem'}}>📝</span> Criar Prescrição
+              <span style={{fontSize: '1rem', marginRight: '0.5rem'}}>ðŸ“</span> Criar PrescriÃ§Ã£o
             </Link>
             <Link 
               to={`/nutri-calendario/${paciente.Id || paciente.id}`}
               className="btn btn-outline btn-lg"
             >
-              <span style={{fontSize: '1rem', marginRight: '0.5rem'}}>📅</span> Calendário
+              <span style={{fontSize: '1rem', marginRight: '0.5rem'}}>ðŸ“…</span> CalendÃ¡rio
             </Link>
           </div>
         </div>

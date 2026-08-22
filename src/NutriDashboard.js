@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Modal from './Modal';
@@ -22,8 +22,8 @@ const NutriDashboard = () => {
   };
 
   const headerLinks = [
-    { href: '/nutri-dashboard', text: 'Início' },
-    { href: '/nutri-solicitacoes', text: 'Solicitações Pendentes' },
+    { href: '/nutri-dashboard', text: 'InÃ­cio' },
+    { href: '/nutri-solicitacoes', text: 'SolicitaÃ§Ãµes Pendentes' },
     { href: '/login', text: 'Sair', onClick: () => navigate('/login') }
   ];
 
@@ -142,7 +142,7 @@ const NutriDashboard = () => {
         <div className="nutri-card">
           <div className="patients-list">
             {acceptedPatients.length === 0 ? (
-              <p className="no-patients-message">Você não tem pacientes.</p>
+              <p className="no-patients-message">VocÃª nÃ£o tem pacientes.</p>
             ) : (
               acceptedPatients.map(patient => (
                 <div key={patient.Id || patient.id} className="patient-item">
@@ -186,13 +186,13 @@ const NutriDashboard = () => {
         className="transfer-modal"
       >
         <label htmlFor="transferReason">
-          Por favor, descreva o motivo do encerramento e transferência do atendimento de{' '}
+          Por favor, descreva o motivo do encerramento e transferÃªncia do atendimento de{' '}
           <strong>{transferModal.patient?.Nome || transferModal.patient?.nome}</strong>:
         </label>
         <textarea
           id="transferReason"
           className="form-textarea"
-          placeholder="Ex: Paciente precisa de uma especialidade diferente, incompatibilidade de horários, etc."
+          placeholder="Ex: Paciente precisa de uma especialidade diferente, incompatibilidade de horÃ¡rios, etc."
           value={transferReason}
           onChange={(e) => setTransferReason(e.target.value)}
           required
@@ -249,7 +249,7 @@ const NutriDashboard = () => {
         
         <div style={{maxHeight: '300px', overflowY: 'auto'}}>
           {getFilteredNutris().length === 0 ? (
-            <p>Nenhum nutricionista disponível.</p>
+            <p>Nenhum nutricionista disponÃ­vel.</p>
           ) : (
             getFilteredNutris().map(nutri => (
               <div key={nutri.Id || nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', border: `1px solid ${dm.border}`, borderRadius: '8px', marginBottom: '0.5rem', background: dm.card}}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Modal from './Modal';
@@ -19,7 +19,7 @@ const NutriCalendario = () => {
     notas: '',
     status: 'planejado'
   });
-  const isDark = document.body.classList.contains('dark-mode');
+  const [isDark, setIsDark] = useState(document.body.classList.contains('dark-mode'));
   const dm = {
     card:      isDark ? '#1e2d24' : 'rgba(255,255,255,0.95)',
     dayBg:     isDark ? '#172212' : 'white',
@@ -33,8 +33,8 @@ const NutriCalendario = () => {
   };
 
   const headerLinks = [
-    { href: '/nutri-dashboard', text: 'Início' },
-    { href: '/nutri-solicitacoes', text: 'Solicitações Pendentes' },
+    { href: '/nutri-dashboard', text: 'InÃ­cio' },
+    { href: '/nutri-solicitacoes', text: 'SolicitaÃ§Ãµes Pendentes' },
     { href: '/login', text: 'Sair', onClick: () => navigate('/login') }
   ];
 
@@ -49,22 +49,22 @@ const NutriCalendario = () => {
     }
     
     if (patient) {
-      // Carregar calendário do banco ou criar vazio
+      // Carregar calendÃ¡rio do banco ou criar vazio
       if (patient.calendario && typeof patient.calendario === 'string') {
         try {
           patient.calendario = JSON.parse(patient.calendario);
         } catch (e) {
-          console.error('Erro ao parsear calendário:', e);
+          console.error('Erro ao parsear calendÃ¡rio:', e);
           patient.calendario = {};
         }
       } else if (!patient.calendario) {
         patient.calendario = {};
       }
       
-      console.log('Calendário carregado:', patient.calendario);
+      console.log('CalendÃ¡rio carregado:', patient.calendario);
       setCurrentPatient(patient);
     } else {
-      alert('Paciente não encontrado para o calendário.');
+      alert('Paciente nÃ£o encontrado para o calendÃ¡rio.');
       navigate('/nutri-dashboard');
     }
     };
@@ -180,8 +180,8 @@ const NutriCalendario = () => {
     
     try {
       const patientId = currentPatient.Id || currentPatient.id;
-      console.log('Salvando calendário para paciente ID:', patientId);
-      console.log('Dados do calendário:', currentPatient.calendario);
+      console.log('Salvando calendÃ¡rio para paciente ID:', patientId);
+      console.log('Dados do calendÃ¡rio:', currentPatient.calendario);
       
       await pacientesAPI.update(patientId, {
         calendario: currentPatient.calendario
@@ -191,7 +191,7 @@ const NutriCalendario = () => {
       alert('Detalhes do dia salvos com sucesso!');
       setDayModal({ isOpen: false });
     } catch (error) {
-      console.error('Erro ao salvar calendário:', error);
+      console.error('Erro ao salvar calendÃ¡rio:', error);
       alert('Erro ao salvar: ' + error.message);
     }
   };
@@ -254,7 +254,7 @@ const NutriCalendario = () => {
         </div>
         
         <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-          <h1 className="info-title">Calendário de {currentPatient.Nome || currentPatient.nome}</h1>
+          <h1 className="info-title">CalendÃ¡rio de {currentPatient.Nome || currentPatient.nome}</h1>
         </div>
 
         <div style={{background: dm.card, borderRadius: '20px', padding: window.innerWidth < 768 ? '1rem' : '2rem', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', maxWidth: '900px', width: '100%'}}>
@@ -311,7 +311,7 @@ const NutriCalendario = () => {
             overflow: 'hidden',
             width: '100%'
           }}>
-            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
+            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'SÃ¡b'].map(day => (
               <div key={day} style={{background: dm.header, padding: '1rem', textAlign: 'center', fontWeight: 600, color: dm.headerText, fontSize: '0.9rem'}}>{day}</div>
             ))}
             {renderCalendar()}
@@ -324,16 +324,16 @@ const NutriCalendario = () => {
         onClose={() => setDayModal({ isOpen: false })}
         title={getSelectedDateFormatted()}
       >
-        <label htmlFor="alimentacaoDiaria">Alimentação do Dia:</label>
+        <label htmlFor="alimentacaoDiaria">AlimentaÃ§Ã£o do Dia:</label>
         <textarea
           id="alimentacaoDiaria"
           className="modal-textarea"
-          placeholder="Descreva a alimentação do dia..."
+          placeholder="Descreva a alimentaÃ§Ã£o do dia..."
           value={dayData.alimentacao}
           onChange={(e) => setDayData({ ...dayData, alimentacao: e.target.value })}
         />
 
-        <label htmlFor="notasDiarias">Notas e Observações:</label>
+        <label htmlFor="notasDiarias">Notas e ObservaÃ§Ãµes:</label>
         <textarea
           id="notasDiarias"
           className="modal-textarea"
@@ -352,7 +352,7 @@ const NutriCalendario = () => {
           <option value="planejado">Planejado</option>
           <option value="cumprido">Cumprido</option>
           <option value="parcialmente-cumprido">Parcialmente Cumprido</option>
-          <option value="nao-cumprido">Não Cumprido</option>
+          <option value="nao-cumprido">NÃ£o Cumprido</option>
         </select>
 
         <div style={{marginTop: '1rem'}}>
@@ -374,7 +374,7 @@ const NutriCalendario = () => {
             </div>
             <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
               <div style={{width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#ef4444'}}></div>
-              <span>Não Cumprido</span>
+              <span>NÃ£o Cumprido</span>
             </div>
           </div>
         </div>
@@ -384,3 +384,4 @@ const NutriCalendario = () => {
 };
 
 export default NutriCalendario;
+

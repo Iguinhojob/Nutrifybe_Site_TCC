@@ -27,18 +27,28 @@ const AdminDashboard = () => {
   const [activityLog, setActivityLog] = useState([]);
   const [allAdmins, setAllAdmins] = useState([]);
   const navigate = useNavigate();
-  const isDark = document.body.classList.contains('dark-mode');
+  const [isDark, setIsDark] = useState(document.body.classList.contains('dark-mode'));
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.body.classList.contains('dark-mode'));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   const dm = {
-    card:    isDark ? '#1e2d24' : 'white',
-    card2:   isDark ? '#172212' : '#f9fafb',
-    card3:   isDark ? '#172212' : 'var(--gray-50)',
-    border:  isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb',
-    border2: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6',
-    text:    isDark ? '#e0e0e0' : '#374151',
-    text2:   isDark ? '#aaa'    : '#6b7280',
-    input:   isDark ? '#1a2a1f' : 'white',
-    inputBorder: isDark ? 'rgba(255,255,255,0.15)' : '#d1d5db',
+    card:    isDark ? '#181A1D' : 'white',
+    card2:   isDark ? '#202228' : '#f9fafb',
+    card3:   isDark ? '#202228' : '#f9fafb',
+    border:  isDark ? '#2A2D32' : '#e5e7eb',
+    border2: isDark ? '#2A2D32' : '#f3f4f6',
+    text:    isDark ? '#F1F1F3' : '#374151',
+    text2:   isDark ? '#9B9DA5' : '#6b7280',
+    title:   isDark ? '#A78BFA' : '#10b981',
+    input:   isDark ? '#202228' : 'white',
+    inputBorder: isDark ? '#2A2D32' : '#d1d5db',
+    bg:      isDark ? '#0F1012' : '#f9fafb',
   };
 
   const reloadData = async () => {
@@ -256,7 +266,7 @@ const AdminDashboard = () => {
     <div className="public-theme" style={{backgroundImage: `url(${fundoImage})`}}>
       <style>{`
         .admin-profile-btn:hover {
-          background: #059669 !important;
+          background: ${isDark ? 'linear-gradient(135deg, #6D28D9, #8B5CF6)' : '#059669'} !important;
         }
       `}</style>
       <Header theme="admin" links={headerLinks} />
@@ -271,7 +281,7 @@ const AdminDashboard = () => {
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '0.5rem', 
-                background: '#10b981', 
+                background: isDark ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : '#10b981', 
                 color: 'white', 
                 padding: '0.5rem 1rem', 
                 borderRadius: '8px', 
@@ -368,8 +378,8 @@ const AdminDashboard = () => {
                 </div>
               </div>
               
-              <div style={{background: 'var(--gray-50)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--gray-200)'}}>
-                <h3 style={{color: 'var(--accent-green)', marginBottom: '1.5rem', textAlign: 'center'}}>Consultor de CRN</h3>
+              <div style={{background: dm.bg, padding: '2rem', borderRadius: '16px', border: `1px solid ${dm.border}`}}>
+                <h3 style={{color: dm.title, marginBottom: '1.5rem', textAlign: 'center'}}>Consultor de CRN</h3>
                 <form onSubmit={handleConsultCrn}>
                   <div className="form-group">
                     <label className="form-label">CRN para Consulta</label>
@@ -484,7 +494,7 @@ const AdminDashboard = () => {
           {activeTab === 'manage' && (
             <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', marginBottom: '2rem'}}>
               <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
-                <h3 style={{color: '#10b981', marginBottom: '1rem', fontSize: '1.2rem'}}>Adicionar Nutricionista</h3>
+                <h3 style={{color: dm.title, marginBottom: '1rem', fontSize: '1.2rem'}}>Adicionar Nutricionista</h3>
                 <form onSubmit={handleAddNutri}>
                   {addMessage && (
                     <div className={`alert ${addMessage.includes('sucesso') ? 'alert-success' : 'alert-error'}`}>
@@ -545,7 +555,7 @@ const AdminDashboard = () => {
               </div>
 
               <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
-                <h3 style={{color: '#10b981', marginBottom: '1rem', fontSize: '1.2rem'}}>Nutricionistas ({getFilteredNutris.length})</h3>
+                <h3 style={{color: dm.title, marginBottom: '1rem', fontSize: '1.2rem'}}>Nutricionistas ({getFilteredNutris.length})</h3>
                 
                 <div style={{marginBottom: '1rem', display: 'flex', gap: '1rem'}}>
                   <input
@@ -637,8 +647,8 @@ const AdminDashboard = () => {
           )}
           
           {activeTab === 'activity' && (
-            <div style={{background: 'var(--gray-50)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--gray-200)'}}>
-              <h3 style={{color: 'var(--accent-green)', marginBottom: '1.5rem', textAlign: 'center'}}>Log de Atividades</h3>
+            <div style={{background: dm.card2, padding: '2rem', borderRadius: '16px', border: `1px solid ${dm.border}`}}>
+              <h3 style={{color: dm.title, marginBottom: '1.5rem', textAlign: 'center'}}>Log de Atividades</h3>
               
               <div className="nutri-list" style={{maxHeight: '500px', overflowY: 'auto'}}>
                 {activityLog.length === 0 ? (
@@ -649,7 +659,7 @@ const AdminDashboard = () => {
                       <div className="nutri-info">
                         <strong>{activity.action}</strong> - {activity.nutriName}
                         <br />
-                        <small style={{color: 'var(--gray-500)'}}>{new Date(activity.timestamp).toLocaleString()}</small>
+                        <small style={{color: dm.text2}}>{new Date(activity.timestamp).toLocaleString()}</small>
                       </div>
                     </div>
                   ))
@@ -761,7 +771,7 @@ const AdminDashboard = () => {
           {activeTab === 'patients' && (
             <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem'}}>
-                <h3 style={{color: '#10b981', margin: 0, fontSize: '1.2rem'}}>Pacientes ({allPatients.length})</h3>
+                <h3 style={{color: dm.title, margin: 0, fontSize: '1.2rem'}}>Pacientes ({allPatients.length})</h3>
                 <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
                   <span style={{color: dm.text2, fontSize: '0.9rem'}}>Ativos: {allPatients.filter(p => p.ativo === true).length}</span>
                   <span style={{color: dm.text2, fontSize: '0.9rem'}}>Inativos: {allPatients.filter(p => p.ativo !== true).length}</span>
@@ -965,8 +975,8 @@ const AdminDashboard = () => {
           )}
           
           {activeTab === 'reports' && (
-            <div style={{background: 'var(--gray-50)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--gray-200)'}}>
-              <h3 style={{color: 'var(--accent-green)', marginBottom: '1.5rem', textAlign: 'center'}}>Relatórios do Sistema</h3>
+            <div style={{background: dm.card2, padding: '2rem', borderRadius: '16px', border: `1px solid ${dm.border}`}}>
+              <h3 style={{color: dm.title, marginBottom: '1.5rem', textAlign: 'center'}}>Relatórios do Sistema</h3>
               
               <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem'}}>
                 <div style={{padding: '1.5rem', background: dm.card, borderRadius: '12px', border: `1px solid ${dm.border}`}}>
@@ -1123,7 +1133,7 @@ const AdminDashboard = () => {
           
           {activeTab === 'admins' && (
             <div style={{background: dm.card, padding: '1.5rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
-              <h3 style={{color: '#10b981', marginBottom: '1.5rem', fontSize: '1.2rem'}}>Gerenciar Administradores ({allAdmins.length})</h3>
+              <h3 style={{color: dm.title, marginBottom: '1.5rem', fontSize: '1.2rem'}}>Gerenciar Administradores ({allAdmins.length})</h3>
               
               <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem'}}>
                 <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px'}}>
@@ -1216,7 +1226,7 @@ const AdminDashboard = () => {
           
           {activeTab === 'profile' && (
             <div style={{background: dm.card, padding: '2rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
-              <h3 style={{color: '#10b981', marginBottom: '2rem', fontSize: '1.4rem', textAlign: 'center'}}>Meu Perfil</h3>
+              <h3 style={{color: dm.title, marginBottom: '2rem', fontSize: '1.4rem', textAlign: 'center'}}>Meu Perfil</h3>
               
               <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '3rem', alignItems: 'start'}}>
                 <div style={{textAlign: 'center'}}>
@@ -1415,8 +1425,8 @@ const AdminDashboard = () => {
           )}
           
           {activeTab === 'settings' && (
-            <div style={{background: 'var(--gray-50)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--gray-200)'}}>
-              <h3 style={{color: 'var(--accent-green)', marginBottom: '1.5rem', textAlign: 'center'}}>Configurações do Sistema</h3>
+            <div style={{background: dm.card2, padding: '2rem', borderRadius: '16px', border: `1px solid ${dm.border}`}}>
+              <h3 style={{color: dm.title, marginBottom: '1.5rem', textAlign: 'center'}}>Configurações do Sistema</h3>
               
               <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem'}}>
                 <div style={{padding: '1.5rem', background: dm.card, borderRadius: '12px', border: `1px solid ${dm.border}`}}>

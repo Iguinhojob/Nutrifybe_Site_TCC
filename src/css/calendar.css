@@ -343,3 +343,110 @@
   max-width: 900px;
   width: 100%;
 }
+
+/* ── Dark Mode — Calendário ── */
+body.dark-mode .calendar-open-btn {
+    background: linear-gradient(135deg, #2a5c3a, #1e3d28) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
+}
+
+body.dark-mode .calendar-open-btn:hover {
+    background: linear-gradient(135deg, #1e3d28, #2a5c3a) !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
+}
+
+body.dark-mode .calendar-card {
+    background: #181A1D !important;
+    border-color: #2A2D32 !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+}
+
+body.dark-mode .calendar-header {
+    background: #202228 !important;
+    border-color: #2A2D32 !important;
+}
+
+body.dark-mode .calendar-header h2 {
+    color: #F1F1F3 !important;
+}
+
+body.dark-mode .calendar-nav-btn {
+    background: rgba(255,255,255,0.08) !important;
+    color: #F1F1F3 !important;
+}
+
+body.dark-mode .calendar-nav-btn:hover {
+    background: rgba(255,255,255,0.14) !important;
+}
+
+body.dark-mode .calendar-grid {
+    background: #2A2D32 !important;
+}
+
+body.dark-mode .day-name {
+    background: #202228 !important;
+    color: #9B9DA5 !important;
+    border-bottom-color: #2A2D32 !important;
+}
+
+body.dark-mode .calendar-day {
+    background: #181A1D !important;
+    color: #F1F1F3 !important;
+    border-color: transparent !important;
+}
+
+body.dark-mode .calendar-day:hover:not(.empty-day) {
+    background: #202228 !important;
+    border-color: #4CAF7A !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+    transform: translateY(-2px);
+}
+
+body.dark-mode .calendar-day.current-date {
+    background: #5E4B85 !important;
+    border-color: #8B6FCF !important;
+    color: #F1F1F3 !important;
+}
+
+body.dark-mode .calendar-day.current-date:hover {
+    background: #4a3a6e !important;
+}
+
+body.dark-mode .calendar-day.current-date .day-number,
+body.dark-mode .calendar-day.current-date .day-preview {
+    color: #F1F1F3 !important;
+}
+
+body.dark-mode .empty-day {
+    background: #0F1012 !important;
+}
+
+body.dark-mode .day-number {
+    color: #F1F1F3 !important;
+}
+
+body.dark-mode .day-preview {
+    color: #9B9DA5 !important;
+}
+
+body.dark-mode .modal-textarea {
+    background: #202228 !important;
+    border-color: #2A2D32 !important;
+    color: #F1F1F3 !important;
+}
+
+body.dark-mode .modal-textarea:focus {
+    border-color: #4CAF7A !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 122, 0.15) !important;
+}
+
+body.dark-mode .modal-select {
+    background: #202228 !important;
+    border-color: #2A2D32 !important;
+    color: #F1F1F3 !important;
+}
+
+body.dark-mode .modal-select:focus {
+    border-color: #4CAF7A !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 122, 0.15) !important;
+}

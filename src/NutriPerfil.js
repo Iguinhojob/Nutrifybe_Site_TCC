@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { nutricionistasAPI } from './services/api';
@@ -11,10 +11,17 @@ const NutriPerfil = () => {
   });
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [isDark, setIsDark] = useState(document.body.classList.contains('dark-mode'));
+
+  useEffect(() => {
+    const obs = new MutationObserver(() => setIsDark(document.body.classList.contains('dark-mode')));
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
 
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Dashboard' },
-    { href: '/nutri-solicitacoes', text: 'Solicitações' },
+    { href: '/nutri-solicitacoes', text: 'SolicitaÃ§Ãµes' },
     { href: '/', text: 'Sair', onClick: () => { localStorage.removeItem('currentUser'); navigate('/'); } }
   ];
 
@@ -107,11 +114,13 @@ const NutriPerfil = () => {
 
           {/* Card principal - hero do perfil */}
           <div style={{
-            background: 'linear-gradient(135deg, rgba(6,182,212,0.9), rgba(16,185,129,0.9))',
+            background: isDark
+              ? 'linear-gradient(135deg, #4C1D95, #7C3AED)'
+              : 'linear-gradient(135deg, rgba(6,182,212,0.9), rgba(16,185,129,0.9))',
             borderRadius: '24px 24px 0 0', padding: '2.5rem 2.5rem 4rem',
             position: 'relative', overflow: 'hidden'
           }}>
-            {/* Decoração de fundo */}
+            {/* DecoraÃ§Ã£o de fundo */}
             <div style={{
               position: 'absolute', top: '-40px', right: '-40px',
               width: '200px', height: '200px', borderRadius: '50%',
@@ -144,7 +153,7 @@ const NutriPerfil = () => {
                   width: '32px', height: '32px', borderRadius: '50%',
                   background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                  color: '#06b6d4', fontSize: '0.85rem'
+                  color: isDark ? '#8B6FCF' : '#06b6d4', fontSize: '0.85rem'
                 }}>
                   <i className="fas fa-camera"></i>
                 </label>
@@ -156,7 +165,7 @@ const NutriPerfil = () => {
                   {formData.nome || 'Nutricionista'}
                 </h1>
                 <p style={{ color: 'rgba(255,255,255,0.9)', margin: '0.25rem 0 0', fontSize: '1rem', fontWeight: 500 }}>
-                  {formData.especialidade || 'Especialidade não informada'}
+                  {formData.especialidade || 'Especialidade nÃ£o informada'}
                 </p>
                 {crn && (
                   <span style={{
@@ -170,141 +179,149 @@ const NutriPerfil = () => {
                 )}
               </div>
 
-              {/* Botão voltar */}
+              {/* BotÃ£o voltar */}
               <button onClick={() => navigate('/nutri-dashboard')} style={{
                 background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)',
                 color: 'white', borderRadius: '10px', padding: '0.5rem 1rem',
                 cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem',
                 backdropFilter: 'blur(10px)', alignSelf: 'flex-start'
               }}>
-                ← Voltar
+                Voltar
               </button>
             </div>
           </div>
 
-          {/* Card de formulário */}
+          {/* Card de formulÃ¡rio */}
           <div style={{
-            background: 'white', borderRadius: '0 0 24px 24px',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.1)',
+            background: isDark ? '#181A1D' : 'white',
+            borderRadius: '0 0 24px 24px',
+            boxShadow: isDark ? '0 20px 60px rgba(0,0,0,0.4)' : '0 20px 60px rgba(0,0,0,0.1)',
+            border: isDark ? '1px solid #2A2D32' : 'none',
             padding: '2.5rem', marginTop: '-1px'
           }}>
 
-            {/* Stats rápidos */}
+            {/* Stats rÃ¡pidos */}
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2.5rem', flexWrap: 'wrap' }}>
               {[
-                { icon: 'fa-envelope', label: 'Email', value: formData.email || '—' },
-                { icon: 'fa-phone', label: 'Telefone', value: formData.telefone || '—' },
-                { icon: 'fa-calendar', label: 'Membro desde', value: dataCriacao ? dataCriacao.split('T')[0] : '—' },
+                { icon: 'fa-envelope', label: 'Email', value: formData.email || 'â€”' },
+                { icon: 'fa-phone', label: 'Telefone', value: formData.telefone || 'â€”' },
+                { icon: 'fa-calendar', label: 'Membro desde', value: dataCriacao ? dataCriacao.split('T')[0] : 'â€”' },
               ].map((item, i) => (
                 <div key={i} style={{
-                  flex: '1', minWidth: '160px', background: '#f8fafc',
-                  borderRadius: '12px', padding: '1rem', border: '1px solid #e2e8f0'
+                  flex: '1', minWidth: '160px',
+                  background: isDark ? '#202228' : '#f8fafc',
+                  borderRadius: '12px', padding: '1rem',
+                  border: `1px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                    <i className={`fas ${item.icon}`} style={{ color: '#06b6d4', fontSize: '0.85rem' }}></i>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.label}</span>
+                    <i className={`fas ${item.icon}`} style={{ color: isDark ? '#8B6FCF' : '#06b6d4', fontSize: '0.85rem' }}></i>
+                    <span style={{ fontSize: '0.75rem', color: isDark ? '#9B9DA5' : '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.label}</span>
                   </div>
-                  <p style={{ margin: 0, color: '#1e293b', fontWeight: 600, fontSize: '0.9rem', wordBreak: 'break-all' }}>{item.value}</p>
+                  <p style={{ margin: 0, color: isDark ? '#F1F1F3' : '#1e293b', fontWeight: 600, fontSize: '0.9rem', wordBreak: 'break-all' }}>{item.value}</p>
                 </div>
               ))}
             </div>
 
-            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '2rem' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <i className="fas fa-edit" style={{ color: '#06b6d4' }}></i>
-                Editar Informações
+            <div style={{ borderTop: `1px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, paddingTop: '2rem' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: isDark ? '#F1F1F3' : '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <i className="fas fa-edit" style={{ color: isDark ? '#8B6FCF' : '#06b6d4' }}></i>
+                Editar InformaÃ§Ãµes
               </h2>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                     Nome Completo
                   </label>
                   <input type="text" name="nome" value={formData.nome} onChange={handleInputChange}
                     placeholder="Seu nome completo"
-                    style={{ width: '100%', padding: '0.875rem 1rem', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }}
-                    onFocus={e => e.target.style.borderColor = '#06b6d4'}
-                    onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+                    style={{ width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box', background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b' }}
+                    onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
+                    onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                     Email
                   </label>
                   <input type="email" name="email" value={formData.email} onChange={handleInputChange}
                     placeholder="seu@email.com"
-                    style={{ width: '100%', padding: '0.875rem 1rem', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }}
-                    onFocus={e => e.target.style.borderColor = '#06b6d4'}
-                    onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+                    style={{ width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box', background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b' }}
+                    onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
+                    onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                     Telefone
                   </label>
                   <input type="tel" name="telefone" value={formData.telefone} onChange={handleInputChange}
                     placeholder="(00) 00000-0000"
-                    style={{ width: '100%', padding: '0.875rem 1rem', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }}
-                    onFocus={e => e.target.style.borderColor = '#06b6d4'}
-                    onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+                    style={{ width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box', background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b' }}
+                    onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
+                    onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                     Especialidade
                   </label>
                   <input type="text" name="especialidade" value={formData.especialidade} onChange={handleInputChange}
                     placeholder="Ex: Nutrição Esportiva"
-                    style={{ width: '100%', padding: '0.875rem 1rem', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }}
-                    onFocus={e => e.target.style.borderColor = '#06b6d4'}
-                    onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+                    style={{ width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box', background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b' }}
+                    onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
+                    onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
                   />
                 </div>
               </div>
 
               {/* Descrição profissional */}
               <div style={{ marginTop: '1.25rem' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                   Descrição Profissional
                 </label>
                 <textarea name="descricao" value={formData.descricao} onChange={handleInputChange}
                   placeholder="Conte sobre sua experiência, abordagem de trabalho, áreas de atuação e o que te diferencia como profissional..."
                   rows={5}
                   style={{
-                    width: '100%', padding: '0.875rem 1rem', border: '2px solid #e2e8f0',
+                    width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`,
                     borderRadius: '10px', fontSize: '0.95rem', outline: 'none',
                     transition: 'border-color 0.2s', resize: 'vertical', lineHeight: 1.6,
-                    fontFamily: 'inherit', boxSizing: 'border-box', color: '#1e293b'
+                    fontFamily: 'inherit', boxSizing: 'border-box',
+                    background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b'
                   }}
-                  onFocus={e => e.target.style.borderColor = '#06b6d4'}
-                  onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+                  onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
+                  onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
                 />
-                <p style={{ margin: '0.4rem 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>
+                <p style={{ margin: '0.4rem 0 0', fontSize: '0.8rem', color: isDark ? '#9B9DA5' : '#94a3b8' }}>
                   Esta descrição será visível para os pacientes ao escolherem um nutricionista.
                 </p>
               </div>
 
-              {/* Botão salvar */}
+              {/* BotÃ£o salvar */}
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', gap: '1rem' }}>
                 <button onClick={() => navigate('/nutri-dashboard')} style={{
-                  padding: '0.875rem 1.75rem', borderRadius: '10px', border: '2px solid #e2e8f0',
-                  background: 'white', color: '#64748b', fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem'
+                  padding: '0.875rem 1.75rem', borderRadius: '10px',
+                  border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`,
+                  background: isDark ? '#202228' : 'white',
+                  color: isDark ? '#9B9DA5' : '#64748b',
+                  fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem'
                 }}>
                   Cancelar
                 </button>
                 <button onClick={handleSave} disabled={loading} style={{
                   padding: '0.875rem 2rem', borderRadius: '10px', border: 'none',
-                  background: loading ? '#94a3b8' : 'linear-gradient(135deg, #06b6d4, #10b981)',
+                  background: loading ? '#94a3b8' : isDark ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : 'linear-gradient(135deg, #06b6d4, #10b981)',
                   color: 'white', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
                   fontSize: '0.95rem', boxShadow: loading ? 'none' : '0 4px 20px rgba(6,182,212,0.4)',
                   display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'all 0.2s'
                 }}>
                   {loading
                     ? <><i className="fas fa-spinner fa-spin"></i> Salvando...</>
-                    : <><i className="fas fa-save"></i> Salvar Alterações</>
+                    : <><i className="fas fa-save"></i> Salvar AlteraÃ§Ãµes</>
                   }
                 </button>
               </div>
@@ -318,3 +335,6 @@ const NutriPerfil = () => {
 };
 
 export default NutriPerfil;
+
+
+

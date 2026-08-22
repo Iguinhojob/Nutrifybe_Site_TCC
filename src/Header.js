@@ -229,34 +229,34 @@ const Header = ({ theme = 'public', links = [] }) => {
             {profileDropdown && (
               <div style={{
                 position: 'absolute', right: '10px', top: '70px',
-                background: 'white', borderRadius: '12px',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                background: darkMode ? '#181A1D' : 'white', borderRadius: '12px',
+                boxShadow: darkMode ? '0 10px 30px rgba(0,0,0,0.5)' : '0 10px 30px rgba(0,0,0,0.15)',
                 zIndex: '9999', overflow: 'hidden',
-                border: '1px solid #e0e0e0', minWidth: '200px'
+                border: darkMode ? '1px solid #2A2D32' : '1px solid #e0e0e0', minWidth: '200px'
               }}>
-                <div style={{ padding: '1rem', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ padding: '1rem', borderBottom: darkMode ? '1px solid #2A2D32' : '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: darkMode ? '#202228' : '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     {formData.foto
                       ? <img src={formData.foto} alt="Foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       : <i className="fas fa-user" style={{ color: '#06b6d4' }}></i>
                     }
                   </div>
                   <div>
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem', color: '#1e293b' }}>{formData.nome}</p>
-                    <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>{formData.especialidade || 'Nutricionista'}</p>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem', color: darkMode ? '#F1F1F3' : '#1e293b' }}>{formData.nome}</p>
+                    <p style={{ margin: 0, fontSize: '0.78rem', color: darkMode ? '#9B9DA5' : '#64748b' }}>{formData.especialidade || 'Nutricionista'}</p>
                   </div>
                 </div>
                 <Link to="/nutri-perfil" onClick={() => setProfileDropdown(false)}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem 1rem', color: '#374151', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.15s' }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem 1rem', color: darkMode ? '#F1F1F3' : '#374151', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = darkMode ? '#202228' : '#f8fafc'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <i className="fas fa-user-edit" style={{ color: '#06b6d4', width: '16px' }}></i>
                   Editar Perfil
                 </Link>
                 <button onClick={() => setProfileDropdown(false)}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem 1rem', color: '#374151', background: 'none', border: 'none', width: '100%', fontSize: '0.9rem', fontWeight: 500, cursor: 'pointer', borderTop: '1px solid #f0f0f0', transition: 'background 0.15s' }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem 1rem', color: darkMode ? '#F1F1F3' : '#374151', background: 'none', border: 'none', width: '100%', fontSize: '0.9rem', fontWeight: 500, cursor: 'pointer', borderTop: darkMode ? '1px solid #2A2D32' : '1px solid #f0f0f0', transition: 'background 0.15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = darkMode ? '#202228' : '#f8fafc'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <i className="fas fa-times" style={{ color: '#94a3b8', width: '16px' }}></i>

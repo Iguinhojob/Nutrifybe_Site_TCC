@@ -25,6 +25,13 @@
     <title>Nutrifybe - Sistema de Gestão Nutricional</title>
   </head>
   <body>
+    <script>
+      (function() {
+        if (localStorage.getItem('darkMode') === 'true') {
+          document.body.classList.add('dark-mode');
+        }
+      })();
+    </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>
