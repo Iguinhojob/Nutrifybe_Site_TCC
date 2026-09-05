@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { nutricionistasAPI } from './services/api';
@@ -99,20 +99,18 @@ const NutriPerfil = () => {
       <main style={{ padding: '5rem 1rem 2rem', minHeight: '100vh' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
 
-          {/* Banner de sucesso */}
           {saved && (
             <div style={{
-              background: 'linear-gradient(135deg, #10b981, #34d399)',
+              background: isDark ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : 'linear-gradient(135deg, #06b6d4, #38bdf8)',
               color: 'white', borderRadius: '12px', padding: '1rem 1.5rem',
               marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              boxShadow: '0 4px 20px rgba(16,185,129,0.3)', fontWeight: 600
+              boxShadow: isDark ? '0 4px 20px rgba(124,58,237,0.3)' : '0 4px 20px rgba(6,182,212,0.3)', fontWeight: 600
             }}>
               <i className="fas fa-check-circle" style={{ fontSize: '1.25rem' }}></i>
               Perfil atualizado com sucesso!
             </div>
           )}
 
-          {/* Card principal - hero do perfil */}
           <div style={{
             background: isDark
               ? 'linear-gradient(135deg, #4C1D95, #7C3AED)'
@@ -120,7 +118,6 @@ const NutriPerfil = () => {
             borderRadius: '24px 24px 0 0', padding: '2.5rem 2.5rem 4rem',
             position: 'relative', overflow: 'hidden'
           }}>
-            {/* Decoração de fundo */}
             <div style={{
               position: 'absolute', top: '-40px', right: '-40px',
               width: '200px', height: '200px', borderRadius: '50%',
@@ -133,7 +130,6 @@ const NutriPerfil = () => {
             }} />
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', position: 'relative', zIndex: 1 }}>
-              {/* Foto */}
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <div style={{
                   width: '110px', height: '110px', borderRadius: '50%',
@@ -159,7 +155,6 @@ const NutriPerfil = () => {
                 </label>
               </div>
 
-              {/* Info principal */}
               <div style={{ flex: 1 }}>
                 <h1 style={{ color: 'white', fontSize: '1.75rem', fontWeight: 800, margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
                   {formData.nome || 'Nutricionista'}
@@ -179,7 +174,6 @@ const NutriPerfil = () => {
                 )}
               </div>
 
-              {/* Botão voltar */}
               <button onClick={() => navigate('/nutri-dashboard')} style={{
                 background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)',
                 color: 'white', borderRadius: '10px', padding: '0.5rem 1rem',
@@ -191,7 +185,6 @@ const NutriPerfil = () => {
             </div>
           </div>
 
-          {/* Card de formulário */}
           <div style={{
             background: isDark ? '#181A1D' : 'white',
             borderRadius: '0 0 24px 24px',
@@ -200,12 +193,11 @@ const NutriPerfil = () => {
             padding: '2.5rem', marginTop: '-1px'
           }}>
 
-            {/* Stats rápidos */}
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2.5rem', flexWrap: 'wrap' }}>
               {[
-                { icon: 'fa-envelope', label: 'Email', value: formData.email || 'â€”' },
-                { icon: 'fa-phone', label: 'Telefone', value: formData.telefone || 'â€”' },
-                { icon: 'fa-calendar', label: 'Membro desde', value: dataCriacao ? dataCriacao.split('T')[0] : 'â€”' },
+                { icon: 'fa-envelope', label: 'Email', value: formData.email || '-' },
+                { icon: 'fa-phone', label: 'Telefone', value: formData.telefone || '-' },
+                { icon: 'fa-calendar', label: 'Membro desde', value: dataCriacao ? new Date(dataCriacao).toLocaleDateString() : '-' },
               ].map((item, i) => (
                 <div key={i} style={{
                   flex: '1', minWidth: '160px',
@@ -278,7 +270,6 @@ const NutriPerfil = () => {
                 </div>
               </div>
 
-              {/* Descrição profissional */}
               <div style={{ marginTop: '1.25rem' }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                   Descrição Profissional
@@ -301,7 +292,6 @@ const NutriPerfil = () => {
                 </p>
               </div>
 
-              {/* Botão salvar */}
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', gap: '1rem' }}>
                 <button onClick={() => navigate('/nutri-dashboard')} style={{
                   padding: '0.875rem 1.75rem', borderRadius: '10px',
@@ -335,6 +325,3 @@ const NutriPerfil = () => {
 };
 
 export default NutriPerfil;
-
-
-

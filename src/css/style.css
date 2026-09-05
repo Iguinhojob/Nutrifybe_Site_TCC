@@ -5187,7 +5187,7 @@ body.dark-mode .request-info h3 {
 }
 
 body.dark-mode .request-info p {
-    color: var(--dm-text-muted) !important;
+    color: var(--dm-purple) !important;
 }
 
 body.dark-mode .request-icon {

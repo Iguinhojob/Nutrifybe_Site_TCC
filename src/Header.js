@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { nutricionistasAPI } from './services/api';
+import { nutricionistasAPI, solicitacoesAPI } from './services/api';
 
 const Header = ({ theme = 'public', links = [] }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -8,6 +8,7 @@ const Header = ({ theme = 'public', links = [] }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [formData, setFormData] = useState({ nome: '', email: '', telefone: '', especialidade: '', foto: '' });
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+  const [pendingCount, setPendingCount] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
@@ -134,7 +135,20 @@ const Header = ({ theme = 'public', links = [] }) => {
     }
   };
 
+  useEffect(() => {
+    if (theme !== 'minimal') return;
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userId = user.id || user.Id;
+    if (!userId) return;
+    solicitacoesAPI.getByNutricionista(userId)
+      .then(s => setPendingCount(s.length))
+      .catch(() => {});
+  }, [theme]);
+
   if (theme === 'minimal') {
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userName = user.nome || user.Nome || 'Perfil';
+    const userFoto = user.foto || user.Foto || '';
     return (
       <div style={{
         position: 'fixed', top: 0, right: 0, zIndex: 9999,
@@ -168,6 +182,62 @@ const Header = ({ theme = 'public', links = [] }) => {
             </svg>
           )}
         </button>
+        <Link
+          to="/nutri-solicitacoes"
+          title="Solicitações Pendentes"
+          style={{
+            pointerEvents: 'all',
+            background: darkMode ? 'rgba(32,34,40,0.85)' : 'rgba(255,255,255,0.85)',
+            border: darkMode ? '1px solid #2A2D32' : '1px solid #e5e7eb',
+            borderRadius: '20px', height: '38px',
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+            padding: '0 0.75rem',
+            cursor: 'pointer', backdropFilter: 'blur(10px)',
+            textDecoration: 'none', color: darkMode ? '#F1F1F3' : '#374151',
+            fontSize: '0.85rem', fontWeight: 600, position: 'relative'
+          }}
+        >
+          <div style={{ position: 'relative' }}>
+            <i className="fas fa-bell" style={{ fontSize: '0.8rem', color: darkMode ? '#A78BFA' : '#06b6d4' }}></i>
+            {pendingCount > 0 && (
+              <span style={{
+                position: 'absolute', top: '-6px', right: '-6px',
+                background: '#ef4444', color: 'white',
+                borderRadius: '50%', width: '14px', height: '14px',
+                fontSize: '0.6rem', fontWeight: 700,
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>!</span>
+            )}
+          </div>
+          Solicitações
+        </Link>
+        <Link
+          to="/nutri-perfil"
+          title="Meu Perfil"
+          style={{
+            pointerEvents: 'all',
+            background: darkMode ? 'rgba(32,34,40,0.85)' : 'rgba(255,255,255,0.85)',
+            border: darkMode ? '1px solid #2A2D32' : '1px solid #e5e7eb',
+            borderRadius: '20px', height: '38px',
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+            padding: '0 0.75rem',
+            cursor: 'pointer', backdropFilter: 'blur(10px)',
+            textDecoration: 'none', color: darkMode ? '#F1F1F3' : '#374151',
+            fontSize: '0.85rem', fontWeight: 600
+          }}
+        >
+          <div style={{
+            width: '24px', height: '24px', borderRadius: '50%',
+            overflow: 'hidden', background: darkMode ? '#202228' : '#e0f2fe',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+          }}>
+            {userFoto
+              ? <img src={userFoto} alt="Foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : <i className="fas fa-user" style={{ color: '#06b6d4', fontSize: '0.7rem' }}></i>
+            }
+          </div>
+          {userName}
+        </Link>
         <a
           href="/"
           title="Voltar ao início"

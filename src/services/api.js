@@ -112,7 +112,7 @@ export const solicitacoesAPI = {
     console.log('Solicitações:', solicitacoes);
     console.log('Nutricionista ID buscado:', nutricionistaId);
     return solicitacoes.filter(s => {
-      const solicitacaoNutriId = s.nutricionistaId || s.NutricionistaId;
+      const solicitacaoNutriId = s.nutricionistaId || s.NutricionistaId || s.nutricionista_id;
       console.log('Comparando:', solicitacaoNutriId, 'com', nutricionistaId);
       return String(solicitacaoNutriId) === String(nutricionistaId);
     });
@@ -135,14 +135,14 @@ export const solicitacoesAPI = {
     
     // Criar paciente com todos os campos
     const paciente = {
-      nome: solicitacao.nome,
-      email: solicitacao.email,
-      idade: solicitacao.idade,
-      peso: solicitacao.peso,
-      altura: solicitacao.altura,
-      objetivo: solicitacao.objetivo,
-      condicaoSaude: solicitacao.condicaoSaude,
-      nutricionistaId: solicitacao.nutricionistaId,
+      nome: solicitacao.nome || solicitacao.Nome,
+      email: solicitacao.email || solicitacao.Email,
+      idade: solicitacao.idade || solicitacao.Idade,
+      peso: solicitacao.peso || solicitacao.Peso,
+      altura: solicitacao.altura || solicitacao.Altura,
+      objetivo: solicitacao.objetivo || solicitacao.Objetivo,
+      condicaoSaude: solicitacao.condicaoSaude || solicitacao.CondicaoSaude,
+      nutricionistaId: solicitacao.nutricionistaId || solicitacao.NutricionistaId || solicitacao.nutricionista_id,
       status: 'accepted',
       ativo: 1
     };

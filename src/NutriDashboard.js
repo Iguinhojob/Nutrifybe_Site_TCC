@@ -12,8 +12,15 @@ const NutriDashboard = () => {
   const [transferReason, setTransferReason] = useState('');
   const [searchNutri, setSearchNutri] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
+  const [isDark, setIsDark] = useState(document.body.classList.contains('dark-mode'));
   const navigate = useNavigate();
-  const isDark = document.body.classList.contains('dark-mode');
+
+  useEffect(() => {
+    const obs = new MutationObserver(() => setIsDark(document.body.classList.contains('dark-mode')));
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
+
   const dm = {
     card:   isDark ? '#1e2d24' : 'white',
     border: isDark ? 'rgba(255,255,255,0.08)' : '#ddd',
@@ -24,7 +31,8 @@ const NutriDashboard = () => {
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Início' },
     { href: '/nutri-solicitacoes', text: 'Solicitações Pendentes' },
-    { href: '/login', text: 'Sair', onClick: () => navigate('/login') }
+    { href: '/nutri-perfil', text: 'Meu Perfil' },
+    { href: '/login', text: 'Sair', onClick: () => { localStorage.removeItem('currentUser'); navigate('/login'); } }
   ];
 
   useEffect(() => {
@@ -145,7 +153,10 @@ const NutriDashboard = () => {
               <p className="no-patients-message">Você não tem pacientes.</p>
             ) : (
               acceptedPatients.map(patient => (
-                <div key={patient.Id || patient.id} className="patient-item">
+                <div key={patient.Id || patient.id} className="patient-item"
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'; e.currentTarget.style.boxShadow = isDark ? '0 4px 16px rgba(167,139,250,0.2)' : '0 4px 16px rgba(6,182,212,0.2)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.boxShadow = ''; }}
+                >
                   <div className="patient-info">
                     <i className="fas fa-user-circle patient-icon"></i>
                     <div className="patient-details">
@@ -158,6 +169,7 @@ const NutriDashboard = () => {
                     <Link 
                       to={`/ficha-paciente/${patient.Id || patient.id}`} 
                       className="btn btn-primary"
+                      style={{ background: isDark ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : 'linear-gradient(135deg, #06b6d4, #22d3ee)', boxShadow: 'none' }}
                     >
                       Ver Ficha
                     </Link>
