@@ -94,9 +94,9 @@ const NutriPerfil = () => {
 
   return (
     <div className="nutri-theme">
-      <Header theme="nutri" links={headerLinks} />
+      <Header theme="minimal" />
 
-      <main style={{ padding: '2rem 1rem', minHeight: 'calc(100vh - 80px)' }}>
+      <main style={{ padding: '5rem 1rem 2rem', minHeight: '100vh' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
 
           {/* Banner de sucesso */}

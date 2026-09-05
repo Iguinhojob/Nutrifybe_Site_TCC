@@ -45,6 +45,8 @@ const AdminLogin = () => {
           id: admin.id,
           nome: admin.nome?.replace(/<[^>]*>/g, ''),
           email: admin.email?.replace(/<[^>]*>/g, ''),
+          foto: admin.foto || null,
+          dataCriacao: admin.dataCriacao || null,
           type: 'admin'
         };
         localStorage.setItem('authToken', 'admin_token_' + admin.id);

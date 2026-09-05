@@ -9,30 +9,18 @@ Sistema completo para gestão de consultas nutricionais com arquitetura moderna 
 npm install
 ```
 
-### 2. Instalar Dependências da API
+### 2. Iniciar o Backend (Java/Spring Boot)
 ```bash
-cd api
-npm install
+cd api-java
+mvn spring-boot:run
 ```
+A API estará disponível em: `http://localhost:8080`
 
-### 3. Iniciar a API (Backend)
-```bash
-cd api
-node index.js
-```
-A API estará disponível em: `http://localhost:3001`
-
-### 4. Iniciar o Frontend (em outro terminal)
+### 3. Iniciar o Frontend (em outro terminal)
 ```bash
 npm start
 ```
 A aplicação estará disponível em: `http://localhost:3000`
-
-### Alternativa - Modo Desenvolvimento Local
-```bash
-npm run dev-local
-```
-Inicia ambos os serviços simultaneamente usando JSON Server local.
 
 ## 👥 Usuários de Teste
 

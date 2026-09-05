@@ -193,6 +193,19 @@ export const adminAPI = {
   })
 };
 
+// Recuperação de Senha
+export const recuperarSenhaAPI = {
+  solicitar: (email) => apiRequest('/api/recuperar-senha/solicitar', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  }),
+  validarToken: (token) => apiRequest(`/api/recuperar-senha/validar?token=${encodeURIComponent(token)}`),
+  redefinir: (token, novaSenha) => apiRequest('/api/recuperar-senha/redefinir', {
+    method: 'POST',
+    body: JSON.stringify({ token, novaSenha }),
+  }),
+};
+
 const api = {
   nutricionistasAPI,
   pacientesAPI,

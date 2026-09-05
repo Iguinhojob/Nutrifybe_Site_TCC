@@ -28,6 +28,18 @@ const AdminDashboard = () => {
   const [allAdmins, setAllAdmins] = useState([]);
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(document.body.classList.contains('dark-mode'));
+  const [adminFoto, setAdminFoto] = useState(() => JSON.parse(localStorage.getItem('currentAdmin'))?.foto || null);
+  const [adminNome, setAdminNome] = useState(() => JSON.parse(localStorage.getItem('currentAdmin'))?.nome || 'Admin');
+
+  const getInitials = (nome) => {
+    if (!nome) return 'A';
+    return nome.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+  };
+
+  const refreshAdminState = () => {
+    const a = JSON.parse(localStorage.getItem('currentAdmin'));
+    if (a) { setAdminFoto(a.foto || null); setAdminNome(a.nome || 'Admin'); }
+  };
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -63,8 +75,8 @@ const AdminDashboard = () => {
       
       const stats = {
         totalPacientes: pacientes.length,
-        pacientesAtivos: pacientes.filter(p => p.ativo === true).length,
-        nutricionistasAtivos: nutricionistas.filter(n => n.Status === 'approved' && n.ativo === true).length,
+        pacientesAtivos: pacientes.filter(p => p.ativo == 1).length,
+        nutricionistasAtivos: nutricionistas.filter(n => n.Status === 'approved' && n.ativo == 1).length,
         solicitacoesPendentes: (await api.solicitacoesAPI.getAll()).length
       };
       setSystemStats(stats);
@@ -95,8 +107,8 @@ const AdminDashboard = () => {
         // Calcular estatísticas do sistema
         const stats = {
           totalPacientes: pacientes.length,
-          pacientesAtivos: pacientes.filter(p => p.ativo === true).length,
-          nutricionistasAtivos: nutricionistas.filter(n => n.status === 'approved' && n.ativo === true).length,
+          pacientesAtivos: pacientes.filter(p => p.ativo == 1).length,
+          nutricionistasAtivos: nutricionistas.filter(n => n.status === 'approved' && n.ativo == 1).length,
           solicitacoesPendentes: (await api.solicitacoesAPI.getAll()).length
         };
         setSystemStats(stats);
@@ -265,49 +277,46 @@ const AdminDashboard = () => {
   return (
     <div className="public-theme" style={{backgroundImage: `url(${fundoImage})`}}>
       <style>{`
-        .admin-profile-btn:hover {
-          background: ${isDark ? 'linear-gradient(135deg, #6D28D9, #8B5CF6)' : '#059669'} !important;
-        }
+        .admin-avatar-btn { transition: box-shadow 0.2s, transform 0.2s; }
+        .admin-avatar-btn:hover { box-shadow: 0 0 0 3px ${isDark ? 'rgba(167,139,250,0.4)' : 'rgba(16,185,129,0.35)'}; transform: scale(1.05); }
       `}</style>
-      <Header theme="admin" links={headerLinks} />
+      <Header theme="minimal" />
       
-      <main className="form-section" style={{minHeight: 'calc(100vh - 80px)', padding: '2rem 1rem'}}>
+      <main className="form-section" style={{minHeight: '100vh', padding: '5rem 1rem 2rem'}}>
         <div className="info-card" style={{maxWidth: '1400px', width: '95%'}}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
             <h1 className="info-title" style={{margin: 0}}>Dashboard do Administrador</h1>
-            <div 
-              className="admin-profile-btn"
-              style={{
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.5rem', 
-                background: isDark ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : '#10b981', 
-                color: 'white', 
-                padding: '0.5rem 1rem', 
-                borderRadius: '8px', 
-                fontSize: '0.9rem', 
-                cursor: 'pointer'
-              }}
+
+            {/* Avatar de perfil */}
+            <div
+              className="admin-avatar-btn"
               onClick={() => setActiveTab('profile')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.6rem',
+                cursor: 'pointer', padding: '0.4rem 0.8rem 0.4rem 0.4rem',
+                borderRadius: '999px',
+                border: `1px solid ${isDark ? '#2A2D32' : '#e5e7eb'}`,
+                background: isDark ? '#202228' : '#f9fafb',
+              }}
             >
-              <div 
-                style={{
-                  width: '24px', 
-                  height: '24px', 
-                  borderRadius: '50%', 
-                  backgroundImage: currentAdmin?.foto ? `url(${encodeURIComponent(currentAdmin.foto)})` : 'none',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.8rem',
-                  border: '1px solid rgba(255,255,255,0.3)'
-                }}
-              >
-                {!currentAdmin?.foto && '👤'}
+              <div style={{
+                width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0,
+                overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: adminFoto ? 'transparent' : (isDark ? 'linear-gradient(135deg,#7C3AED,#A78BFA)' : 'linear-gradient(135deg,#10b981,#059669)'),
+                fontSize: '0.85rem', fontWeight: '700', color: 'white',
+                border: `2px solid ${isDark ? '#3A3D45' : '#d1fae5'}`,
+              }}>
+                {adminFoto
+                  ? <img src={adminFoto} alt="foto" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                  : getInitials(adminNome)
+                }
               </div>
-              {JSON.parse(localStorage.getItem('currentAdmin'))?.nome || 'Admin'}
+              <span style={{fontSize: '0.875rem', fontWeight: '600', color: isDark ? '#F1F1F3' : '#374151', whiteSpace: 'nowrap'}}>
+                {adminNome}
+              </span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{opacity: 0.5}}>
+                <path d="M2 4l4 4 4-4" stroke={isDark ? '#F1F1F3' : '#374151'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
           </div>
           
@@ -316,44 +325,44 @@ const AdminDashboard = () => {
               className={`btn ${activeTab === 'dashboard' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('dashboard')}
             >
-              📊 Dashboard
+              Dashboard
             </button>
             <button 
               className={`btn ${activeTab === 'manage' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('manage')}
             >
-              👩‍⚕️ Nutricionistas
+              Nutricionistas
             </button>
             <button 
               className={`btn ${activeTab === 'activity' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('activity')}
             >
-              📋 Atividades
+              Atividades
             </button>
             <button 
               className={`btn ${activeTab === 'patients' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('patients')}
             >
-              🏥 Pacientes
+              Pacientes
             </button>
             <button 
               className={`btn ${activeTab === 'reports' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('reports')}
             >
-              📈 Relatórios
+              Relatórios
             </button>
             <button 
               className={`btn ${activeTab === 'admins' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('admins')}
             >
-              👤 Admins
+              Admins
             </button>
 
             <button 
               className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setActiveTab('settings')}
             >
-              ⚙️ Configurações
+              Configurações
             </button>
           </div>
 
@@ -420,9 +429,9 @@ const AdminDashboard = () => {
                             <span style={{
                               marginLeft: '1rem',
                               fontWeight: 'bold',
-                              color: consultResult.ativo !== false ? 'green' : 'red'
+                              color: consultResult.ativo == 1 ? 'green' : 'red'
                             }}>
-                              ({consultResult.ativo !== false ? 'ATIVO' : 'INATIVO'})
+                              ({consultResult.ativo == 1 ? 'ATIVO' : 'INATIVO'})
                             </span>
                           )}
                         </p>
@@ -456,7 +465,7 @@ const AdminDashboard = () => {
                         )}
                         {consultResult.status === 'approved' && (
                           <>
-                            {consultResult.ativo !== false ? (
+                            {consultResult.ativo == 1 ? (
                               <button 
                                 className="nutri-action-btn btn-warning"
                                 onClick={() => {
@@ -606,9 +615,9 @@ const AdminDashboard = () => {
                               fontSize: '0.75rem',
                               fontWeight: 'bold',
                               color: 'white',
-                              background: nutri.ativo !== false ? '#059669' : '#dc2626'
+                              background: nutri.ativo == 1 ? '#059669' : '#dc2626'
                             }}>
-                              {nutri.ativo !== false ? 'ATIVO' : 'INATIVO'}
+                              {nutri.ativo == 1 ? 'ATIVO' : 'INATIVO'}
                             </span>
                           )}
                           {nutri.status === 'pending' && (
@@ -621,10 +630,10 @@ const AdminDashboard = () => {
                           )}
                           {nutri.status === 'approved' && (
                             <button 
-                              style={{padding: '0.5rem 1rem', background: nutri.ativo !== false ? '#f59e0b' : '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer'}}
-                              onClick={() => handleNutriAction(nutri.id, nutri.ativo !== false ? 'deactivate' : 'activate')}
+                              style={{padding: '0.5rem 1rem', background: nutri.ativo == 1 ? '#f59e0b' : '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer'}}
+                              onClick={() => handleNutriAction(nutri.id, nutri.ativo == 1 ? 'deactivate' : 'activate')}
                             >
-                              {nutri.ativo !== false ? 'Desativar' : 'Ativar'}
+                              {nutri.ativo == 1 ? 'Desativar' : 'Ativar'}
                             </button>
                           )}
                           <button 
@@ -744,7 +753,7 @@ const AdminDashboard = () => {
                     doc.save(`Log_Atividades_Nutrifybe_${new Date().toISOString().split('T')[0]}.pdf`);
                   }}
                 >
-                  📄 Exportar Log (PDF)
+                  Exportar Log (PDF)
                 </button>
                 <button 
                   className="btn btn-warning" 
@@ -762,7 +771,7 @@ const AdminDashboard = () => {
                     }
                   }}
                 >
-                  🗑️ Limpar Histórico
+                  Limpar Histórico
                 </button>
               </div>
             </div>
@@ -773,8 +782,8 @@ const AdminDashboard = () => {
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem'}}>
                 <h3 style={{color: dm.title, margin: 0, fontSize: '1.2rem'}}>Pacientes ({allPatients.length})</h3>
                 <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-                  <span style={{color: dm.text2, fontSize: '0.9rem'}}>Ativos: {allPatients.filter(p => p.ativo === true).length}</span>
-                  <span style={{color: dm.text2, fontSize: '0.9rem'}}>Inativos: {allPatients.filter(p => p.ativo !== true).length}</span>
+                  <span style={{color: dm.text2, fontSize: '0.9rem'}}>Ativos: {allPatients.filter(p => p.ativo == 1).length}</span>
+                  <span style={{color: dm.text2, fontSize: '0.9rem'}}>Inativos: {allPatients.filter(p => p.ativo != 1).length}</span>
                 </div>
               </div>
               
@@ -785,10 +794,10 @@ const AdminDashboard = () => {
                   allPatients.map(patient => {
                     const nutri = managedNutricionists.find(n => n.id === patient.nutricionista_id);
                     return (
-                      <div key={patient.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: patient.ativo === true ? dm.card2 : (isDark ? '#2d1a1a' : '#fef2f2'), borderRadius: '8px', marginBottom: '0.5rem', border: `1px solid ${patient.ativo === true ? dm.border : (isDark ? '#5a2a2a' : '#fecaca')}`}}>
+                      <div key={patient.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: patient.ativo == 1 ? dm.card2 : (isDark ? '#2d1a1a' : '#fef2f2'), borderRadius: '8px', marginBottom: '0.5rem', border: `1px solid ${patient.ativo == 1 ? dm.border : (isDark ? '#5a2a2a' : '#fecaca')}`}}>
                         <div style={{flex: 1}}>
                           <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem'}}>
-                            <div style={{fontWeight: 'bold', fontSize: '1.1rem', color: patient.ativo === true ? dm.text : dm.text2}}>{patient.nome}</div>
+                            <div style={{fontWeight: 'bold', fontSize: '1.1rem', color: patient.ativo == 1 ? dm.text : dm.text2}}>{patient.nome}</div>
                             <div style={{fontSize: '0.8rem', color: dm.text2}}>#{patient.id}</div>
                           </div>
                           <div style={{color: dm.text2, fontSize: '0.85rem', lineHeight: '1.4'}}>
@@ -806,15 +815,15 @@ const AdminDashboard = () => {
                             fontSize: '0.7rem',
                             fontWeight: 'bold',
                             color: 'white',
-                            background: patient.ativo === true ? '#10b981' : '#ef4444'
+                            background: patient.ativo == 1 ? '#10b981' : '#ef4444'
                           }}>
-                            {patient.ativo === true ? '✓ ATIVO' : '✗ INATIVO'}
+                            {patient.ativo == 1 ? 'ATIVO' : 'INATIVO'}
                           </span>
                           <div style={{display: 'flex', gap: '0.5rem'}}>
                             <button 
                               style={{
                                 padding: '0.4rem 0.8rem', 
-                                background: patient.ativo === true ? '#f59e0b' : '#10b981', 
+                                background: patient.ativo == 1 ? '#f59e0b' : '#10b981', 
                                 color: 'white', 
                                 border: 'none', 
                                 borderRadius: '6px', 
@@ -824,15 +833,15 @@ const AdminDashboard = () => {
                               }}
                               onClick={async () => {
                                 try {
-                                  await api.pacientesAPI.update(patient.id, { ativo: patient.ativo === true ? 0 : 1 });
-                                  addToActivityLog(patient.ativo === true ? 'Paciente Desativado' : 'Paciente Ativado', patient.nome);
+                                  await api.pacientesAPI.update(patient.id, { ativo: patient.ativo == 1 ? 0 : 1 });
+                                  addToActivityLog(patient.ativo == 1 ? 'Paciente Desativado' : 'Paciente Ativado', patient.nome);
                                   await reloadData();
                                 } catch (error) {
                                   alert('Erro ao alterar status do paciente.');
                                 }
                               }}
                             >
-                              {patient.ativo === true ? '🚫 Desativar' : '✓ Ativar'}
+                              {patient.ativo == 1 ? 'Desativar' : 'Ativar'}
                             </button>
                             <button 
                               style={{
@@ -857,7 +866,7 @@ const AdminDashboard = () => {
                                 }
                               }}
                             >
-                              🗑️ Excluir
+                              Excluir
                             </button>
                           </div>
                         </div>
@@ -896,8 +905,8 @@ const AdminDashboard = () => {
                     // Estatísticas em caixas
                     const stats = [
                       { label: 'Total', value: allPatients.length, color: [59, 130, 246] },
-                      { label: 'Ativos', value: allPatients.filter(p => p.ativo === true).length, color: [16, 185, 129] },
-                      { label: 'Inativos', value: allPatients.filter(p => p.ativo !== true).length, color: [239, 68, 68] }
+                      { label: 'Ativos', value: allPatients.filter(p => p.ativo == 1).length, color: [16, 185, 129] },
+                      { label: 'Inativos', value: allPatients.filter(p => p.ativo != 1).length, color: [239, 68, 68] }
                     ];
                     
                     stats.forEach((stat, index) => {
@@ -926,8 +935,8 @@ const AdminDashboard = () => {
                       }
                       
                       const nutri = managedNutricionists.find(n => n.id === patient.nutricionista_id);
-                      const status = patient.ativo === true ? 'ATIVO' : 'INATIVO';
-                      const statusColor = patient.ativo === true ? [16, 185, 129] : [239, 68, 68];
+                      const status = patient.ativo == 1 ? 'ATIVO' : 'INATIVO';
+                      const statusColor = patient.ativo == 1 ? [16, 185, 129] : [239, 68, 68];
                       
                       // Linha separadora
                       doc.setDrawColor(200, 200, 200);
@@ -968,7 +977,7 @@ const AdminDashboard = () => {
                     doc.save(`Pacientes_Nutrifybe_${new Date().toISOString().split('T')[0]}.pdf`);
                   }}
                 >
-                  📄 Exportar Pacientes (PDF)
+                  Exportar Pacientes (PDF)
                 </button>
               </div>
             </div>
@@ -1103,12 +1112,12 @@ const AdminDashboard = () => {
                         doc.addPage();
                         yPos = 20;
                       }
-                      const statusColor = patient.ativo === true ? [34, 197, 94] : [239, 68, 68];
+                      const statusColor = patient.ativo == 1 ? [34, 197, 94] : [239, 68, 68];
                       doc.setTextColor(0, 0, 0);
                       doc.text(`${index + 1}. ${patient.nome}`, 20, yPos);
                       doc.text(patient.email, 80, yPos);
                       doc.setTextColor(...statusColor);
-                      doc.text(patient.ativo === true ? 'ATIVO' : 'INATIVO', 150, yPos);
+                      doc.text(patient.ativo == 1 ? 'ATIVO' : 'INATIVO', 150, yPos);
                       yPos += 8;
                     });
                     
@@ -1125,7 +1134,7 @@ const AdminDashboard = () => {
                     doc.save(`Relatorio_Executivo_Nutrifybe_${new Date().toISOString().split('T')[0]}.pdf`);
                   }}
                 >
-                  📈 Exportar Relatório (PDF)
+                  Exportar Relatório (PDF)
                 </button>
               </div>
             </div>
@@ -1203,7 +1212,7 @@ const AdminDashboard = () => {
                                 }
                               }}
                             >
-                              🗑️ Excluir
+                              Excluir
                             </button>
                           ) : (
                             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem'}}>
@@ -1227,127 +1236,123 @@ const AdminDashboard = () => {
           {activeTab === 'profile' && (
             <div style={{background: dm.card, padding: '2rem', borderRadius: '12px', border: `1px solid ${dm.border}`}}>
               <h3 style={{color: dm.title, marginBottom: '2rem', fontSize: '1.4rem', textAlign: 'center'}}>Meu Perfil</h3>
-              
-              <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '3rem', alignItems: 'start'}}>
-                <div style={{textAlign: 'center'}}>
-                  <div style={{position: 'relative', display: 'inline-block', marginBottom: '1rem'}}>
-                    <div 
-                      style={{
-                        width: '120px', 
-                        height: '120px', 
-                        borderRadius: '50%', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        fontSize: '3rem', 
-                        color: 'white',
-                        backgroundImage: currentAdmin?.foto ? `url(${encodeURIComponent(currentAdmin.foto)})` : 'linear-gradient(135deg, #10b981, #059669)',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        cursor: 'pointer',
-                        border: '3px solid #e5e7eb'
-                      }}
-                      onClick={() => document.getElementById('photoInput').click()}
-                    >
-                      {!currentAdmin?.foto && '👤'}
+
+              <div style={{display: 'grid', gridTemplateColumns: '220px 1fr', gap: '2.5rem', alignItems: 'start'}}>
+
+                {/* Coluna esquerda — avatar + info */}
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem'}}>
+                  <div style={{position: 'relative'}}>
+                    <div style={{
+                      width: '110px', height: '110px', borderRadius: '50%',
+                      overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: adminFoto ? 'transparent' : (isDark ? 'linear-gradient(135deg,#7C3AED,#A78BFA)' : 'linear-gradient(135deg,#10b981,#059669)'),
+                      fontSize: '2.2rem', fontWeight: '700', color: 'white',
+                      border: `3px solid ${isDark ? '#3A3D45' : '#d1fae5'}`,
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.12)'
+                    }}>
+                      {adminFoto
+                        ? <img src={adminFoto} alt="foto" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                        : getInitials(adminNome)
+                      }
                     </div>
-                    <input 
-                      id="photoInput" 
-                      type="file" 
-                      accept="image/*" 
-                      style={{display: 'none'}} 
+
+                    {/* Botão câmera sobreposto */}
+                    <button
+                      onClick={() => document.getElementById('photoInput').click()}
+                      title="Alterar foto"
+                      style={{
+                        position: 'absolute', bottom: '2px', right: '2px',
+                        width: '30px', height: '30px', borderRadius: '50%',
+                        background: isDark ? '#7C3AED' : '#10b981',
+                        border: `2px solid ${isDark ? '#181A1D' : 'white'}`,
+                        color: 'white', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.75rem', padding: 0
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                      </svg>
+                    </button>
+
+                    <input
+                      id="photoInput" type="file" accept="image/*" style={{display: 'none'}}
                       onChange={async (e) => {
                         const file = e.target.files[0];
-                        if (file) {
-                          const canvas = document.createElement('canvas');
-                          const ctx = canvas.getContext('2d');
-                          const img = new Image();
-                          
-                          img.onload = async () => {
-                            canvas.width = 200;
-                            canvas.height = 200;
-                            ctx.drawImage(img, 0, 0, 200, 200);
-                            const foto = canvas.toDataURL('image/jpeg', 0.7);
-                            
-                            try {
-                              await adminAPI.update(currentAdmin.id, { foto });
-                              // Atualizar localStorage
-                              const updatedAdmin = { ...currentAdmin, foto };
-                              localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
-                              addToActivityLog('Foto Atualizada', currentAdmin.nome);
-                              alert('Foto atualizada com sucesso!');
-                              // Forçar re-render
-                              setActiveTab('dashboard');
-                              setTimeout(() => setActiveTab('profile'), 100);
-                            } catch (error) {
-                              alert('Erro ao atualizar foto: ' + error.message);
-                            }
-                          };
-                          
-                          const reader = new FileReader();
-                          reader.onload = (e) => img.src = e.target.result;
-                          reader.readAsDataURL(file);
-                        }
+                        if (!file) return;
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const img = new Image();
+                        img.onload = async () => {
+                          canvas.width = 200; canvas.height = 200;
+                          ctx.drawImage(img, 0, 0, 200, 200);
+                          const foto = canvas.toDataURL('image/jpeg', 0.8);
+                          try {
+                            await adminAPI.update(currentAdmin.id, { foto });
+                            const updatedAdmin = { ...currentAdmin, foto };
+                            localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
+                            setAdminFoto(foto);
+                            addToActivityLog('Foto Atualizada', currentAdmin.nome);
+                          } catch (error) {
+                            alert('Erro ao atualizar foto: ' + error.message);
+                          }
+                        };
+                        const reader = new FileReader();
+                        reader.onload = (ev) => img.src = ev.target.result;
+                        reader.readAsDataURL(file);
                       }}
                     />
-                    <div style={{position: 'absolute', bottom: '5px', right: '5px', background: '#10b981', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem', cursor: 'pointer'}}>
-                      📷
-                    </div>
-                    {currentAdmin?.foto && (
-                      <div 
-                        style={{position: 'absolute', bottom: '5px', left: '5px', background: '#ef4444', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem', cursor: 'pointer'}}
-                        onClick={async () => {
-                          if (window.confirm('Remover foto de perfil?')) {
-                            try {
-                              await adminAPI.update(currentAdmin.id, { foto: null });
-                              // Atualizar localStorage
-                              const updatedAdmin = { ...currentAdmin, foto: null };
-                              localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
-                              addToActivityLog('Foto Removida', currentAdmin.nome);
-                              alert('Foto removida com sucesso!');
-                              // Forçar re-render
-                              setActiveTab('dashboard');
-                              setTimeout(() => setActiveTab('profile'), 100);
-                            } catch (error) {
-                              alert('Erro ao remover foto.');
-                            }
-                          }
-                        }}
-                      >
-                        🗑️
-                      </div>
-                    )}
                   </div>
-                  <h4 style={{margin: '0 0 0.5rem 0', color: dm.text}}>{currentAdmin?.nome}</h4>
-                  <p style={{color: dm.text2, fontSize: '0.9rem', margin: '0 0 0.5rem 0'}}>Administrador</p>
-                  <div style={{background: dm.card2, padding: '0.75rem', borderRadius: '6px', fontSize: '0.8rem', color: dm.text2}}>
-                    <div style={{marginBottom: '0.25rem'}}><strong>Email:</strong> {currentAdmin?.email}</div>
-                    <div><strong>ID:</strong> #{currentAdmin?.id}</div>
+
+                  <div style={{textAlign: 'center'}}>
+                    <div style={{fontWeight: '700', fontSize: '1.1rem', color: dm.text}}>{adminNome}</div>
+                    <div style={{fontSize: '0.8rem', color: dm.text2, marginTop: '0.2rem'}}>Administrador</div>
                   </div>
+
+                  <div style={{width: '100%', background: dm.card2, borderRadius: '8px', padding: '0.75rem 1rem', fontSize: '0.8rem', color: dm.text2, border: `1px solid ${dm.border}`}}>
+                    <div style={{marginBottom: '0.4rem'}}><strong style={{color: dm.text}}>Email:</strong> {currentAdmin?.email}</div>
+                    <div style={{marginBottom: '0.4rem'}}><strong style={{color: dm.text}}>ID:</strong> #{currentAdmin?.id}</div>
+                    <div><strong style={{color: dm.text}}>Membro desde:</strong> {new Date(currentAdmin?.dataCriacao).toLocaleDateString()}</div>
+                  </div>
+
+                  {adminFoto && (
+                    <button
+                      style={{fontSize: '0.78rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0}}
+                      onClick={async () => {
+                        if (window.confirm('Remover foto de perfil?')) {
+                          try {
+                            await adminAPI.update(currentAdmin.id, { foto: null });
+                            const updatedAdmin = { ...currentAdmin, foto: null };
+                            localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
+                            setAdminFoto(null);
+                            addToActivityLog('Foto Removida', currentAdmin.nome);
+                          } catch { alert('Erro ao remover foto.'); }
+                        }
+                      }}
+                    >
+                      Remover foto
+                    </button>
+                  )}
                 </div>
-                
-                <div>
-                  <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px', marginBottom: '1.5rem'}}>
-                    <h5 style={{margin: '0 0 1rem 0', color: dm.text}}>Editar Informações</h5>
+
+                {/* Coluna direita — formulários */}
+                <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem'}}>
+                  <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px', border: `1px solid ${dm.border}`}}>
+                    <h5 style={{margin: '0 0 1rem 0', color: dm.text, fontSize: '1rem'}}>Editar Informações</h5>
                     <form onSubmit={async (e) => {
                       e.preventDefault();
                       const formData = new FormData(e.target);
                       const nome = formData.get('nome');
                       const email = formData.get('email');
-                      
                       try {
                         await adminAPI.update(currentAdmin.id, { nome, email });
-                        // Atualizar localStorage
                         const updatedAdmin = { ...currentAdmin, nome, email };
                         localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
-                        alert('Informações atualizadas com sucesso!');
+                        setAdminNome(nome);
                         addToActivityLog('Perfil Atualizado', nome);
-                        // Forçar re-render
-                        setActiveTab('dashboard');
-                        setTimeout(() => setActiveTab('profile'), 100);
-                      } catch (error) {
-                        alert('Erro ao atualizar informações.');
-                      }
+                        alert('Informações atualizadas com sucesso!');
+                      } catch { alert('Erro ao atualizar informações.'); }
                     }}>
                       <div className="form-group">
                         <label className="form-label">Nome</label>
@@ -1357,52 +1362,30 @@ const AdminDashboard = () => {
                         <label className="form-label">Email</label>
                         <input type="email" name="email" className="form-input" defaultValue={currentAdmin?.email} required />
                       </div>
-                      <div style={{display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderTop: `1px solid ${dm.border}`, marginTop: '1rem', paddingTop: '1rem'}}>
-                        <span style={{fontWeight: '500', color: dm.text}}>Membro desde:</span>
-                        <span style={{color: dm.text2}}>{new Date(currentAdmin?.dataCriacao).toLocaleDateString()}</span>
-                      </div>
-                      <button type="submit" className="btn btn-primary" style={{width: '100%', marginTop: '1rem'}}>Salvar Alterações</button>
+                      <button type="submit" className="btn btn-primary" style={{width: '100%', marginTop: '0.5rem'}}>Salvar Alterações</button>
                     </form>
                   </div>
-                  
-                  <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px'}}>
-                    <h5 style={{margin: '0 0 1rem 0', color: dm.text}}>Alterar Senha</h5>
+
+                  <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px', border: `1px solid ${dm.border}`}}>
+                    <h5 style={{margin: '0 0 1rem 0', color: dm.text, fontSize: '1rem'}}>Alterar Senha</h5>
                     <form onSubmit={async (e) => {
                       e.preventDefault();
                       const formData = new FormData(e.target);
                       const senhaAtual = formData.get('senhaAtual');
                       const novaSenha = formData.get('novaSenha');
                       const confirmarSenha = formData.get('confirmarSenha');
-                      
-                      // Verificar senha atual no servidor
                       const admins = await adminAPI.getAll();
                       const adminAtual = admins.find(a => a.id === currentAdmin.id);
-                      
-                      if (senhaAtual !== adminAtual?.senha) {
-                        alert('Senha atual incorreta!');
-                        return;
-                      }
-                      
-                      if (novaSenha !== confirmarSenha) {
-                        alert('Nova senha e confirmação não coincidem!');
-                        return;
-                      }
-                      
-                      if (novaSenha.length < 6) {
-                        alert('Nova senha deve ter pelo menos 6 caracteres!');
-                        return;
-                      }
-                      
+                      if (senhaAtual !== adminAtual?.senha) { alert('Senha atual incorreta!'); return; }
+                      if (novaSenha !== confirmarSenha) { alert('Nova senha e confirmação não coincidem!'); return; }
+                      if (novaSenha.length < 6) { alert('Nova senha deve ter pelo menos 6 caracteres!'); return; }
                       try {
                         await adminAPI.update(currentAdmin.id, { senha: novaSenha });
-                        const updatedAdmin = { ...currentAdmin, senha: novaSenha };
-                        localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
+                        localStorage.setItem('currentAdmin', JSON.stringify({ ...currentAdmin, senha: novaSenha }));
                         alert('Senha alterada com sucesso!');
                         e.target.reset();
                         addToActivityLog('Senha Alterada', currentAdmin.nome);
-                      } catch (error) {
-                        alert('Erro ao alterar senha.');
-                      }
+                      } catch { alert('Erro ao alterar senha.'); }
                     }}>
                       <div className="form-group">
                         <label className="form-label">Senha Atual</label>
@@ -1470,8 +1453,9 @@ const AdminDashboard = () => {
                   <h4 style={{margin: '0 0 1rem 0', color: dm.text}}>Informações do Sistema</h4>
                   <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
                     <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Versão: <strong>2.0.0</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Backend: <strong>Java / Spring Boot</strong></li>
                     <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Banco: <strong>SQL Server</strong></li>
-                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Servidor: <strong>SQL Server Somee.com</strong></li>
+                    <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Servidor: <strong>Somee.com</strong></li>
                     <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Status: <strong style={{color: 'green'}}>Online</strong></li>
                     <li style={{padding: '0.5rem 0', color: dm.text}}>Administrador: <strong>admin@nutrifybe.com</strong></li>
                   </ul>

@@ -129,9 +129,9 @@ const NutriDashboard = () => {
 
   return (
     <div className="nutri-theme">
-      <Header theme="nutri" links={headerLinks} />
+      <Header theme="minimal" />
       
-      <main className="nutri-dashboard">
+      <main className="nutri-dashboard" style={{paddingTop: '4.5rem'}}>
         <div className="nutri-welcome">
           <h1 className="nutri-welcome-title">
             Seja Bem Vindo(a) ao <span className="nutri-brand">Nutrifybe</span>

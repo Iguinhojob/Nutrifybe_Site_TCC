@@ -572,13 +572,13 @@ const Home = () => {
           </p>
           <div className="home-hero-buttons">
             <Link to="/solicitar-consulta" className="hbtn hbtn-consult">
-              <span className="hbtn-icon">📅</span> Solicitar Consulta
+              Solicitar Consulta
             </Link>
             <Link to="/registro" className="hbtn hbtn-nutri">
-              <span className="hbtn-icon">🩺</span> Sou Nutricionista
+              Sou Nutricionista
             </Link>
             <Link to="/login" className="hbtn hbtn-login">
-              <span className="hbtn-icon">🔑</span> Entrar
+              Entrar
             </Link>
           </div>
         </div>

@@ -65,6 +65,7 @@ public class NutricionistasController {
             if (body.containsKey("especialidade")) nutri.setEspecialidade((String) body.get("especialidade"));
             if (body.containsKey("descricao")) nutri.setDescricao((String) body.get("descricao"));
             if (body.containsKey("foto")) nutri.setFoto((String) body.get("foto"));
+            if (body.containsKey("senha")) nutri.setSenha(passwordEncoder.encode((String) body.get("senha")));
             repository.save(nutri);
             return ResponseEntity.ok(Map.of("success", true));
         }).orElse(ResponseEntity.notFound().build());

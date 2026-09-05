@@ -4898,11 +4898,11 @@ body.dark-mode::before {
 }
 
 /* â”€â”€ Header â”€â”€ */
-body.dark-mode header,
-body.dark-mode.nutri-theme header,
-body.dark-mode.admin-theme header,
-body.dark-mode .nutri-theme header,
-body.dark-mode .admin-theme header {
+body.dark-mode header:not(.minimal-header),
+body.dark-mode.nutri-theme header:not(.minimal-header),
+body.dark-mode.admin-theme header:not(.minimal-header),
+body.dark-mode .nutri-theme header:not(.minimal-header),
+body.dark-mode .admin-theme header:not(.minimal-header) {
     background: linear-gradient(135deg, #4C1D95, #7C3AED) !important;
     border-bottom: 1px solid rgba(124, 58, 237, 0.3) !important;
     box-shadow: 0 2px 20px rgba(124, 58, 237, 0.4) !important;
