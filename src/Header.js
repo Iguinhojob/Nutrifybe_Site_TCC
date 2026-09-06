@@ -145,6 +145,65 @@ const Header = ({ theme = 'public', links = [] }) => {
       .catch(() => {});
   }, [theme]);
 
+  if (theme === 'admin-minimal') {
+    return (
+      <div style={{
+        position: 'fixed', top: 0, right: 0, zIndex: 9999,
+        padding: '1rem',
+        display: 'flex', alignItems: 'center', gap: '0.75rem',
+        pointerEvents: 'none'
+      }}>
+        <button
+          onClick={toggleDarkMode}
+          style={{
+            pointerEvents: 'all',
+            background: darkMode ? 'rgba(32,34,40,0.85)' : 'rgba(255,255,255,0.85)',
+            border: darkMode ? '1px solid #2A2D32' : '1px solid #e5e7eb',
+            borderRadius: '50%', width: '38px', height: '38px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', backdropFilter: 'blur(10px)'
+          }}
+          title={darkMode ? 'Modo claro' : 'Modo escuro'}
+        >
+          {darkMode ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          )}
+        </button>
+        <a
+          href="/"
+          title="Sair"
+          style={{
+            pointerEvents: 'all',
+            background: darkMode ? 'rgba(32,34,40,0.85)' : 'rgba(255,255,255,0.85)',
+            border: darkMode ? '1px solid #2A2D32' : '1px solid #e5e7eb',
+            borderRadius: '50%', width: '38px', height: '38px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', backdropFilter: 'blur(10px)',
+            textDecoration: 'none', color: darkMode ? '#9B9DA5' : '#6b7280',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.borderColor = '#ef4444'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = darkMode ? '#9B9DA5' : '#6b7280'; e.currentTarget.style.borderColor = darkMode ? '#2A2D32' : '#e5e7eb'; }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </a>
+      </div>
+    );
+  }
+
   if (theme === 'minimal') {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const userName = user.nome || user.Nome || 'Perfil';

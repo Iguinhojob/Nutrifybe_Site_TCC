@@ -280,7 +280,7 @@ const AdminDashboard = () => {
         .admin-avatar-btn { transition: box-shadow 0.2s, transform 0.2s; }
         .admin-avatar-btn:hover { box-shadow: 0 0 0 3px ${isDark ? 'rgba(167,139,250,0.4)' : 'rgba(16,185,129,0.35)'}; transform: scale(1.05); }
       `}</style>
-      <Header theme="minimal" />
+      <Header theme="admin-minimal" />
       
       <main className="form-section" style={{minHeight: '100vh', padding: '5rem 1rem 2rem'}}>
         <div className="info-card" style={{maxWidth: '1400px', width: '95%'}}>
