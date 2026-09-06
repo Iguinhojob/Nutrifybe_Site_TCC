@@ -3,7 +3,7 @@ const isCodespaces = typeof window !== 'undefined' && window.location.hostname.i
 const API_BASE_URL = isCodespaces
   ? `https://${window.location.hostname.replace('-3000', '-3001')}`
   : process.env.NODE_ENV === 'production'
-    ? 'https://nutrifybe.vercel.app'
+    ? 'https://backend-tcc-web.onrender.com'
     : 'http://localhost:3001';
 
 const isJsonServer = false;
