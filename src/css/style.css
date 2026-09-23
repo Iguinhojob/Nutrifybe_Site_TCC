@@ -4563,7 +4563,8 @@ body.admin-theme nav ul li a.active {
 /* placeholder dark-mode removed */
 .dark-mode-toggle {
     position: absolute;
-    left: 1rem;
+    left: auto;
+    right: 1rem;
     top: 50%;
     transform: translateY(-50%);
     background: rgba(0,0,0,0.08);

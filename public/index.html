@@ -2,8 +2,8 @@
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" data-theme-favicon href="%PUBLIC_URL%/app-icon-1024.png" type="image/png" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/app-icon-1024.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Nutrifybe - Sistema completo de gestão nutricional para nutricionistas e pacientes. Gerencie consultas, prescrições e acompanhe o progresso de forma moderna e segura." />
@@ -27,8 +27,13 @@
   <body>
     <script>
       (function() {
-        if (localStorage.getItem('darkMode') === 'true') {
+        var isDark = localStorage.getItem('darkMode') === 'true';
+        if (isDark) {
           document.body.classList.add('dark-mode');
+        }
+        var favicon = document.querySelector('[data-theme-favicon]');
+        if (favicon) {
+          favicon.href = '%PUBLIC_URL%/' + (isDark ? 'icone-roxo.png' : 'app-icon-1024.png');
         }
       })();
     </script>

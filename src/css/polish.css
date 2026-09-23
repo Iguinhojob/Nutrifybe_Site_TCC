@@ -122,3 +122,133 @@
             0 0 20px rgba(255, 255, 255, 0.2);
     }
 }
+
+/*
+ * Identidade visual compartilhada com a tela inicial.
+ * As páginas internas antes usavam um fundo bege e cards verde-translúcidos,
+ * o que fazia a navegação parecer pertencer a sistemas diferentes.
+ */
+.public-theme,
+div.nutri-theme,
+div.admin-theme {
+    background-color: #f0f4ff !important;
+    background-image:
+        radial-gradient(ellipse at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(6, 182, 212, 0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(167, 139, 250, 0.05) 0%, transparent 60%) !important;
+    background-position: 0 0 !important;
+    background-size: auto !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
+}
+
+/* O cabeçalho segue o mesmo vidro claro da Home. */
+.public-theme header,
+div.nutri-theme header,
+div.admin-theme header,
+header.nutri-theme,
+header.admin-theme {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1) !important;
+    box-shadow: 0 2px 20px rgba(99, 102, 241, 0.08) !important;
+}
+
+.public-theme nav ul li a,
+.nutri-theme nav ul li a,
+.admin-theme nav ul li a {
+    color: #3730a3 !important;
+    text-shadow: none !important;
+}
+
+.public-theme nav ul li a:hover,
+.public-theme nav ul li a.active,
+.nutri-theme nav ul li a:hover,
+.nutri-theme nav ul li a.active,
+.admin-theme nav ul li a:hover,
+.admin-theme nav ul li a.active {
+    background: rgba(99, 102, 241, 0.1) !important;
+    color: #4338ca !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Cards internos: mesmo ciano translúcido, borda e sombra suaves da Home. */
+.public-theme .form-card,
+.public-theme .info-card {
+    background: rgba(207, 250, 254, 0.55) !important;
+    border: 1px solid rgba(6, 182, 212, 0.25) !important;
+    box-shadow: 0 8px 32px rgba(6, 182, 212, 0.1) !important;
+}
+
+.public-theme .link-container {
+    background: rgba(207, 250, 254, 0.28) !important;
+    border-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+.public-theme .team-member,
+.public-theme .faq-item,
+.public-theme .contact-item {
+    background: rgba(207, 250, 254, 0.3) !important;
+    border-color: rgba(6, 182, 212, 0.22) !important;
+}
+
+.public-theme .team-member {
+    border-left-color: #06b6d4 !important;
+}
+
+/* Remove o verde residual dos textos associados aos cards. */
+.public-theme .form-title,
+.public-theme .info-title,
+.public-theme .team-title,
+.public-theme .faq-title,
+.public-theme .faq-question,
+.public-theme .contact-icon,
+.public-theme .support-link,
+.public-theme .link-highlight {
+    color: #155e75 !important;
+    -webkit-text-fill-color: #155e75 !important;
+}
+
+.public-theme .form-subtitle,
+.public-theme .form-body .form-label,
+.public-theme .info-text,
+.public-theme .faq-answer,
+.public-theme .contact-text,
+.public-theme .link-text {
+    color: #334155 !important;
+}
+
+.public-theme .faq-number {
+    background: #06b6d4 !important;
+}
+
+/* O alternador fica junto aos controles do lado direito do cabeçalho. */
+.dark-mode-toggle {
+    left: auto !important;
+    right: 1rem !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+    border: 1px solid rgba(99, 102, 241, 0.18) !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.12);
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.96) !important;
+    transform: translateY(-50%) scale(1.08) !important;
+    box-shadow: 0 6px 18px rgba(6, 182, 212, 0.2);
+}
+
+body.dark-mode .dark-mode-toggle {
+    background: rgba(32, 34, 40, 0.88) !important;
+    border-color: rgba(167, 139, 250, 0.35) !important;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.2);
+}
+
+@media (max-width: 768px) {
+    /* Deixa o hambúrguer no canto e o tema imediatamente ao lado dele. */
+    .dark-mode-toggle,
+    .nutri-theme .dark-mode-toggle {
+        left: auto !important;
+        right: 4.5rem !important;
+    }
+}
