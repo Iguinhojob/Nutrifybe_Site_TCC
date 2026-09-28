@@ -4,7 +4,7 @@ const API_BASE_URL = isCodespaces
   ? `https://${window.location.hostname.replace('-3000', '-3001')}`
   : process.env.NODE_ENV === 'production'
     ? 'https://backend-tcc-web.onrender.com'
-    : 'http://localhost:3001';
+    : 'http://localhost:8080';
 
 const isJsonServer = false;
 
