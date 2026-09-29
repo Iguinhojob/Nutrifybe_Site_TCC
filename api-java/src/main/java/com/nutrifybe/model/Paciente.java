@@ -1,5 +1,6 @@
 package com.nutrifybe.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -24,6 +25,10 @@ public class Paciente {
 
     private String status;
     private Integer ativo;
+
+    // Senha do paciente (só entra na API, nunca sai nas respostas)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String senha;
 
     @Column(name = "prescricao_semanal", columnDefinition = "NVARCHAR(MAX)")
     private String prescricaoSemanal;
@@ -60,4 +65,7 @@ public class Paciente {
     public String getCalendario() { return calendario; }
     public void setCalendario(String calendario) { this.calendario = calendario; }
     public String getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(String dataCriacao) { this.dataCriacao = dataCriacao; }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
 }
