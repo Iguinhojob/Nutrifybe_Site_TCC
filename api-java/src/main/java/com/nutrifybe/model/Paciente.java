@@ -13,9 +13,23 @@ public class Paciente {
     private String nome;
     private String email;
     private Integer idade;
+    @Column(name = "data_nascimento")
+    private String dataNascimento;
+    private String sexo;
     private Double peso;
     private Double altura;
+    @Column(name = "peso_meta")
+    private Double pesoMeta;
+    @Column(name = "meta_agua")
+    private Double metaAgua;
     private String objetivo;
+    private String atividade;
+    private String motivacao;
+    private String restricoes;
+    private String observacoes;
+    private String origem;
+    @Column(name = "preferencia_acompanhamento")
+    private String preferenciaAcompanhamento;
 
     @Column(name = "condicao_saude")
     private String condicaoSaude;
@@ -46,12 +60,32 @@ public class Paciente {
     public void setEmail(String email) { this.email = email; }
     public Integer getIdade() { return idade; }
     public void setIdade(Integer idade) { this.idade = idade; }
+    public String getDataNascimento() { return dataNascimento; }
+    public void setDataNascimento(String dataNascimento) { this.dataNascimento = dataNascimento; }
+    public String getSexo() { return sexo; }
+    public void setSexo(String sexo) { this.sexo = sexo; }
     public Double getPeso() { return peso; }
     public void setPeso(Double peso) { this.peso = peso; }
     public Double getAltura() { return altura; }
     public void setAltura(Double altura) { this.altura = altura; }
+    public Double getPesoMeta() { return pesoMeta; }
+    public void setPesoMeta(Double pesoMeta) { this.pesoMeta = pesoMeta; }
+    public Double getMetaAgua() { return metaAgua; }
+    public void setMetaAgua(Double metaAgua) { this.metaAgua = metaAgua; }
     public String getObjetivo() { return objetivo; }
     public void setObjetivo(String objetivo) { this.objetivo = objetivo; }
+    public String getAtividade() { return atividade; }
+    public void setAtividade(String atividade) { this.atividade = atividade; }
+    public String getMotivacao() { return motivacao; }
+    public void setMotivacao(String motivacao) { this.motivacao = motivacao; }
+    public String getRestricoes() { return restricoes; }
+    public void setRestricoes(String restricoes) { this.restricoes = restricoes; }
+    public String getObservacoes() { return observacoes; }
+    public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
+    public String getOrigem() { return origem; }
+    public void setOrigem(String origem) { this.origem = origem; }
+    public String getPreferenciaAcompanhamento() { return preferenciaAcompanhamento; }
+    public void setPreferenciaAcompanhamento(String preferenciaAcompanhamento) { this.preferenciaAcompanhamento = preferenciaAcompanhamento; }
     public String getCondicaoSaude() { return condicaoSaude; }
     public void setCondicaoSaude(String condicaoSaude) { this.condicaoSaude = condicaoSaude; }
     public Long getNutricionistaId() { return nutricionistaId; }

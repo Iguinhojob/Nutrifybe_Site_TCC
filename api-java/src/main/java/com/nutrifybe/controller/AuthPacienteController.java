@@ -9,13 +9,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
 /** Cadastro, login e perfil do paciente (usado pelo app mobile). */
 @RestController
-@RequestMapping("/api/auth/paciente")
+@RequestMapping({"/api/auth/paciente", "/api/auth"})
 public class AuthPacienteController {
 
     private final PacienteRepository repository;
@@ -29,9 +33,9 @@ public class AuthPacienteController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, Object> body) {
-        String nome = Campos.texto(body.get("nome"));
+        String nome = primeiroTexto(body, "nome", "name");
         String email = Campos.texto(body.get("email"));
-        String senha = body.get("senha") == null ? null : body.get("senha").toString();
+        String senha = primeiroTexto(body, "senha", "password");
 
         if (nome == null || email == null || !email.contains("@")) {
             return erro(400, "Informe nome e e-mail válidos");
@@ -48,11 +52,21 @@ public class AuthPacienteController {
         p.setNome(nome);
         p.setEmail(emailFinal);
         p.setSenha(encoder.encode(senha));
-        p.setIdade(Campos.inteiro(body.get("idade")));
-        p.setPeso(Campos.decimal(body.get("peso")));
-        p.setAltura(Campos.decimal(body.get("altura")));
-        p.setObjetivo(Campos.texto(body.get("objetivo")));
-        p.setCondicaoSaude(Campos.texto(body.get("condicaoSaude")));
+        p.setIdade(body.containsKey("idade") ? Campos.inteiro(body.get("idade")) : idadeDe(body.get("birthDate")));
+        p.setDataNascimento(primeiroTexto(body, "dataNascimento", "birthDate"));
+        p.setSexo(Campos.texto(body.get("sexo")));
+        p.setPeso(body.containsKey("peso") ? Campos.decimal(body.get("peso")) : Campos.decimal(body.get("weight")));
+        p.setAltura(body.containsKey("altura") ? Campos.decimal(body.get("altura")) : Campos.decimal(body.get("height")));
+        p.setPesoMeta(body.containsKey("pesoMeta") ? Campos.decimal(body.get("pesoMeta")) : Campos.decimal(body.get("targetWeight")));
+        p.setMetaAgua(body.containsKey("metaAgua") ? Campos.decimal(body.get("metaAgua")) : Campos.decimal(body.get("waterGoal")));
+        p.setObjetivo(primeiroTexto(body, "objetivo", "goal"));
+        p.setAtividade(primeiroTexto(body, "atividade", "activityLevel"));
+        p.setMotivacao(primeiroTexto(body, "motivacao", "motivation"));
+        p.setRestricoes(primeiroTexto(body, "restricoes", "restrictions"));
+        p.setObservacoes(primeiroTexto(body, "observacoes", "healthNote"));
+        p.setOrigem(Campos.texto(body.get("origem")));
+        p.setPreferenciaAcompanhamento(primeiroTexto(body, "preferenciaAcompanhamento", "followupPreference"));
+        p.setCondicaoSaude(primeiroTexto(body, "condicaoSaude", "healthNote", "restrictions"));
         p.setStatus("solo");
         p.setAtivo(1);
         p.setDataCriacao(Instant.now().toString());
@@ -63,7 +77,7 @@ public class AuthPacienteController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> body) {
         String email = Campos.texto(body.get("email"));
-        String senha = body.get("senha") == null ? null : body.get("senha").toString();
+        String senha = primeiroTexto(body, "senha", "password");
         if (email == null || senha == null) {
             return erro(400, "Informe e-mail e senha");
         }
@@ -97,12 +111,27 @@ public class AuthPacienteController {
         if (op.isEmpty()) return erro(404, "Paciente não encontrado");
 
         Paciente p = op.get();
-        if (Campos.texto(body.get("nome")) != null) p.setNome(Campos.texto(body.get("nome")));
+        String nome = primeiroTexto(body, "nome", "name");
+        if (nome != null) p.setNome(nome);
         if (body.containsKey("idade")) p.setIdade(Campos.inteiro(body.get("idade")));
-        if (body.containsKey("peso")) p.setPeso(Campos.decimal(body.get("peso")));
-        if (body.containsKey("altura")) p.setAltura(Campos.decimal(body.get("altura")));
-        if (body.containsKey("objetivo")) p.setObjetivo(Campos.texto(body.get("objetivo")));
-        if (body.containsKey("condicaoSaude")) p.setCondicaoSaude(Campos.texto(body.get("condicaoSaude")));
+        if (body.containsKey("peso") || body.containsKey("weight")) p.setPeso(Campos.decimal(body.containsKey("peso") ? body.get("peso") : body.get("weight")));
+        if (body.containsKey("altura") || body.containsKey("height")) p.setAltura(Campos.decimal(body.containsKey("altura") ? body.get("altura") : body.get("height")));
+        if (body.containsKey("objetivo") || body.containsKey("goal")) p.setObjetivo(primeiroTexto(body, "objetivo", "goal"));
+        if (body.containsKey("condicaoSaude") || body.containsKey("healthNote")) p.setCondicaoSaude(primeiroTexto(body, "condicaoSaude", "healthNote"));
+        if (body.containsKey("nutricionistaId")) p.setNutricionistaId(Long.valueOf(body.get("nutricionistaId").toString()));
+        if (body.containsKey("status")) p.setStatus(Campos.texto(body.get("status")));
+        if (body.containsKey("prescricaoSemanal")) p.setPrescricaoSemanal(Campos.texto(body.get("prescricaoSemanal")));
+        if (body.containsKey("calendario")) p.setCalendario(Campos.texto(body.get("calendario")));
+        if (body.containsKey("dataNascimento")) p.setDataNascimento(Campos.texto(body.get("dataNascimento")));
+        if (body.containsKey("sexo")) p.setSexo(Campos.texto(body.get("sexo")));
+        if (body.containsKey("pesoMeta")) p.setPesoMeta(Campos.decimal(body.get("pesoMeta")));
+        if (body.containsKey("metaAgua")) p.setMetaAgua(Campos.decimal(body.get("metaAgua")));
+        if (body.containsKey("atividade")) p.setAtividade(Campos.texto(body.get("atividade")));
+        if (body.containsKey("motivacao")) p.setMotivacao(Campos.texto(body.get("motivacao")));
+        if (body.containsKey("restricoes")) p.setRestricoes(Campos.texto(body.get("restricoes")));
+        if (body.containsKey("observacoes")) p.setObservacoes(Campos.texto(body.get("observacoes")));
+        if (body.containsKey("origem")) p.setOrigem(Campos.texto(body.get("origem")));
+        if (body.containsKey("preferenciaAcompanhamento")) p.setPreferenciaAcompanhamento(Campos.texto(body.get("preferenciaAcompanhamento")));
         repository.save(p);
         return ResponseEntity.ok(p);
     }
@@ -117,5 +146,23 @@ public class AuthPacienteController {
 
     private ResponseEntity<?> erro(int status, String mensagem) {
         return ResponseEntity.status(status).body(Map.of("success", false, "message", mensagem));
+    }
+
+    private static String primeiroTexto(Map<String, Object> body, String... nomes) {
+        for (String nome : nomes) {
+            String valor = Campos.texto(body.get(nome));
+            if (valor != null) return valor;
+        }
+        return null;
+    }
+
+    private static Integer idadeDe(Object valor) {
+        String texto = Campos.texto(valor);
+        if (texto == null) return null;
+        for (DateTimeFormatter formato : new DateTimeFormatter[]{DateTimeFormatter.ISO_LOCAL_DATE, DateTimeFormatter.ofPattern("dd/MM/yyyy")}) {
+            try { return Period.between(LocalDate.parse(texto, formato), LocalDate.now()).getYears(); }
+            catch (DateTimeParseException ignored) { }
+        }
+        return null;
     }
 }

@@ -1,6 +1,8 @@
 package com.nutrifybe.util;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 public final class Campos {
     private Campos() {}
@@ -32,7 +34,11 @@ public final class Campos {
             try {
                 return Instant.parse(s).toString();
             } catch (Exception ignored) {
-                // usa a data de agora
+                try {
+                    return LocalDate.parse(s).atStartOfDay(ZoneOffset.UTC).toInstant().toString();
+                } catch (Exception ignoredDate) {
+                    // usa a data de agora
+                }
             }
         }
         return Instant.now().toString();

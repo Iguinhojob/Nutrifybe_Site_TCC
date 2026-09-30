@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** Diário do paciente (refeições, água e medidas). Todas as rotas exigem o token de login. */
 @RestController
@@ -33,10 +35,13 @@ public class DiarioController {
 
     // ---------- Refeições ----------
     @GetMapping("/refeicoes")
-    public ResponseEntity<?> listarRefeicoes(@RequestHeader(value = "Authorization", required = false) String auth) {
+    public ResponseEntity<?> listarRefeicoes(@RequestHeader(value = "Authorization", required = false) String auth,
+                                             @RequestParam(required = false) String date) {
         Long id = tokens.validar(auth);
         if (id == null) return naoAutorizado();
-        return ResponseEntity.ok(refeicoes.findByPacienteIdOrderByCriadoEmDesc(id));
+        List<DiarioRefeicao> registros = refeicoes.findByPacienteIdOrderByCriadoEmDesc(id);
+        if (date != null && !date.isBlank()) registros = registros.stream().filter(r -> r.getCriadoEm() != null && r.getCriadoEm().startsWith(date)).collect(Collectors.toList());
+        return ResponseEntity.ok(registros);
     }
 
     @PostMapping("/refeicoes")
@@ -44,13 +49,13 @@ public class DiarioController {
                                            @RequestBody Map<String, Object> body) {
         Long id = tokens.validar(auth);
         if (id == null) return naoAutorizado();
-        Double calorias = Campos.decimal(body.get("calorias"));
+        Double calorias = Campos.decimal(body.containsKey("calorias") ? body.get("calorias") : body.get("calories"));
         if (calorias == null || calorias < 0) return erro(400, "Informe as calorias da refeição");
 
         DiarioRefeicao r = new DiarioRefeicao();
         r.setPacienteId(id);
-        r.setNome(Campos.texto(body.get("nome")) != null ? Campos.texto(body.get("nome")) : "Refeição");
-        r.setDescricao(Campos.texto(body.get("descricao")));
+        r.setNome(primeiroTexto(body, "nome", "mealType") != null ? primeiroTexto(body, "nome", "mealType") : "Refeição");
+        r.setDescricao(primeiroTexto(body, "descricao", "description"));
         r.setCalorias(calorias);
         r.setCarboidratos(Campos.decimal(body.get("carboidratos")));
         r.setProteinas(Campos.decimal(body.get("proteinas")));
@@ -58,7 +63,7 @@ public class DiarioController {
         r.setItens(Campos.texto(body.get("itens")));
         r.setOrigem(Campos.texto(body.get("origem")));
         r.setReferenciaId(Campos.texto(body.get("referenciaId")));
-        r.setCriadoEm(Campos.dataOuAgora(body.get("criadoEm")));
+        r.setCriadoEm(Campos.dataOuAgora(body.containsKey("criadoEm") ? body.get("criadoEm") : body.get("entryDate")));
         return ResponseEntity.ok(refeicoes.save(r));
     }
 
@@ -75,10 +80,13 @@ public class DiarioController {
 
     // ---------- Água ----------
     @GetMapping("/agua")
-    public ResponseEntity<?> listarAgua(@RequestHeader(value = "Authorization", required = false) String auth) {
+    public ResponseEntity<?> listarAgua(@RequestHeader(value = "Authorization", required = false) String auth,
+                                        @RequestParam(required = false) String date) {
         Long id = tokens.validar(auth);
         if (id == null) return naoAutorizado();
-        return ResponseEntity.ok(agua.findByPacienteIdOrderByCriadoEmDesc(id));
+        List<DiarioAgua> registros = agua.findByPacienteIdOrderByCriadoEmDesc(id);
+        if (date != null && !date.isBlank()) registros = registros.stream().filter(r -> r.getCriadoEm() != null && r.getCriadoEm().startsWith(date)).collect(Collectors.toList());
+        return ResponseEntity.ok(registros);
     }
 
     @PostMapping("/agua")
@@ -86,13 +94,13 @@ public class DiarioController {
                                        @RequestBody Map<String, Object> body) {
         Long id = tokens.validar(auth);
         if (id == null) return naoAutorizado();
-        Integer ml = Campos.inteiro(body.get("quantidadeMl"));
+        Integer ml = Campos.inteiro(body.containsKey("quantidadeMl") ? body.get("quantidadeMl") : body.get("amountMl"));
         if (ml == null || ml <= 0) return erro(400, "Informe a quantidade de água em ml");
 
         DiarioAgua a = new DiarioAgua();
         a.setPacienteId(id);
         a.setQuantidadeMl(ml);
-        a.setCriadoEm(Campos.dataOuAgora(body.get("criadoEm")));
+        a.setCriadoEm(Campos.dataOuAgora(body.containsKey("criadoEm") ? body.get("criadoEm") : body.get("entryDate")));
         return ResponseEntity.ok(agua.save(a));
     }
 
@@ -153,5 +161,13 @@ public class DiarioController {
 
     private ResponseEntity<?> erro(int status, String mensagem) {
         return ResponseEntity.status(status).body(Map.of("success", false, "message", mensagem));
+    }
+
+    private static String primeiroTexto(Map<String, Object> body, String... nomes) {
+        for (String nome : nomes) {
+            String valor = Campos.texto(body.get(nome));
+            if (valor != null) return valor;
+        }
+        return null;
     }
 }
