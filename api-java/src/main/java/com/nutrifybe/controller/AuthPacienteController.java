@@ -1,11 +1,16 @@
 package com.nutrifybe.controller;
 
 import com.nutrifybe.model.Paciente;
+import com.nutrifybe.model.Nutricionista;
+import com.nutrifybe.model.SolicitacaoPendente;
 import com.nutrifybe.repository.PacienteRepository;
+import com.nutrifybe.repository.NutricionistaRepository;
+import com.nutrifybe.repository.SolicitacaoPendenteRepository;
 import com.nutrifybe.security.TokenService;
 import com.nutrifybe.util.Campos;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -23,15 +28,23 @@ import java.util.Optional;
 public class AuthPacienteController {
 
     private final PacienteRepository repository;
+    private final NutricionistaRepository nutricionistaRepository;
+    private final SolicitacaoPendenteRepository solicitacaoRepository;
     private final TokenService tokens;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public AuthPacienteController(PacienteRepository repository, TokenService tokens) {
+    public AuthPacienteController(PacienteRepository repository,
+                                  NutricionistaRepository nutricionistaRepository,
+                                  SolicitacaoPendenteRepository solicitacaoRepository,
+                                  TokenService tokens) {
         this.repository = repository;
+        this.nutricionistaRepository = nutricionistaRepository;
+        this.solicitacaoRepository = solicitacaoRepository;
         this.tokens = tokens;
     }
 
     @PostMapping("/register")
+    @Transactional
     public ResponseEntity<?> register(@RequestBody Map<String, Object> body) {
         String nome = primeiroTexto(body, "nome", "name");
         String email = Campos.texto(body.get("email"));
@@ -46,6 +59,23 @@ public class AuthPacienteController {
         String emailFinal = email.toLowerCase();
         if (repository.existsByEmailIgnoreCase(emailFinal)) {
             return erro(409, "E-mail já cadastrado");
+        }
+
+        Nutricionista nutricionista = null;
+        Object nutricionistaIdValue = body.get("nutricionistaId");
+        if (nutricionistaIdValue != null) {
+            Long nutricionistaId;
+            try {
+                nutricionistaId = Long.valueOf(nutricionistaIdValue.toString());
+            } catch (NumberFormatException e) {
+                return erro(400, "Nutricionista invalido");
+            }
+            Optional<Nutricionista> encontrado = nutricionistaRepository.findById(nutricionistaId);
+            if (encontrado.isEmpty() || !"approved".equalsIgnoreCase(encontrado.get().getStatus())
+                    || !Integer.valueOf(1).equals(encontrado.get().getAtivo())) {
+                return erro(400, "Nutricionista nao encontrado ou indisponivel");
+            }
+            nutricionista = encontrado.get();
         }
 
         Paciente p = new Paciente();
@@ -64,13 +94,17 @@ public class AuthPacienteController {
         p.setMotivacao(primeiroTexto(body, "motivacao", "motivation"));
         p.setRestricoes(primeiroTexto(body, "restricoes", "restrictions"));
         p.setObservacoes(primeiroTexto(body, "observacoes", "healthNote"));
-        p.setOrigem(Campos.texto(body.get("origem")));
+        p.setOrigem(primeiroTexto(body, "origem", "origin"));
         p.setPreferenciaAcompanhamento(primeiroTexto(body, "preferenciaAcompanhamento", "followupPreference"));
         p.setCondicaoSaude(primeiroTexto(body, "condicaoSaude", "healthNote", "restrictions"));
-        p.setStatus("solo");
+        p.setNutricionistaId(nutricionista == null ? null : nutricionista.getId());
+        p.setStatus(nutricionista == null ? "solo" : "pending");
         p.setAtivo(1);
         p.setDataCriacao(Instant.now().toString());
         repository.save(p);
+        if (nutricionista != null) {
+            criarSolicitacao(p);
+        }
         return ResponseEntity.ok(resposta(p));
     }
 
@@ -114,26 +148,57 @@ public class AuthPacienteController {
         String nome = primeiroTexto(body, "nome", "name");
         if (nome != null) p.setNome(nome);
         if (body.containsKey("idade")) p.setIdade(Campos.inteiro(body.get("idade")));
-        if (body.containsKey("peso") || body.containsKey("weight")) p.setPeso(Campos.decimal(body.containsKey("peso") ? body.get("peso") : body.get("weight")));
-        if (body.containsKey("altura") || body.containsKey("height")) p.setAltura(Campos.decimal(body.containsKey("altura") ? body.get("altura") : body.get("height")));
-        if (body.containsKey("objetivo") || body.containsKey("goal")) p.setObjetivo(primeiroTexto(body, "objetivo", "goal"));
-        if (body.containsKey("condicaoSaude") || body.containsKey("healthNote")) p.setCondicaoSaude(primeiroTexto(body, "condicaoSaude", "healthNote"));
-        if (body.containsKey("nutricionistaId")) p.setNutricionistaId(Long.valueOf(body.get("nutricionistaId").toString()));
-        if (body.containsKey("status")) p.setStatus(Campos.texto(body.get("status")));
-        if (body.containsKey("prescricaoSemanal")) p.setPrescricaoSemanal(Campos.texto(body.get("prescricaoSemanal")));
-        if (body.containsKey("calendario")) p.setCalendario(Campos.texto(body.get("calendario")));
-        if (body.containsKey("dataNascimento")) p.setDataNascimento(Campos.texto(body.get("dataNascimento")));
+        if (containsAny(body, "peso", "weight")) p.setPeso(Campos.decimal(primeiroValor(body, "peso", "weight")));
+        if (containsAny(body, "altura", "height")) p.setAltura(Campos.decimal(primeiroValor(body, "altura", "height")));
+        if (containsAny(body, "objetivo", "goal")) p.setObjetivo(primeiroTexto(body, "objetivo", "goal"));
+        if (containsAny(body, "condicaoSaude", "healthNote")) {
+            String healthNote = primeiroTexto(body, "condicaoSaude", "healthNote");
+            p.setCondicaoSaude(healthNote);
+            p.setObservacoes(healthNote);
+        }
+        if (body.containsKey("nutricionistaId")) return erro(400, "Use o endpoint de vinculo para solicitar um nutricionista");
+        if (containsAny(body, "dataNascimento", "birthDate")) p.setDataNascimento(primeiroTexto(body, "dataNascimento", "birthDate"));
         if (body.containsKey("sexo")) p.setSexo(Campos.texto(body.get("sexo")));
-        if (body.containsKey("pesoMeta")) p.setPesoMeta(Campos.decimal(body.get("pesoMeta")));
-        if (body.containsKey("metaAgua")) p.setMetaAgua(Campos.decimal(body.get("metaAgua")));
-        if (body.containsKey("atividade")) p.setAtividade(Campos.texto(body.get("atividade")));
-        if (body.containsKey("motivacao")) p.setMotivacao(Campos.texto(body.get("motivacao")));
-        if (body.containsKey("restricoes")) p.setRestricoes(Campos.texto(body.get("restricoes")));
+        if (containsAny(body, "pesoMeta", "targetWeight")) p.setPesoMeta(Campos.decimal(primeiroValor(body, "pesoMeta", "targetWeight")));
+        if (containsAny(body, "metaAgua", "waterGoal")) p.setMetaAgua(Campos.decimal(primeiroValor(body, "metaAgua", "waterGoal")));
+        if (containsAny(body, "atividade", "activityLevel")) p.setAtividade(primeiroTexto(body, "atividade", "activityLevel"));
+        if (containsAny(body, "motivacao", "motivation")) p.setMotivacao(primeiroTexto(body, "motivacao", "motivation"));
+        if (containsAny(body, "restricoes", "restrictions")) p.setRestricoes(primeiroTexto(body, "restricoes", "restrictions"));
         if (body.containsKey("observacoes")) p.setObservacoes(Campos.texto(body.get("observacoes")));
-        if (body.containsKey("origem")) p.setOrigem(Campos.texto(body.get("origem")));
-        if (body.containsKey("preferenciaAcompanhamento")) p.setPreferenciaAcompanhamento(Campos.texto(body.get("preferenciaAcompanhamento")));
+        if (containsAny(body, "origem", "origin")) p.setOrigem(primeiroTexto(body, "origem", "origin"));
+        if (containsAny(body, "preferenciaAcompanhamento", "followupPreference")) p.setPreferenciaAcompanhamento(primeiroTexto(body, "preferenciaAcompanhamento", "followupPreference"));
         repository.save(p);
         return ResponseEntity.ok(p);
+    }
+
+    @PostMapping("/me/vinculo")
+    @Transactional
+    public ResponseEntity<?> solicitarVinculo(@RequestHeader(value = "Authorization", required = false) String auth,
+                                               @RequestBody Map<String, Object> body) {
+        Long id = tokens.validar(auth);
+        if (id == null) return erro(401, "Sessao invalida");
+        Long nutricionistaId;
+        try {
+            nutricionistaId = Long.valueOf(body.get("nutricionistaId").toString());
+        } catch (Exception e) {
+            return erro(400, "Nutricionista invalido");
+        }
+        Optional<Nutricionista> nutricionista = nutricionistaRepository.findById(nutricionistaId);
+        if (nutricionista.isEmpty() || !"approved".equalsIgnoreCase(nutricionista.get().getStatus())
+                || !Integer.valueOf(1).equals(nutricionista.get().getAtivo())) {
+            return erro(400, "Nutricionista nao encontrado ou indisponivel");
+        }
+        Optional<Paciente> op = repository.findById(id);
+        if (op.isEmpty()) return erro(404, "Paciente nao encontrado");
+
+        Paciente paciente = op.get();
+        if (!nutricionistaId.equals(paciente.getNutricionistaId())) {
+            paciente.setNutricionistaId(nutricionistaId);
+            paciente.setStatus("pending");
+            repository.save(paciente);
+        }
+        criarSolicitacao(paciente);
+        return ResponseEntity.ok(paciente);
     }
 
     private Map<String, Object> resposta(Paciente p) {
@@ -148,12 +213,39 @@ public class AuthPacienteController {
         return ResponseEntity.status(status).body(Map.of("success", false, "message", mensagem));
     }
 
+    private void criarSolicitacao(Paciente paciente) {
+        Long nutricionistaId = paciente.getNutricionistaId();
+        if (nutricionistaId == null || solicitacaoRepository.existsByEmailIgnoreCaseAndNutricionistaId(paciente.getEmail(), nutricionistaId)) return;
+        SolicitacaoPendente solicitacao = new SolicitacaoPendente();
+        solicitacao.setNome(paciente.getNome());
+        solicitacao.setEmail(paciente.getEmail());
+        solicitacao.setIdade(paciente.getIdade());
+        solicitacao.setPeso(paciente.getPeso());
+        solicitacao.setAltura(paciente.getAltura());
+        solicitacao.setObjetivo(paciente.getObjetivo());
+        solicitacao.setCondicaoSaude(paciente.getCondicaoSaude());
+        solicitacao.setNutricionistaId(nutricionistaId);
+        solicitacaoRepository.save(solicitacao);
+    }
+
     private static String primeiroTexto(Map<String, Object> body, String... nomes) {
         for (String nome : nomes) {
             String valor = Campos.texto(body.get(nome));
             if (valor != null) return valor;
         }
         return null;
+    }
+
+    private static Object primeiroValor(Map<String, Object> body, String... nomes) {
+        for (String nome : nomes) {
+            if (body.containsKey(nome)) return body.get(nome);
+        }
+        return null;
+    }
+
+    private static boolean containsAny(Map<String, Object> body, String... nomes) {
+        for (String nome : nomes) if (body.containsKey(nome)) return true;
+        return false;
     }
 
     private static Integer idadeDe(Object valor) {

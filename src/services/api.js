@@ -1,10 +1,11 @@
 const isCodespaces = typeof window !== 'undefined' && window.location.hostname.includes('app.github.dev');
+const configuredApiBaseUrl = process.env.REACT_APP_API_URL?.trim().replace(/\/+$/, '');
 
-const API_BASE_URL = isCodespaces
+const API_BASE_URL = configuredApiBaseUrl || (isCodespaces
   ? `https://${window.location.hostname.replace('-3000', '-3001')}`
   : process.env.NODE_ENV === 'production'
     ? 'https://backend-tcc-web.onrender.com'
-    : 'http://localhost:8080';
+    : 'http://localhost:8080');
 
 const isJsonServer = false;
 
@@ -12,10 +13,15 @@ const endpoint = (path) => path;
 
 // Funções auxiliares
 const handleResponse = async (response) => {
+  const raw = await response.text();
+  let data = null;
+  try { data = raw ? JSON.parse(raw) : null; } catch { data = raw ? { message: raw } : null; }
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const error = new Error(data?.message || `HTTP error! status: ${response.status}`);
+    error.status = response.status;
+    throw error;
   }
-  return await response.json();
+  return data;
 };
 
 const apiRequest = async (path, options = {}) => {
@@ -26,13 +32,16 @@ const apiRequest = async (path, options = {}) => {
   const url = `${API_BASE_URL}${endpoint(path)}`;
   console.log('API Request:', url);
   
+  let storedUser = null;
+  try { storedUser = JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch { storedUser = null; }
   const config = {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-Token': Math.random().toString(36).substring(2),
+      ...(storedUser?.token ? { Authorization: `Bearer ${storedUser.token}` } : {}),
       ...options.headers,
     },
-    ...options,
   };
 
   const response = await fetch(url, config);
@@ -69,11 +78,11 @@ export const nutricionistasAPI = {
         method: 'POST',
         body: JSON.stringify({ email, crn, senha }),
       });
-      if (response.success) return response.nutricionista;
+      if (response.success) return { ...response.nutricionista, token: response.token };
       return null;
     } catch (error) {
       if (error.message === 'PENDING_APPROVAL' || error.message === 'ACCOUNT_INACTIVE') throw error;
-      if (error.message.includes('401')) return null;
+      if (error.status === 401 || error.message.includes('401')) return null;
       throw error;
     }
   }
@@ -82,15 +91,11 @@ export const nutricionistasAPI = {
 // Pacientes
 export const pacientesAPI = {
   getAll: () => apiRequest('/api/pacientes'),
-  getById: (id) => apiRequest(`/api/pacientes/${id}`),
-  getByNutricionista: async (nutricionistaId) => {
-    const pacientes = await apiRequest('/api/pacientes');
-    return pacientes.filter(p => {
-      const pacienteNutriId = p.nutricionistaId || p.NutricionistaId || p.nutricionista_id;
-      const pacienteStatus = p.status || p.Status;
-      return String(pacienteNutriId) === String(nutricionistaId) && pacienteStatus === 'accepted';
-    });
-  },
+  getById: (id) => apiRequest(`/api/nutri/pacientes/${id}`),
+  getByNutricionista: () => apiRequest('/api/nutri/pacientes'),
+  updateClinical: (id, data) => apiRequest(`/api/nutri/pacientes/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  transfer: (id, nutricionistaId) => apiRequest(`/api/nutri/pacientes/${id}/transferir`, { method: 'POST', body: JSON.stringify({ nutricionistaId }) }),
+  endService: (id) => apiRequest(`/api/nutri/pacientes/${id}/vinculo`, { method: 'DELETE' }),
   create: (data) => apiRequest('/api/pacientes', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -107,7 +112,10 @@ export const pacientesAPI = {
 // Solicitações Pendentes
 export const solicitacoesAPI = {
   getAll: () => apiRequest('/api/solicitacoesPendentes'),
-  getByNutricionista: async (nutricionistaId) => {
+  getByNutricionista: () => apiRequest('/api/nutri/solicitacoes'),
+  acceptScoped: (id) => apiRequest(`/api/nutri/solicitacoes/${id}/aceitar`, { method: 'PUT', body: JSON.stringify({}) }),
+  denyScoped: (id) => apiRequest(`/api/nutri/solicitacoes/${id}`, { method: 'DELETE' }),
+  getByNutricionistaLegacy: async (nutricionistaId) => {
     const solicitacoes = await apiRequest('/api/solicitacoesPendentes');
     console.log('Solicitações:', solicitacoes);
     console.log('Nutricionista ID buscado:', nutricionistaId);
@@ -125,43 +133,15 @@ export const solicitacoesAPI = {
     method: 'DELETE',
   }),
   acceptRequest: async (id) => {
-    // Buscar todas as solicitações e encontrar a específica
     const solicitacoes = await apiRequest('/api/solicitacoesPendentes');
-    const solicitacao = solicitacoes.find(s => (s.id || s.Id) === id);
-    
+    const solicitacao = solicitacoes.find(s => String(s.id || s.Id) === String(id));
     if (!solicitacao) throw new Error('Solicitação não encontrada');
-    
-    console.log('Solicitação encontrada:', solicitacao);
-    
-    // Criar paciente com todos os campos
-    const paciente = {
-      nome: solicitacao.nome || solicitacao.Nome,
-      email: solicitacao.email || solicitacao.Email,
-      idade: solicitacao.idade || solicitacao.Idade,
-      peso: solicitacao.peso || solicitacao.Peso,
-      altura: solicitacao.altura || solicitacao.Altura,
-      objetivo: solicitacao.objetivo || solicitacao.Objetivo,
-      condicaoSaude: solicitacao.condicaoSaude || solicitacao.CondicaoSaude,
-      nutricionistaId: solicitacao.nutricionistaId || solicitacao.NutricionistaId || solicitacao.nutricionista_id,
-      status: 'accepted',
-      ativo: 1
-    };
-    
-    console.log('Criando paciente:', paciente);
-    
-    const newPaciente = await apiRequest('/api/pacientes', {
-      method: 'POST',
-      body: JSON.stringify(paciente),
+    const nutricionistaId = solicitacao.nutricionistaId || solicitacao.NutricionistaId || solicitacao.nutricionista_id;
+    if (!nutricionistaId) throw new Error('A solicitação não tem nutricionista associado');
+    return apiRequest(`/api/solicitacoesPendentes/${id}/accept`, {
+      method: 'PUT',
+      body: JSON.stringify({ nutricionistaId: Number(nutricionistaId) }),
     });
-    
-    console.log('Paciente criado:', newPaciente);
-    
-    // Remover da lista de pendentes
-    await apiRequest(`/api/solicitacoesPendentes/${id}`, {
-      method: 'DELETE',
-    });
-    
-    return { nome: paciente.nome, ...newPaciente };
   }
 };
 

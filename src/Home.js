@@ -6,7 +6,6 @@ import Footer from './Footer';
 const Home = () => {
   const headerLinks = [
     { href: '/', text: 'Início' },
-    { href: '/solicitar-consulta', text: 'Solicitar Consulta' },
     { href: '/registro', text: 'Registro' },
     { href: '/login', text: 'Entrar' },
     { href: '/sobre-nos', text: 'Sobre nós' },
@@ -150,18 +149,6 @@ const Home = () => {
         .hbtn:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        }
-
-        .hbtn-consult {
-          background: linear-gradient(135deg, #6366f1, #818cf8);
-          color: #fff;
-          box-shadow: 0 4px 18px rgba(99,102,241,0.4);
-        }
-
-        .hbtn-consult:hover {
-          background: linear-gradient(135deg, #4f46e5, #6366f1);
-          box-shadow: 0 8px 28px rgba(99,102,241,0.55);
-          transform: translateY(-3px);
         }
 
         .hbtn-nutri {
@@ -467,16 +454,6 @@ const Home = () => {
           color: #C4B5FD !important;
         }
 
-        body.dark-mode .hbtn-consult {
-          background: linear-gradient(135deg, #7C3AED, #A78BFA) !important;
-          box-shadow: 0 4px 18px rgba(124,58,237,0.5) !important;
-        }
-
-        body.dark-mode .hbtn-consult:hover {
-          background: linear-gradient(135deg, #6D28D9, #8B5CF6) !important;
-          box-shadow: 0 8px 28px rgba(124,58,237,0.65) !important;
-        }
-
         body.dark-mode .hbtn-nutri {
           background: linear-gradient(135deg, #4C1D95, #6D28D9) !important;
           box-shadow: 0 4px 18px rgba(76,29,149,0.5) !important;
@@ -571,9 +548,6 @@ const Home = () => {
             organizar rotinas e integrar o acompanhamento à outras áreas da saúde.
           </p>
           <div className="home-hero-buttons">
-            <Link to="/solicitar-consulta" className="hbtn hbtn-consult">
-              Solicitar Consulta
-            </Link>
             <Link to="/registro" className="hbtn hbtn-nutri">
               Sou Nutricionista
             </Link>
@@ -614,7 +588,7 @@ const Home = () => {
           <div className="home-feature-card">
             <span className="home-feature-icon">🏥</span>
             <div className="home-feature-title">Para Pacientes</div>
-            <p className="home-feature-text">Solicite consultas e receba acompanhamento personalizado</p>
+            <p className="home-feature-text">Acompanhe sua alimentação e seus hábitos pelo aplicativo</p>
           </div>
           <div className="home-feature-card">
             <span className="home-feature-icon">👩‍⚕️</span>

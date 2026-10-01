@@ -45,7 +45,7 @@ const NutriDashboard = () => {
         }
         setCurrentUser(user);
         
-        const pacientes = await pacientesAPI.getByNutricionista(user.Id || user.id);
+        const pacientes = await pacientesAPI.getByNutricionista();
         const nutricionistas = await nutricionistasAPI.getAll();
         console.log('Todos os nutricionistas:', nutricionistas);
         
@@ -55,6 +55,7 @@ const NutriDashboard = () => {
         setManagedNutricionists(approvedNutris);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
+        if (error.status === 401) navigate('/login');
       }
     };
     
@@ -86,16 +87,14 @@ const NutriDashboard = () => {
 
   const handleSelectNutri = async (selectedNutriId) => {
     try {
-      const selectedNutri = managedNutricionists.find(n => (n.Id || n.id) === selectedNutriId);
+      const selectedNutri = managedNutricionists.find(n => String(n.Id || n.id) === String(selectedNutriId));
       if (!selectedNutri) return;
 
       const patientId = selectNutriModal.patient.Id || selectNutriModal.patient.id;
       console.log('Transferindo paciente ID:', patientId, 'para nutricionista ID:', selectedNutriId);
 
       // Atualizar paciente para novo nutricionista
-      await pacientesAPI.update(patientId, {
-        nutricionistaId: selectedNutriId
-      });
+      await pacientesAPI.transfer(patientId, selectedNutriId);
 
       // Atualizar lista local
       const updatedPatients = acceptedPatients.filter(p => (p.Id || p.id) !== patientId);
@@ -219,11 +218,11 @@ const NutriDashboard = () => {
             onClick={async () => {
               try {
                 const patientId = transferModal.patient.Id || transferModal.patient.id;
-                await pacientesAPI.delete(patientId);
+                await pacientesAPI.endService(patientId);
                 const updatedPatients = acceptedPatients.filter(p => (p.Id || p.id) !== patientId);
                 setAcceptedPatients(updatedPatients);
                 
-                alert(`Atendimento de ${transferModal.patient.Nome || transferModal.patient.nome} foi encerrado definitivamente.`);
+                alert(`Atendimento de ${transferModal.patient.Nome || transferModal.patient.nome} foi encerrado. O cadastro e o histórico foram preservados.`);
                 setTransferModal({ isOpen: false, patient: null });
                 setTransferReason('');
               } catch (error) {

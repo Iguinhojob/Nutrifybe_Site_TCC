@@ -50,6 +50,11 @@ public class DiarioController {
         Long id = tokens.validar(auth);
         if (id == null) return naoAutorizado();
         Double calorias = Campos.decimal(body.containsKey("calorias") ? body.get("calorias") : body.get("calories"));
+        String referenciaId = Campos.texto(body.get("referenciaId"));
+        if (referenciaId != null) {
+            var existente = refeicoes.findFirstByPacienteIdAndReferenciaId(id, referenciaId);
+            if (existente.isPresent()) return ResponseEntity.ok(existente.get());
+        }
         if (calorias == null || calorias < 0) return erro(400, "Informe as calorias da refeição");
 
         DiarioRefeicao r = new DiarioRefeicao();
@@ -57,14 +62,35 @@ public class DiarioController {
         r.setNome(primeiroTexto(body, "nome", "mealType") != null ? primeiroTexto(body, "nome", "mealType") : "Refeição");
         r.setDescricao(primeiroTexto(body, "descricao", "description"));
         r.setCalorias(calorias);
-        r.setCarboidratos(Campos.decimal(body.get("carboidratos")));
-        r.setProteinas(Campos.decimal(body.get("proteinas")));
-        r.setGorduras(Campos.decimal(body.get("gorduras")));
+        r.setCarboidratos(Campos.decimal(body.containsKey("carboidratos") ? body.get("carboidratos") : body.get("carbs")));
+        r.setProteinas(Campos.decimal(body.containsKey("proteinas") ? body.get("proteinas") : body.get("protein")));
+        r.setGorduras(Campos.decimal(body.containsKey("gorduras") ? body.get("gorduras") : body.get("fat")));
         r.setItens(Campos.texto(body.get("itens")));
         r.setOrigem(Campos.texto(body.get("origem")));
         r.setReferenciaId(Campos.texto(body.get("referenciaId")));
         r.setCriadoEm(Campos.dataOuAgora(body.containsKey("criadoEm") ? body.get("criadoEm") : body.get("entryDate")));
         return ResponseEntity.ok(refeicoes.save(r));
+    }
+
+    @PutMapping("/refeicoes/{registroId}")
+    public ResponseEntity<?> atualizarRefeicao(@RequestHeader(value = "Authorization", required = false) String auth,
+                                                @PathVariable Long registroId,
+                                                @RequestBody Map<String, Object> body) {
+        Long id = tokens.validar(auth);
+        if (id == null) return naoAutorizado();
+        Double calorias = Campos.decimal(body.containsKey("calorias") ? body.get("calorias") : body.get("calories"));
+        if (calorias == null || calorias < 0) return erro(400, "Informe calorias validas para a refeicao");
+        return refeicoes.findByIdAndPacienteId(registroId, id).map(r -> {
+            String nome = primeiroTexto(body, "nome", "mealType");
+            if (nome != null) r.setNome(nome);
+            if (body.containsKey("descricao") || body.containsKey("description")) r.setDescricao(primeiroTexto(body, "descricao", "description"));
+            r.setCalorias(calorias);
+            if (body.containsKey("carboidratos") || body.containsKey("carbs")) r.setCarboidratos(Campos.decimal(body.containsKey("carboidratos") ? body.get("carboidratos") : body.get("carbs")));
+            if (body.containsKey("proteinas") || body.containsKey("protein")) r.setProteinas(Campos.decimal(body.containsKey("proteinas") ? body.get("proteinas") : body.get("protein")));
+            if (body.containsKey("gorduras") || body.containsKey("fat")) r.setGorduras(Campos.decimal(body.containsKey("gorduras") ? body.get("gorduras") : body.get("fat")));
+            if (body.containsKey("itens") || body.containsKey("items")) r.setItens(Campos.texto(body.containsKey("itens") ? body.get("itens") : body.get("items")));
+            return ResponseEntity.ok(refeicoes.save(r));
+        }).orElseGet(() -> ResponseEntity.status(404).body((Object) Map.of("success", false, "message", "Registro nao encontrado")));
     }
 
     @DeleteMapping("/refeicoes/{registroId}")
@@ -96,10 +122,16 @@ public class DiarioController {
         if (id == null) return naoAutorizado();
         Integer ml = Campos.inteiro(body.containsKey("quantidadeMl") ? body.get("quantidadeMl") : body.get("amountMl"));
         if (ml == null || ml <= 0) return erro(400, "Informe a quantidade de água em ml");
+        String referenciaId = Campos.texto(body.get("referenciaId"));
+        if (referenciaId != null) {
+            var existente = agua.findFirstByPacienteIdAndReferenciaId(id, referenciaId);
+            if (existente.isPresent()) return ResponseEntity.ok(existente.get());
+        }
 
         DiarioAgua a = new DiarioAgua();
         a.setPacienteId(id);
         a.setQuantidadeMl(ml);
+        a.setReferenciaId(referenciaId);
         a.setCriadoEm(Campos.dataOuAgora(body.containsKey("criadoEm") ? body.get("criadoEm") : body.get("entryDate")));
         return ResponseEntity.ok(agua.save(a));
     }
@@ -140,6 +172,12 @@ public class DiarioController {
                 && m.getBraco() == null && m.getGorduraCorporal() == null) {
             return erro(400, "Informe pelo menos uma medida");
         }
+        String referenciaId = Campos.texto(body.get("referenciaId"));
+        if (referenciaId != null) {
+            var existente = medidas.findFirstByPacienteIdAndReferenciaId(id, referenciaId);
+            if (existente.isPresent()) return ResponseEntity.ok(existente.get());
+        }
+        m.setReferenciaId(referenciaId);
         m.setCriadoEm(Campos.dataOuAgora(body.get("criadoEm")));
         return ResponseEntity.ok(medidas.save(m));
     }

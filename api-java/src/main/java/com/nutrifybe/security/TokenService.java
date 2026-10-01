@@ -23,9 +23,11 @@ public class TokenService {
     }
 
     public String gerar(Long pacienteId) {
-        long expira = System.currentTimeMillis() / 1000 + horas * 3600;
-        String corpo = b64((pacienteId + ":" + expira).getBytes(StandardCharsets.UTF_8));
-        return corpo + "." + b64(assinar(corpo));
+        return gerarCorpo(pacienteId + ":" + (System.currentTimeMillis() / 1000 + horas * 3600));
+    }
+
+    public String gerarNutricionista(Long nutricionistaId) {
+        return gerarCorpo("nutri:" + nutricionistaId + ":" + (System.currentTimeMillis() / 1000 + horas * 3600));
     }
 
     /** Recebe o cabeçalho "Authorization: Bearer ..." e devolve o id do paciente, ou null se inválido. */
@@ -39,12 +41,39 @@ public class TokenService {
             byte[] recebida = Base64.getUrlDecoder().decode(token.substring(ponto + 1));
             if (!MessageDigest.isEqual(assinar(corpo), recebida)) return null;
             String[] partes = new String(Base64.getUrlDecoder().decode(corpo), StandardCharsets.UTF_8).split(":");
+            if (partes.length != 2) return null;
             long expira = Long.parseLong(partes[1]);
             if (expira < System.currentTimeMillis() / 1000) return null;
             return Long.valueOf(partes[0]);
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public Long validarNutricionista(String cabecalho) {
+        String[] partes = validarCorpo(cabecalho);
+        if (partes == null || partes.length != 3 || !"nutri".equals(partes[0])) return null;
+        try { return Long.valueOf(partes[1]); } catch (NumberFormatException e) { return null; }
+    }
+
+    private String gerarCorpo(String valor) {
+        String corpo = b64(valor.getBytes(StandardCharsets.UTF_8));
+        return corpo + "." + b64(assinar(corpo));
+    }
+
+    private String[] validarCorpo(String cabecalho) {
+        if (cabecalho == null || !cabecalho.startsWith("Bearer ")) return null;
+        String token = cabecalho.substring(7).trim();
+        int ponto = token.indexOf('.');
+        if (ponto < 1) return null;
+        String corpo = token.substring(0, ponto);
+        try {
+            byte[] recebida = Base64.getUrlDecoder().decode(token.substring(ponto + 1));
+            if (!MessageDigest.isEqual(assinar(corpo), recebida)) return null;
+            String[] partes = new String(Base64.getUrlDecoder().decode(corpo), StandardCharsets.UTF_8).split(":");
+            if (partes.length < 2 || Long.parseLong(partes[partes.length - 1]) < System.currentTimeMillis() / 1000) return null;
+            return partes;
+        } catch (Exception e) { return null; }
     }
 
     private byte[] assinar(String dados) {

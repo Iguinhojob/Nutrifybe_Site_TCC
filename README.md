@@ -16,6 +16,8 @@ mvn spring-boot:run
 ```
 A API estará disponível em: `http://localhost:8080`
 
+Para o site e o app mobile usarem a mesma API, configure `REACT_APP_API_URL` no site e `EXPO_PUBLIC_API_URL` no app com a mesma URL base. Em desenvolvimento local, use `http://localhost:8080`; em um celular fisico, use o IP local do computador. No Vercel, defina `REACT_APP_API_URL` com a URL do backend publicado e mantenha o backend atualizado com o codigo de `api-java`.
+
 ### 3. Iniciar o Frontend (em outro terminal)
 ```bash
 npm start

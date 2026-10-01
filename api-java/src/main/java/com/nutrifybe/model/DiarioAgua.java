@@ -16,6 +16,9 @@ public class DiarioAgua {
     @Column(name = "quantidade_ml")
     private Integer quantidadeMl;
 
+    @Column(name = "referencia_id")
+    private String referenciaId;
+
     @Column(name = "criado_em")
     private String criadoEm;
 
@@ -24,6 +27,8 @@ public class DiarioAgua {
     public void setPacienteId(Long pacienteId) { this.pacienteId = pacienteId; }
     public Integer getQuantidadeMl() { return quantidadeMl; }
     public void setQuantidadeMl(Integer quantidadeMl) { this.quantidadeMl = quantidadeMl; }
+    public String getReferenciaId() { return referenciaId; }
+    public void setReferenciaId(String referenciaId) { this.referenciaId = referenciaId; }
     public String getCriadoEm() { return criadoEm; }
     public void setCriadoEm(String criadoEm) { this.criadoEm = criadoEm; }
 }

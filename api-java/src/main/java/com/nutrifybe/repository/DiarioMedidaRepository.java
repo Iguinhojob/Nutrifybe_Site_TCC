@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface DiarioMedidaRepository extends JpaRepository<DiarioMedida, Long> {
     List<DiarioMedida> findByPacienteIdOrderByCriadoEmDesc(Long pacienteId);
     Optional<DiarioMedida> findByIdAndPacienteId(Long id, Long pacienteId);
+    Optional<DiarioMedida> findFirstByPacienteIdAndReferenciaId(Long pacienteId, String referenciaId);
 }

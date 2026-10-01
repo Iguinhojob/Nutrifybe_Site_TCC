@@ -24,6 +24,9 @@ public class DiarioMedida {
     @Column(name = "gordura_corporal")
     private String gorduraCorporal;
 
+    @Column(name = "referencia_id")
+    private String referenciaId;
+
     @Column(name = "criado_em")
     private String criadoEm;
 
@@ -40,6 +43,8 @@ public class DiarioMedida {
     public void setBraco(String braco) { this.braco = braco; }
     public String getGorduraCorporal() { return gorduraCorporal; }
     public void setGorduraCorporal(String gorduraCorporal) { this.gorduraCorporal = gorduraCorporal; }
+    public String getReferenciaId() { return referenciaId; }
+    public void setReferenciaId(String referenciaId) { this.referenciaId = referenciaId; }
     public String getCriadoEm() { return criadoEm; }
     public void setCriadoEm(String criadoEm) { this.criadoEm = criadoEm; }
 }

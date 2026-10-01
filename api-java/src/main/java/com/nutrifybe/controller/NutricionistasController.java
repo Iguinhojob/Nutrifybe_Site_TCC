@@ -2,12 +2,14 @@ package com.nutrifybe.controller;
 
 import com.nutrifybe.model.Nutricionista;
 import com.nutrifybe.repository.NutricionistaRepository;
+import com.nutrifybe.security.TokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 
 @RestController
@@ -15,21 +17,23 @@ import java.util.Optional;
 public class NutricionistasController {
 
     private final NutricionistaRepository repository;
+    private final TokenService tokens;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public NutricionistasController(NutricionistaRepository repository) {
+    public NutricionistasController(NutricionistaRepository repository, TokenService tokens) {
         this.repository = repository;
+        this.tokens = tokens;
     }
 
     @GetMapping
-    public List<Nutricionista> getAll() {
-        return repository.findAll();
+    public List<Map<String, Object>> getAll() {
+        return repository.findAll().stream().map(this::publico).toList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         return repository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(n -> ResponseEntity.ok((Object) publico(n)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -49,7 +53,9 @@ public class NutricionistasController {
         Optional<Nutricionista> nutri = repository.findByEmailAndCrnAndStatusAndAtivo(email, crn, "approved", 1);
 
         if (nutri.isPresent() && passwordEncoder.matches(senha, nutri.get().getSenha())) {
-            return ResponseEntity.ok(Map.of("success", true, "nutricionista", nutri.get()));
+            Nutricionista profissional = nutri.get();
+            return ResponseEntity.ok(Map.of("success", true, "nutricionista", publico(profissional),
+                    "token", tokens.gerarNutricionista(profissional.getId())));
         }
         return ResponseEntity.status(401).body(Map.of("success", false, "message", "Credenciais inválidas"));
     }
@@ -67,7 +73,7 @@ public class NutricionistasController {
             if (body.containsKey("foto")) nutri.setFoto((String) body.get("foto"));
             if (body.containsKey("senha")) nutri.setSenha(passwordEncoder.encode((String) body.get("senha")));
             repository.save(nutri);
-            return ResponseEntity.ok(Map.of("success", true));
+            return ResponseEntity.ok(publico(nutri));
         }).orElse(ResponseEntity.notFound().build());
     }
 
@@ -75,5 +81,21 @@ public class NutricionistasController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    private Map<String, Object> publico(Nutricionista n) {
+        Map<String, Object> dados = new LinkedHashMap<>();
+        dados.put("id", n.getId());
+        dados.put("nome", n.getNome());
+        dados.put("email", n.getEmail());
+        dados.put("crn", n.getCrn());
+        dados.put("status", n.getStatus());
+        dados.put("ativo", n.getAtivo());
+        dados.put("telefone", n.getTelefone());
+        dados.put("especialidade", n.getEspecialidade());
+        dados.put("descricao", n.getDescricao());
+        dados.put("foto", n.getFoto());
+        dados.put("dataCriacao", n.getDataCriacao());
+        return dados;
     }
 }

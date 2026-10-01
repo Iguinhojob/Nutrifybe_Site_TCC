@@ -7,7 +7,6 @@ const fundoImage = '/images/fundo_index.png';
 const TermosUso = () => {
   const headerLinks = [
     { href: '/', text: 'Início' },
-    { href: '/solicitar-consulta', text: 'Solicitar Consulta' },
     { href: '/registro', text: 'Registro' },
     { href: '/login', text: 'Entrar' },
     { href: '/sobre-nos', text: 'Sobre nós' },

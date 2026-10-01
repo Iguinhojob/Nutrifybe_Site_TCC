@@ -42,7 +42,7 @@ const NutriSolicitacoes = () => {
 
   const acceptPatientRequest = async (id) => {
     try {
-      const acceptedPatient = await solicitacoesAPI.acceptRequest(id);
+      const acceptedPatient = await solicitacoesAPI.acceptScoped(id);
       const updatedPending = pendingRequests.filter(req => (req.id || req.Id) !== id);
       setPendingRequests(updatedPending);
       
@@ -56,7 +56,7 @@ const NutriSolicitacoes = () => {
   const rejectPatientRequest = async (id) => {
     try {
       const rejectedPatient = pendingRequests.find(req => (req.id || req.Id) === id);
-      await solicitacoesAPI.delete(id);
+      await solicitacoesAPI.denyScoped(id);
       const updatedPending = pendingRequests.filter(req => (req.id || req.Id) !== id);
       setPendingRequests(updatedPending);
       

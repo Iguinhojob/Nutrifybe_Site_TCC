@@ -43,9 +43,9 @@ const NutriCalendario = () => {
     let patient;
     try {
       patient = await pacientesAPI.getById(id);
-    } catch {
-      const allPacientes = await pacientesAPI.getAll();
-      patient = allPacientes.find(p => (p.Id || p.id) === parseInt(id));
+    } catch (error) {
+      console.error('Não foi possível carregar a ficha autorizada do paciente:', error);
+      patient = null;
     }
     
     if (patient) {
@@ -183,7 +183,7 @@ const NutriCalendario = () => {
       console.log('Salvando calendÃ¡rio para paciente ID:', patientId);
       console.log('Dados do calendÃ¡rio:', currentPatient.calendario);
       
-      await pacientesAPI.update(patientId, {
+      await pacientesAPI.updateClinical(patientId, {
         calendario: currentPatient.calendario
       });
       

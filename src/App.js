@@ -15,7 +15,6 @@ import NutriSolicitacoes from './NutriSolicitacoes';
 import NutriPerfil from './NutriPerfil';
 import SobreNos from './SobreNos';
 import Suporte from './Suporte';
-import SolicitarConsulta from './SolicitarConsulta';
 import TermosUso from './TermosUso';
 import PoliticaPrivacidade from './PoliticaPrivacidade';
 import FichaPaciente from './FichaPaciente';
@@ -37,7 +36,6 @@ function App() {
         <Route path="/ficha-paciente/:id" element={<FichaPaciente />} />
         <Route path="/nutri-solicitacoes" element={<NutriSolicitacoes />} />
         <Route path="/nutri-perfil" element={<NutriPerfil />} />
-        <Route path="/solicitar-consulta" element={<SolicitarConsulta />} />
         <Route path="/sobre-nos" element={<SobreNos />} />
         <Route path="/suporte" element={<Suporte />} />
         <Route path="/termos-uso" element={<TermosUso />} />
