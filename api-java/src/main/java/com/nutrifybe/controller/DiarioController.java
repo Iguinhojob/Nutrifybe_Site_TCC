@@ -89,7 +89,7 @@ public class DiarioController {
             if (body.containsKey("proteinas") || body.containsKey("protein")) r.setProteinas(Campos.decimal(body.containsKey("proteinas") ? body.get("proteinas") : body.get("protein")));
             if (body.containsKey("gorduras") || body.containsKey("fat")) r.setGorduras(Campos.decimal(body.containsKey("gorduras") ? body.get("gorduras") : body.get("fat")));
             if (body.containsKey("itens") || body.containsKey("items")) r.setItens(Campos.texto(body.containsKey("itens") ? body.get("itens") : body.get("items")));
-            return ResponseEntity.ok(refeicoes.save(r));
+            return ResponseEntity.ok((Object) refeicoes.save(r));
         }).orElseGet(() -> ResponseEntity.status(404).body((Object) Map.of("success", false, "message", "Registro nao encontrado")));
     }
 

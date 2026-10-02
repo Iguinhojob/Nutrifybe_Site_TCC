@@ -17,7 +17,12 @@ export default function FichaPaciente() {
   const [paciente, setPaciente] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const dark = document.body.classList.contains('dark-mode');
+  const [dark, setDark] = useState(() => localStorage.getItem('darkMode') === 'true');
+  useEffect(() => {
+    const syncTheme = (event) => setDark(event.detail?.darkMode ?? localStorage.getItem('darkMode') === 'true');
+    window.addEventListener('nutrifybe-theme-change', syncTheme);
+    return () => window.removeEventListener('nutrifybe-theme-change', syncTheme);
+  }, []);
   const C = {
     card: dark ? '#172321' : '#fff', soft: dark ? '#1d2c2a' : '#f4f8f9',
     border: dark ? 'rgba(255,255,255,.1)' : '#e2e8f0',
@@ -59,6 +64,11 @@ export default function FichaPaciente() {
     return [...days.entries()].sort(([a], [b]) => b.localeCompare(a));
   }, [paciente]);
   const latestWeight = paciente?.medidas?.find((item) => item.peso)?.peso;
+  let planoAtual = null;
+  try {
+    const parsed = JSON.parse(paciente?.prescricaoSemanal || 'null');
+    if (parsed?.version === 1 && Array.isArray(parsed.meals)) planoAtual = parsed;
+  } catch { /* Prescrição antiga em texto livre. */ }
   const panel = { background: C.card, border: `1px solid ${C.border}`, borderRadius: 16, padding: 20, marginBottom: 16 };
   const label = { color: C.muted, fontSize: '.76rem', textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 800 };
   const value = { color: C.text, margin: '5px 0 0', fontWeight: 650, lineHeight: 1.5, overflowWrap: 'anywhere' };
@@ -138,7 +148,7 @@ export default function FichaPaciente() {
 
         <section style={panel}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}><h2 style={{ color: C.text, margin: 0 }}>Plano alimentar atual</h2><Link to={`/nutri-prescricao/${paciente.id}`} style={{ color: C.accent, fontWeight: 800 }}>Editar prescrição →</Link></div>
-          {paciente.prescricaoSemanal ? <div style={{ color: C.text, lineHeight: 1.75, whiteSpace: 'pre-wrap', marginTop: 12 }}>{paciente.prescricaoSemanal}</div> : <p style={{ color: C.muted, marginBottom: 0 }}>Ainda não há uma dieta prescrita para este paciente.</p>}
+          {planoAtual ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(230px,1fr))', gap: 10, marginTop: 14 }}>{planoAtual.meals.map((meal, index) => <article key={index} style={{ background: C.soft, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14 }}><strong style={{ color: C.text }}>{meal.horario ? `${meal.horario} · ` : ''}{meal.nome || `Refeição ${index + 1}`}</strong>{meal.alimentos && <p style={{ color: C.muted, whiteSpace: 'pre-wrap', margin: '8px 0 4px' }}>{meal.alimentos}</p>}{meal.porcao && <small style={{ color: C.text }}>Porção: {meal.porcao}</small>}{meal.calorias != null && meal.calorias !== '' && <p style={{ color: C.primary, fontWeight: 850, margin: '7px 0 0' }}>{meal.calorias} kcal</p>}{meal.observacao && <p style={{ color: C.muted, margin: '6px 0 0' }}>Opção/observação: {meal.observacao}</p>}</article>)}{planoAtual.notes && <div style={{ gridColumn: '1 / -1', color: C.text, whiteSpace: 'pre-wrap', background: C.soft, padding: 14, borderRadius: 12 }}><strong>Orientações gerais</strong><br />{planoAtual.notes}</div>}</div> : paciente.prescricaoSemanal ? <div style={{ color: C.text, lineHeight: 1.75, whiteSpace: 'pre-wrap', marginTop: 12 }}>{paciente.prescricaoSemanal}</div> : <p style={{ color: C.muted, marginBottom: 0 }}>Ainda não há uma dieta prescrita para este paciente.</p>}
         </section>
       </main>
     </div>

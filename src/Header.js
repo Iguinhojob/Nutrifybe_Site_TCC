@@ -16,7 +16,11 @@ const Header = ({ theme = 'public', links = [] }) => {
     localStorage.setItem('darkMode', darkMode);
   }, [darkMode]);
 
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
+  const toggleDarkMode = () => setDarkMode(prev => {
+    const next = !prev;
+    window.dispatchEvent(new CustomEvent('nutrifybe-theme-change', { detail: { darkMode: next } }));
+    return next;
+  });
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
