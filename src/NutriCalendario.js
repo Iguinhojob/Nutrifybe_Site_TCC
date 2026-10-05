@@ -3,6 +3,38 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { pacientesAPI } from './services/api';
 
+const MEAL_KEYWORDS = [
+  { key: 'cafe',    label: 'Café da Manhã',    icon: '☕', color: '#f59e0b', terms: ['café','cafe','manhã','manha','breakfast','desjejum'] },
+  { key: 'lanche1', label: 'Lanche da Manhã', icon: '🍎', color: '#10b981', terms: ['lanche manhã','lanche da manhã','lanche manha','lanche 1','lanche1'] },
+  { key: 'almoco',  label: 'Almoço',          icon: '🍽️', color: '#6366f1', terms: ['almoço','almoco','lunch'] },
+  { key: 'lanche2', label: 'Lanche da Tarde', icon: '🥪', color: '#06b6d4', terms: ['lanche tarde','lanche da tarde','lanche 2','lanche2','lanche'] },
+  { key: 'jantar',  label: 'Jantar',          icon: '🌙', color: '#8b5cf6', terms: ['jantar','dinner','janta'] },
+  { key: 'ceia',    label: 'Ceia',            icon: '🌛', color: '#ec4899', terms: ['ceia','noite','supper'] },
+];
+
+function parseMeals(alimentacao) {
+  if (!alimentacao) return null;
+  const lines = alimentacao.split('\n').map(l => l.trim()).filter(Boolean);
+  const meals = {};
+  let currentKey = null;
+  for (const line of lines) {
+    const lower = line.toLowerCase();
+    const found = MEAL_KEYWORDS.find(m => m.terms.some(t => lower.includes(t)));
+    if (found) {
+      currentKey = found.key;
+      const content = line.replace(/^[^:：]+[:：]\s*/, '').trim();
+      if (!meals[currentKey]) meals[currentKey] = [];
+      if (content) meals[currentKey].push(content);
+    } else if (currentKey) {
+      meals[currentKey].push(line);
+    } else {
+      if (!meals['geral']) meals['geral'] = [];
+      meals['geral'].push(line);
+    }
+  }
+  return Object.keys(meals).length > 0 ? meals : null;
+}
+
 const STATUS_CONFIG = {
   cumprido:               { color: '#10b981', label: 'Cumprido',            icon: '✓' },
   'parcialmente-cumprido':{ color: '#f59e0b', label: 'Parcialmente Cumprido', icon: '◑' },
@@ -25,6 +57,12 @@ const NutriCalendario = () => {
   const [year, setYear]   = useState(today.getFullYear());
   const [isDark] = useState(() => document.body.classList.contains('dark-mode'));
 
+  // Retorno
+  const [showRetornoForm, setShowRetornoForm] = useState(false);
+  const [retornoData, setRetornoData] = useState({ data: '', hora: '', observacao: '' });
+  const [retornoSalvo, setRetornoSalvo] = useState(null);
+  const [savingRetorno, setSavingRetorno] = useState(false);
+
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Início' },
     { href: '/nutri-solicitacoes', text: 'Solicitações Pendentes' },
@@ -40,7 +78,14 @@ const NutriCalendario = () => {
           try { p.calendario = JSON.parse(p.calendario); } catch { p.calendario = {}; }
         }
         p.calendario = p.calendario || {};
+        if (typeof p.retorno === 'string') {
+          try { p.retorno = JSON.parse(p.retorno); } catch { p.retorno = null; }
+        }
         setPatient(p);
+        if (p.retorno) {
+          setRetornoSalvo(p.retorno);
+          setRetornoData(p.retorno);
+        }
       } catch {
         navigate('/nutri-dashboard');
       }
@@ -49,9 +94,38 @@ const NutriCalendario = () => {
 
   const navigateMonth = (dir) => {
     if (dir === 'prev') {
-      setMonth(m => m === 0 ? (setYear(y => y - 1), 11) : m - 1);
+      if (month === 0) { setYear(y => y - 1); setMonth(11); }
+      else setMonth(m => m - 1);
     } else {
-      setMonth(m => m === 11 ? (setYear(y => y + 1), 0) : m + 1);
+      if (month === 11) { setYear(y => y + 1); setMonth(0); }
+      else setMonth(m => m + 1);
+    }
+  };
+
+  const saveRetorno = async () => {
+    if (!retornoData.data) return;
+    setSavingRetorno(true);
+    try {
+      const patientId = patient.Id || patient.id;
+      await pacientesAPI.updateClinical(patientId, { retorno: retornoData });
+      setRetornoSalvo({ ...retornoData });
+      setShowRetornoForm(false);
+    } catch (e) {
+      alert('Erro ao salvar retorno: ' + e.message);
+    } finally {
+      setSavingRetorno(false);
+    }
+  };
+
+  const removeRetorno = async () => {
+    if (!window.confirm('Remover agendamento de retorno?')) return;
+    try {
+      const patientId = patient.Id || patient.id;
+      await pacientesAPI.updateClinical(patientId, { retorno: null });
+      setRetornoSalvo(null);
+      setRetornoData({ data: '', hora: '', observacao: '' });
+    } catch (e) {
+      alert('Erro ao remover retorno: ' + e.message);
     }
   };
 
@@ -65,13 +139,15 @@ const NutriCalendario = () => {
       const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const info    = patient?.calendario?.[dateStr];
       const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-      cells.push({ day: d, dateStr, info, isToday, key: dateStr });
+      const isRetorno = retornoSalvo?.data === dateStr;
+      cells.push({ day: d, dateStr, info, isToday, isRetorno, key: dateStr });
     }
     return cells;
   };
 
   const selectedInfo = selectedDate ? patient?.calendario?.[selectedDate] : null;
   const statusCfg    = selectedInfo ? (STATUS_CONFIG[selectedInfo.status] || STATUS_CONFIG.planejado) : null;
+  const parsedMeals  = selectedInfo ? parseMeals(selectedInfo.alimentacao) : null;
 
   const stats = patient ? (() => {
     const entries = Object.values(patient.calendario);
@@ -95,6 +171,8 @@ const NutriCalendario = () => {
     dayHover: isDark ? '#202228' : '#f0f9ff',
     todayBg:  isDark ? '#4C1D95' : '#6366f1',
     emptyBg:  isDark ? '#0F1012' : '#f1f5f9',
+    retornoBg:  isDark ? '#1a2a1a' : '#f0fdf4',
+    retornoBorder: isDark ? '#2a4a2a' : '#bbf7d0',
     shadow:   isDark
       ? '0 20px 40px rgba(0,0,0,0.5)'
       : '0 20px 60px rgba(99,102,241,0.12), 0 4px 16px rgba(0,0,0,0.06)',
@@ -135,7 +213,7 @@ const NutriCalendario = () => {
           >
             <i className="fas fa-arrow-left" />
           </Link>
-          <div>
+          <div style={{ flex: 1 }}>
             <h1 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 700, color: c.text }}>
               Histórico de {patientName}
             </h1>
@@ -143,7 +221,100 @@ const NutriCalendario = () => {
               Registros enviados pelo aplicativo
             </p>
           </div>
+          <button
+            onClick={() => setShowRetornoForm(v => !v)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '0.5rem',
+              background: showRetornoForm
+                ? (isDark ? '#2A2D32' : '#ede9fe')
+                : 'linear-gradient(135deg, #10b981, #34d399)',
+              border: showRetornoForm ? `1px solid ${c.accent}` : 'none',
+              color: showRetornoForm ? c.accent : '#fff',
+              padding: '0.6rem 1.2rem', borderRadius: '12px',
+              fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer',
+              boxShadow: showRetornoForm ? 'none' : '0 4px 14px rgba(16,185,129,0.35)',
+              transition: 'all 0.2s', flexShrink: 0,
+            }}
+          >
+            <i className="fas fa-calendar-plus" />
+            {retornoSalvo ? 'Ver Retorno' : 'Agendar Retorno'}
+          </button>
         </div>
+
+        {/* Banner retorno salvo */}
+        {retornoSalvo && !showRetornoForm && (
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            background: c.retornoBg, border: `1px solid ${c.retornoBorder}`,
+            borderRadius: '16px', padding: '1rem 1.5rem', marginBottom: '1.5rem',
+            animation: 'fadeInUp 0.3s ease',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>📅</span>
+              <div>
+                <div style={{ fontWeight: 700, color: c.text, fontSize: '0.95rem' }}>Retorno agendado</div>
+                <div style={{ color: c.muted, fontSize: '0.85rem' }}>
+                  {new Date(retornoSalvo.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                  {retornoSalvo.hora && ` às ${retornoSalvo.hora}`}
+                </div>
+                {retornoSalvo.observacao && (
+                  <div style={{ color: c.muted, fontSize: '0.8rem', marginTop: '0.2rem', fontStyle: 'italic' }}>{retornoSalvo.observacao}</div>
+                )}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button onClick={() => setShowRetornoForm(true)} style={{ background: 'none', border: `1px solid ${c.border}`, color: c.muted, padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem' }}>
+                <i className="fas fa-edit" />
+              </button>
+              <button onClick={removeRetorno} style={{ background: 'none', border: '1px solid #fca5a5', color: '#ef4444', padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem' }}>
+                <i className="fas fa-trash" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Formulário de retorno */}
+        {showRetornoForm && (
+          <div style={{
+            background: c.card, borderRadius: '20px', border: `1px solid ${c.border}`,
+            marginBottom: '1.5rem', boxShadow: c.shadow, overflow: 'hidden',
+            animation: 'fadeInUp 0.3s ease',
+          }}>
+            <div style={{
+              padding: '1.25rem 1.5rem', background: isDark ? '#202228' : '#f8fafc',
+              borderBottom: `1px solid ${c.border}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>📅</span>
+                <span style={{ fontWeight: 700, color: c.text }}>Agendar Retorno</span>
+              </div>
+              <button onClick={() => setShowRetornoForm(false)} style={{ background: 'none', border: 'none', color: c.muted, fontSize: '1.1rem', cursor: 'pointer' }}>
+                <i className="fas fa-times" />
+              </button>
+            </div>
+            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>Data *</label>
+                <input type="date" value={retornoData.data} onChange={e => setRetornoData(r => ({ ...r, data: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>Horário</label>
+                <input type="time" value={retornoData.hora} onChange={e => setRetornoData(r => ({ ...r, hora: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>Observação</label>
+                <input type="text" placeholder="Ex: Trazer exames, consulta de rotina..." value={retornoData.observacao} onChange={e => setRetornoData(r => ({ ...r, observacao: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
+              </div>
+              <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                <button onClick={() => setShowRetornoForm(false)} style={{ padding: '0.7rem 1.5rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: 'none', color: c.muted, cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
+                <button onClick={saveRetorno} disabled={!retornoData.data || savingRetorno} style={{ padding: '0.7rem 1.5rem', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #10b981, #34d399)', color: '#fff', cursor: retornoData.data ? 'pointer' : 'not-allowed', fontWeight: 700, opacity: retornoData.data ? 1 : 0.6, boxShadow: '0 4px 14px rgba(16,185,129,0.35)' }}>
+                  {savingRetorno ? 'Salvando...' : 'Salvar Retorno'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── Cards de estatísticas ── */}
         {stats && stats.total > 0 && (
@@ -242,39 +413,34 @@ const NutriCalendario = () => {
                 const { day, dateStr, info, isToday } = cell;
                 const st = info ? (STATUS_CONFIG[info.status] || STATUS_CONFIG.planejado) : null;
                 const isSelected = selectedDate === dateStr;
+                const isRetorno = retornoSalvo?.data === dateStr;
 
                 return (
                   <div
                     key={cell.key}
-                    onClick={() => info ? setSelectedDate(isSelected ? null : dateStr) : null}
+                    onClick={() => (info || isRetorno) ? setSelectedDate(isSelected ? null : dateStr) : null}
                     style={{
-                      background: isToday
-                        ? c.todayBg
-                        : isSelected
-                          ? (isDark ? '#2A2D32' : '#ede9fe')
-                          : c.raised,
-                      borderRadius: '12px',
-                      minHeight: '80px',
-                      padding: '0.6rem',
-                      cursor: info ? 'pointer' : 'default',
-                      border: isSelected
-                        ? `2px solid ${c.accent}`
-                        : isToday
-                          ? '2px solid transparent'
-                          : `1px solid ${c.border}`,
+                      background: isToday ? c.todayBg
+                        : isSelected ? (isDark ? '#2A2D32' : '#ede9fe')
+                        : isRetorno ? c.retornoBg
+                        : c.raised,
+                      borderRadius: '12px', minHeight: '80px', padding: '0.6rem',
+                      cursor: (info || isRetorno) ? 'pointer' : 'default',
+                      border: isSelected ? `2px solid ${c.accent}`
+                        : isRetorno ? '2px solid #10b981'
+                        : isToday ? '2px solid transparent'
+                        : `1px solid ${c.border}`,
                       transition: 'all 0.2s ease',
                       display: 'flex', flexDirection: 'column', gap: '0.3rem',
                       position: 'relative', overflow: 'hidden',
                     }}
-                    onMouseEnter={e => { if (info && !isSelected) e.currentTarget.style.background = c.dayHover; }}
-                    onMouseLeave={e => { if (info && !isSelected) e.currentTarget.style.background = c.raised; }}
+                    onMouseEnter={e => { if ((info || isRetorno) && !isSelected) e.currentTarget.style.background = c.dayHover; }}
+                    onMouseLeave={e => { if ((info || isRetorno) && !isSelected) e.currentTarget.style.background = isRetorno ? c.retornoBg : c.raised; }}
                   >
-                    <span style={{
-                      fontSize: '0.9rem', fontWeight: 700,
-                      color: isToday ? '#fff' : c.text,
-                    }}>
-                      {day}
-                    </span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 700, color: isToday ? '#fff' : c.text }}>{day}</span>
+                    {isRetorno && (
+                      <div style={{ fontSize: '0.6rem', color: '#10b981', fontWeight: 700 }}>📅 Retorno</div>
+                    )}
 
                     {st && (
                       <>
@@ -313,11 +479,15 @@ const NutriCalendario = () => {
                 <span style={{ fontSize: '0.78rem', color: c.muted, fontWeight: 500 }}>{cfg.label}</span>
               </div>
             ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <div style={{ width: '10px', height: '10px', borderRadius: '4px', background: '#10b981' }} />
+              <span style={{ fontSize: '0.78rem', color: c.muted, fontWeight: 500 }}>Retorno Agendado</span>
+            </div>
           </div>
         </div>
 
         {/* ── Painel de detalhes do dia selecionado ── */}
-        {selectedDate && selectedInfo && (
+        {selectedDate && (selectedInfo || retornoSalvo?.data === selectedDate) && (
           <div style={{
             marginTop: '1.5rem',
             background: c.card, borderRadius: '20px',
@@ -333,89 +503,101 @@ const NutriCalendario = () => {
               borderBottom: `1px solid ${c.border}`,
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{
-                  width: '2.5rem', height: '2.5rem', borderRadius: '12px',
-                  background: statusCfg.color + '20',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.2rem', color: statusCfg.color, fontWeight: 700,
-                }}>
-                  {statusCfg.icon}
-                </div>
+                {statusCfg && (
+                  <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '12px', background: statusCfg.color + '20', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', color: statusCfg.color, fontWeight: 700 }}>
+                    {statusCfg.icon}
+                  </div>
+                )}
                 <div>
                   <div style={{ fontWeight: 700, color: c.text, fontSize: '1rem' }}>
-                    {new Date(selectedDate + 'T12:00:00').toLocaleDateString('pt-BR', {
-                      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-                    })}
+                    {new Date(selectedDate + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                   </div>
-                  <div style={{
-                    fontSize: '0.8rem', fontWeight: 600,
-                    color: statusCfg.color, marginTop: '0.1rem',
-                  }}>
-                    {statusCfg.label}
-                  </div>
+                  {statusCfg && (
+                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: statusCfg.color, marginTop: '0.1rem' }}>{statusCfg.label}</div>
+                  )}
+                  {retornoSalvo?.data === selectedDate && (
+                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#10b981', marginTop: '0.1rem' }}>
+                      📅 Retorno agendado{retornoSalvo.hora ? ` às ${retornoSalvo.hora}` : ''}
+                    </div>
+                  )}
                 </div>
               </div>
-              <button
-                onClick={() => setSelectedDate(null)}
-                style={{
-                  background: 'none', border: 'none', color: c.muted,
-                  fontSize: '1.2rem', cursor: 'pointer', padding: '0.25rem',
-                  borderRadius: '8px', transition: 'color 0.2s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = c.text}
-                onMouseLeave={e => e.currentTarget.style.color = c.muted}
-              >
+              <button onClick={() => setSelectedDate(null)} style={{ background: 'none', border: 'none', color: c.muted, fontSize: '1.2rem', cursor: 'pointer', padding: '0.25rem', borderRadius: '8px' }}>
                 <i className="fas fa-times" />
               </button>
             </div>
 
             {/* Conteúdo */}
             <div style={{ padding: '1.5rem', display: 'grid', gap: '1.25rem' }}>
-              {selectedInfo.alimentacao && (
+
+              {/* Refeições separadas */}
+              {parsedMeals && (() => {
+                const mealOrder = ['cafe','lanche1','almoco','lanche2','jantar','ceia','geral'];
+                const rendered = [];
+                for (const key of mealOrder) {
+                  if (!parsedMeals[key]) continue;
+                  const cfg = MEAL_KEYWORDS.find(m => m.key === key);
+                  const label = cfg ? cfg.label : 'Alimentação';
+                  const icon  = cfg ? cfg.icon  : '🍽️';
+                  const color = cfg ? cfg.color : '#6366f1';
+                  rendered.push(
+                    <div key={key} style={{ background: isDark ? '#0F1012' : '#fff', border: `1px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '14px', overflow: 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: color + (isDark ? '22' : '12'), borderBottom: `1px solid ${color}30` }}>
+                        <span style={{ fontSize: '1.1rem' }}>{icon}</span>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</span>
+                      </div>
+                      <div style={{ padding: '0.75rem 1rem' }}>
+                        {parsedMeals[key].map((item, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', marginBottom: i < parsedMeals[key].length - 1 ? '0.4rem' : 0 }}>
+                            <span style={{ color, marginTop: '0.15rem', fontSize: '0.7rem' }}>●</span>
+                            <span style={{ color: c.text, fontSize: '0.9rem', lineHeight: 1.5 }}>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return rendered;
+              })()}
+
+              {/* Alimentação sem estrutura de refeições */}
+              {!parsedMeals && selectedInfo?.alimentacao && (
                 <div>
-                  <div style={{
-                    fontSize: '0.75rem', fontWeight: 700, color: c.muted,
-                    textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.5rem',
-                    display: 'flex', alignItems: 'center', gap: '0.4rem',
-                  }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <i className="fas fa-utensils" style={{ color: '#10b981' }} />
                     Alimentação do Dia
                   </div>
-                  <div style={{
-                    background: isDark ? '#0F1012' : '#f0fdf4',
-                    border: `1px solid ${isDark ? '#2A2D32' : '#bbf7d0'}`,
-                    borderRadius: '12px', padding: '1rem',
-                    color: c.text, fontSize: '0.9rem', lineHeight: 1.7,
-                    whiteSpace: 'pre-wrap',
-                  }}>
+                  <div style={{ background: isDark ? '#0F1012' : '#f0fdf4', border: `1px solid ${isDark ? '#2A2D32' : '#bbf7d0'}`, borderRadius: '12px', padding: '1rem', color: c.text, fontSize: '0.9rem', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                     {selectedInfo.alimentacao}
                   </div>
                 </div>
               )}
 
-              {selectedInfo.notas && (
+              {selectedInfo?.notas && (
                 <div>
-                  <div style={{
-                    fontSize: '0.75rem', fontWeight: 700, color: c.muted,
-                    textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.5rem',
-                    display: 'flex', alignItems: 'center', gap: '0.4rem',
-                  }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <i className="fas fa-sticky-note" style={{ color: '#f59e0b' }} />
                     Notas e Observações
                   </div>
-                  <div style={{
-                    background: isDark ? '#0F1012' : '#fffbeb',
-                    border: `1px solid ${isDark ? '#2A2D32' : '#fde68a'}`,
-                    borderRadius: '12px', padding: '1rem',
-                    color: c.text, fontSize: '0.9rem', lineHeight: 1.7,
-                    whiteSpace: 'pre-wrap',
-                  }}>
+                  <div style={{ background: isDark ? '#0F1012' : '#fffbeb', border: `1px solid ${isDark ? '#2A2D32' : '#fde68a'}`, borderRadius: '12px', padding: '1rem', color: c.text, fontSize: '0.9rem', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                     {selectedInfo.notas}
                   </div>
                 </div>
               )}
 
-              {!selectedInfo.alimentacao && !selectedInfo.notas && (
+              {retornoSalvo?.data === selectedDate && retornoSalvo.observacao && (
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <i className="fas fa-calendar-check" style={{ color: '#10b981' }} />
+                    Observação do Retorno
+                  </div>
+                  <div style={{ background: c.retornoBg, border: `1px solid ${c.retornoBorder}`, borderRadius: '12px', padding: '1rem', color: c.text, fontSize: '0.9rem', lineHeight: 1.7 }}>
+                    {retornoSalvo.observacao}
+                  </div>
+                </div>
+              )}
+
+              {!selectedInfo?.alimentacao && !selectedInfo?.notas && retornoSalvo?.data !== selectedDate && (
                 <div style={{ textAlign: 'center', color: c.muted, padding: '1rem', fontSize: '0.9rem' }}>
                   <i className="fas fa-info-circle" style={{ marginRight: '0.5rem' }} />
                   Nenhum detalhe registrado para este dia.
