@@ -1,29 +1,29 @@
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\repository\PacienteRepository.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\util\Campos.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\model\Paciente.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\AuthPacienteController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\repository\SolicitacaoPendenteRepository.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\AdminController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\RecuperarSenhaController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\model\SolicitacaoPendente.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\model\Nutricionista.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\model\ActivityLog.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\model\DiarioMedida.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\config\CorsConfig.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\model\DiarioRefeicao.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\NutribyeApplication.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\repository\NutricionistaRepository.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\SolicitacoesNutriController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\repository\AdminRepository.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\security\TokenService.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\repository\DiarioMedidaRepository.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\NutricionistasController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\repository\DiarioRefeicaoRepository.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\model\Admin.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\repository\ActivityLogRepository.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\SolicitacoesController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\repository\DiarioAguaRepository.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\PacientesController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\AcompanhamentoNutricionalController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\controller\DiarioController.java
-C:\Users\Iguinho\Downloads\Nutrifybe(Site tcc adapt claude)\Nutrifybe_Site_TCC\api-java\src\main\java\com\nutrifybe\model\DiarioAgua.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\AdminController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\repository\DiarioMedidaRepository.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\model\ActivityLog.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\repository\DiarioRefeicaoRepository.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\security\TokenService.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\DiarioController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\model\DiarioMedida.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\util\Campos.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\model\Nutricionista.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\AcompanhamentoNutricionalController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\repository\DiarioAguaRepository.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\repository\PacienteRepository.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\repository\SolicitacaoPendenteRepository.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\RecuperarSenhaController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\AuthPacienteController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\repository\ActivityLogRepository.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\repository\NutricionistaRepository.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\model\SolicitacaoPendente.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\PacientesController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\model\DiarioAgua.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\model\DiarioRefeicao.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\NutribyeApplication.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\NutricionistasController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\SolicitacoesNutriController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\repository\AdminRepository.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\model\Admin.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\controller\SolicitacoesController.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\config\CorsConfig.java
+Z:\Web\api-java\src\main\java\com\nutrifybe\model\Paciente.java
