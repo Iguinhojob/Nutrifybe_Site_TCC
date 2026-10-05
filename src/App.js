@@ -19,6 +19,7 @@ import TermosUso from './TermosUso';
 import PoliticaPrivacidade from './PoliticaPrivacidade';
 import FichaPaciente from './FichaPaciente';
 import NotFound from './NotFound';
+import NutriChat from './NutriChat';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/nutri-dashboard" element={<NutriDashboard />} />
+        <Route path="/nutri-chat/:id" element={<NutriChat />} />
         <Route path="/nutri-calendario/:id" element={<NutriCalendario />} />
         <Route path="/nutri-prescricao/:id" element={<NutriPrescricao />} />
         <Route path="/ficha-paciente/:id" element={<FichaPaciente />} />

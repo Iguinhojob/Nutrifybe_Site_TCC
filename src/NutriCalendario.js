@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { pacientesAPI } from './services/api';
@@ -42,6 +42,23 @@ const STATUS_CONFIG = {
   planejado:              { color: '#6366f1', label: 'Planejado',            icon: '○' },
 };
 
+const REVIEW_STATUSES = ['cumprido', 'parcialmente-cumprido', 'nao-cumprido'];
+const REGISTRO_COLOR = '#06b6d4';
+
+const dateKey = (value) => {
+  if (typeof value === 'string') {
+    const match = value.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (match) return match[1];
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+};
+
+const formatNumber = (value, digits = 0) => Number.isFinite(Number(value))
+  ? Number(value).toFixed(digits)
+  : '—';
+
 const MONTHS_PT = [
   'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
@@ -62,6 +79,8 @@ const NutriCalendario = () => {
   const [retornoData, setRetornoData] = useState({ data: '', hora: '', observacao: '' });
   const [retornoSalvo, setRetornoSalvo] = useState(null);
   const [savingRetorno, setSavingRetorno] = useState(false);
+  const [savingReview, setSavingReview] = useState(false);
+  const [reviewMessage, setReviewMessage] = useState('');
 
   const headerLinks = [
     { href: '/nutri-dashboard', text: 'Início' },
@@ -129,6 +148,60 @@ const NutriCalendario = () => {
     }
   };
 
+  const mealsByDate = useMemo(() => {
+    const grouped = {};
+    (patient?.refeicoes || []).forEach((meal) => {
+      const key = dateKey(meal.criadoEm || meal.createdAt);
+      if (!key) return;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(meal);
+    });
+    return grouped;
+  }, [patient?.refeicoes]);
+
+  const waterByDate = useMemo(() => {
+    const grouped = {};
+    (patient?.agua || []).forEach((record) => {
+      const key = dateKey(record.criadoEm || record.createdAt);
+      if (!key) return;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(record);
+    });
+    return grouped;
+  }, [patient?.agua]);
+
+  const measurementsByDate = useMemo(() => {
+    const grouped = {};
+    (patient?.medidas || []).forEach((record) => {
+      const key = dateKey(record.criadoEm || record.createdAt);
+      if (!key) return;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(record);
+    });
+    return grouped;
+  }, [patient?.medidas]);
+
+  const saveReviewStatus = async (status) => {
+    if (!selectedDate || !patient || savingReview) return;
+    const previousCalendar = patient.calendario || {};
+    const nextCalendar = {
+      ...previousCalendar,
+      [selectedDate]: { ...(previousCalendar[selectedDate] || {}), status },
+    };
+    setSavingReview(true);
+    setReviewMessage('');
+    setPatient((current) => ({ ...current, calendario: nextCalendar }));
+    try {
+      await pacientesAPI.updateClinical(patient.Id || patient.id, { calendario: nextCalendar });
+      setReviewMessage('Avaliação salva para este dia.');
+    } catch (error) {
+      setPatient((current) => ({ ...current, calendario: previousCalendar }));
+      setReviewMessage(error.message || 'Não foi possível salvar a avaliação.');
+    } finally {
+      setSavingReview(false);
+    }
+  };
+
   const buildCalendar = () => {
     const firstDay   = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -138,21 +211,34 @@ const NutriCalendario = () => {
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const info    = patient?.calendario?.[dateStr];
+      const meals   = mealsByDate[dateStr] || [];
+      const water   = waterByDate[dateStr] || [];
+      const measurements = measurementsByDate[dateStr] || [];
       const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
       const isRetorno = retornoSalvo?.data === dateStr;
-      cells.push({ day: d, dateStr, info, isToday, isRetorno, key: dateStr });
+      cells.push({ day: d, dateStr, info, meals, water, measurements, isToday, isRetorno, key: dateStr });
     }
     return cells;
   };
 
   const selectedInfo = selectedDate ? patient?.calendario?.[selectedDate] : null;
-  const statusCfg    = selectedInfo ? (STATUS_CONFIG[selectedInfo.status] || STATUS_CONFIG.planejado) : null;
+  const selectedMeals = selectedDate ? (mealsByDate[selectedDate] || []) : [];
+  const selectedWater = selectedDate ? (waterByDate[selectedDate] || []) : [];
+  const selectedMeasurements = selectedDate ? (measurementsByDate[selectedDate] || []) : [];
+  const statusCfg    = selectedInfo?.status ? (STATUS_CONFIG[selectedInfo.status] || STATUS_CONFIG.planejado) : null;
   const parsedMeals  = selectedInfo ? parseMeals(selectedInfo.alimentacao) : null;
+  const recordedDays = new Set([
+    ...Object.keys(mealsByDate),
+    ...Object.keys(waterByDate),
+    ...Object.keys(measurementsByDate),
+  ]);
 
   const stats = patient ? (() => {
-    const entries = Object.values(patient.calendario);
+    const entries = Object.entries(patient.calendario)
+      .filter(([day]) => (mealsByDate[day] || []).length > 0)
+      .map(([, entry]) => entry);
     return {
-      total:    entries.length,
+      total:    recordedDays.size,
       cumprido: entries.filter(e => e.status === 'cumprido').length,
       parcial:  entries.filter(e => e.status === 'parcialmente-cumprido').length,
       nao:      entries.filter(e => e.status === 'nao-cumprido').length,
@@ -330,7 +416,6 @@ const NutriCalendario = () => {
                 border: `1px solid ${c.border}`, textAlign: 'center',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
               }}>
-                <div style={{ fontSize: '1.5rem', marginBottom: '0.4rem' }}>{s.icon}</div>
                 <div style={{ fontSize: '1.8rem', fontWeight: 800, color: s.color, lineHeight: 1 }}>{s.value}</div>
                 <div style={{ fontSize: '0.78rem', color: c.muted, marginTop: '0.3rem', fontWeight: 500 }}>{s.label}</div>
               </div>
@@ -410,22 +495,30 @@ const NutriCalendario = () => {
                   <div key={cell.key} style={{ background: c.emptyBg, borderRadius: '12px', minHeight: '80px' }} />
                 );
 
-                const { day, dateStr, info, isToday } = cell;
-                const st = info ? (STATUS_CONFIG[info.status] || STATUS_CONFIG.planejado) : null;
+                const { day, dateStr, info, meals, water, measurements, isToday } = cell;
+                const hasMeal = meals.length > 0;
+                const hasWater = water.length > 0;
+                const hasMeasurements = measurements.length > 0;
+                const hasRegistro = hasMeal || hasWater || hasMeasurements;
+                const st = info?.status ? (STATUS_CONFIG[info.status] || STATUS_CONFIG.planejado) : null;
                 const isSelected = selectedDate === dateStr;
                 const isRetorno = retornoSalvo?.data === dateStr;
 
                 return (
                   <div
                     key={cell.key}
-                    onClick={() => (info || isRetorno) ? setSelectedDate(isSelected ? null : dateStr) : null}
+                    onClick={() => {
+                      if (!(hasRegistro || info || isRetorno)) return;
+                      setReviewMessage('');
+                      setSelectedDate(isSelected ? null : dateStr);
+                    }}
                     style={{
                       background: isToday ? c.todayBg
                         : isSelected ? (isDark ? '#2A2D32' : '#ede9fe')
                         : isRetorno ? c.retornoBg
                         : c.raised,
                       borderRadius: '12px', minHeight: '80px', padding: '0.6rem',
-                      cursor: (info || isRetorno) ? 'pointer' : 'default',
+                      cursor: (hasRegistro || info || isRetorno) ? 'pointer' : 'default',
                       border: isSelected ? `2px solid ${c.accent}`
                         : isRetorno ? '2px solid #10b981'
                         : isToday ? '2px solid transparent'
@@ -434,32 +527,46 @@ const NutriCalendario = () => {
                       display: 'flex', flexDirection: 'column', gap: '0.3rem',
                       position: 'relative', overflow: 'hidden',
                     }}
-                    onMouseEnter={e => { if ((info || isRetorno) && !isSelected) e.currentTarget.style.background = c.dayHover; }}
-                    onMouseLeave={e => { if ((info || isRetorno) && !isSelected) e.currentTarget.style.background = isRetorno ? c.retornoBg : c.raised; }}
+                    onMouseEnter={e => { if ((hasRegistro || info || isRetorno) && !isSelected) e.currentTarget.style.background = c.dayHover; }}
+                    onMouseLeave={e => { if ((hasRegistro || info || isRetorno) && !isSelected) e.currentTarget.style.background = isRetorno ? c.retornoBg : c.raised; }}
                   >
                     <span style={{ fontSize: '0.9rem', fontWeight: 700, color: isToday ? '#fff' : c.text }}>{day}</span>
                     {isRetorno && (
                       <div style={{ fontSize: '0.6rem', color: '#10b981', fontWeight: 700 }}>📅 Retorno</div>
                     )}
 
-                    {st && (
+                    {hasRegistro && (
                       <>
                         <div style={{
-                          width: '8px', height: '8px', borderRadius: '50%',
-                          background: st.color, flexShrink: 0,
+                          width: '10px', height: '10px', borderRadius: '50%',
+                          background: st?.color || (hasMeal ? REGISTRO_COLOR : '#0ea5e9'), flexShrink: 0,
+                          boxShadow: `0 0 0 3px ${(st?.color || (hasMeal ? REGISTRO_COLOR : '#0ea5e9'))}22`,
                         }} />
-                        {info.alimentacao && (
-                          <div style={{
-                            fontSize: '0.65rem',
-                            color: isToday ? 'rgba(255,255,255,0.8)' : c.muted,
-                            lineHeight: 1.3, overflow: 'hidden',
-                            display: '-webkit-box', WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                          }}>
-                            {info.alimentacao.split('\n')[0].substring(0, 30)}
-                          </div>
-                        )}
+                        <div style={{
+                          fontSize: '0.65rem',
+                          color: isToday ? 'rgba(255,255,255,0.8)' : c.muted,
+                          lineHeight: 1.3,
+                        }}>
+                          {[hasMeal && (meals.length === 1 ? '1 refeição' : `${meals.length} refeições`), hasWater && 'água', hasMeasurements && 'medidas'].filter(Boolean).join(' · ')}
+                        </div>
                       </>
+                    )}
+                    {!hasRegistro && st && (
+                      <div style={{
+                        width: '8px', height: '8px', borderRadius: '50%',
+                        background: st.color, flexShrink: 0,
+                      }} />
+                    )}
+                    {!hasRegistro && info?.alimentacao && (
+                      <div style={{
+                        fontSize: '0.65rem',
+                        color: isToday ? 'rgba(255,255,255,0.8)' : c.muted,
+                        lineHeight: 1.3, overflow: 'hidden',
+                        display: '-webkit-box', WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}>
+                        {info.alimentacao.split('\n')[0].substring(0, 30)}
+                      </div>
                     )}
                   </div>
                 );
@@ -473,7 +580,11 @@ const NutriCalendario = () => {
             padding: '1rem 1.5rem 1.5rem',
             borderTop: `1px solid ${c.border}`,
           }}>
-            {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: REGISTRO_COLOR }} />
+              <span style={{ fontSize: '0.78rem', color: c.muted, fontWeight: 500 }}>Registro do paciente</span>
+            </div>
+            {Object.entries(STATUS_CONFIG).filter(([key]) => key !== 'planejado').map(([key, cfg]) => (
               <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: cfg.color }} />
                 <span style={{ fontSize: '0.78rem', color: c.muted, fontWeight: 500 }}>{cfg.label}</span>
@@ -487,7 +598,7 @@ const NutriCalendario = () => {
         </div>
 
         {/* ── Painel de detalhes do dia selecionado ── */}
-        {selectedDate && (selectedInfo || retornoSalvo?.data === selectedDate) && (
+        {selectedDate && (selectedMeals.length > 0 || selectedWater.length > 0 || selectedMeasurements.length > 0 || selectedInfo || retornoSalvo?.data === selectedDate) && (
           <div style={{
             marginTop: '1.5rem',
             background: c.card, borderRadius: '20px',
@@ -529,6 +640,89 @@ const NutriCalendario = () => {
 
             {/* Conteúdo */}
             <div style={{ padding: '1.5rem', display: 'grid', gap: '1.25rem' }}>
+
+              {selectedMeals.length > 0 && (
+                <section>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.6rem' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Registros alimentares do paciente
+                    </div>
+                    <span style={{ fontSize: '0.8rem', color: c.muted }}>{selectedMeals.length} {selectedMeals.length === 1 ? 'refeição' : 'refeições'}</span>
+                  </div>
+                  <div style={{ display: 'grid', gap: '0.65rem' }}>
+                    {selectedMeals.slice().sort((a, b) => String(a.criadoEm || '').localeCompare(String(b.criadoEm || ''))).map((meal) => {
+                      const time = new Date(meal.criadoEm || meal.createdAt);
+                      const hasTime = !Number.isNaN(time.getTime());
+                      return (
+                        <article key={meal.id || `${meal.nome}-${meal.criadoEm}`} style={{ background: isDark ? '#0F1012' : '#f0fdfa', border: `1px solid ${isDark ? '#2A2D32' : '#bae6fd'}`, borderRadius: '12px', padding: '0.9rem 1rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'baseline' }}>
+                            <strong style={{ color: c.text, fontSize: '0.95rem' }}>{meal.nome || 'Refeição registrada'}</strong>
+                            <strong style={{ color: '#0891b2', whiteSpace: 'nowrap', fontSize: '0.9rem' }}>{formatNumber(meal.calorias)} kcal</strong>
+                          </div>
+                          {hasTime && <div style={{ color: c.muted, fontSize: '0.78rem', marginTop: '0.2rem' }}>{time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>}
+                          {(meal.descricao || meal.itens) && <div style={{ color: c.text, fontSize: '0.88rem', lineHeight: 1.5, marginTop: '0.55rem', whiteSpace: 'pre-wrap' }}>{meal.descricao || meal.itens}</div>}
+                          <div style={{ color: c.muted, fontSize: '0.78rem', marginTop: '0.55rem' }}>C {formatNumber(meal.carboidratos, 1)} g · P {formatNumber(meal.proteinas, 1)} g · G {formatNumber(meal.gorduras, 1)} g</div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
+
+              {selectedWater.length > 0 && (
+                <section style={{ background: isDark ? '#0F1012' : '#eff6ff', border: `1px solid ${isDark ? '#2A2D32' : '#bfdbfe'}`, borderRadius: '14px', padding: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '1rem' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Hidratação registrada</div>
+                    <strong style={{ color: '#0369a1', fontSize: '1rem' }}>{selectedWater.reduce((sum, record) => sum + Number(record.quantidadeMl || record.amountMl || 0), 0)} ml</strong>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.75rem' }}>
+                    {selectedWater.slice().sort((a, b) => String(a.criadoEm || '').localeCompare(String(b.criadoEm || ''))).map((record) => {
+                      const time = new Date(record.criadoEm || record.createdAt);
+                      return <span key={record.id || `${record.criadoEm}-${record.quantidadeMl}`} style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: '999px', padding: '0.4rem 0.65rem', color: c.text, fontSize: '0.82rem' }}>{Number(record.quantidadeMl || record.amountMl || 0)} ml {!Number.isNaN(time.getTime()) && `· ${time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`}</span>;
+                    })}
+                  </div>
+                </section>
+              )}
+
+              {selectedMeasurements.length > 0 && (
+                <section>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.6rem' }}>Medidas registradas</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.6rem' }}>
+                    {selectedMeasurements.map((measurement) => [
+                      ['Peso', measurement.peso, 'kg'],
+                      ['Cintura', measurement.cintura, 'cm'],
+                      ['Quadril', measurement.quadril, 'cm'],
+                      ['Braço', measurement.braco, 'cm'],
+                      ['Gordura corporal', measurement.gorduraCorporal, '%'],
+                    ].filter(([, value]) => value != null && value !== '').map(([label, value, unit]) => (
+                      <div key={`${measurement.id || measurement.criadoEm}-${label}`} style={{ background: c.raised, border: `1px solid ${c.border}`, borderRadius: '10px', padding: '0.75rem' }}>
+                        <div style={{ color: c.muted, fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
+                        <div style={{ color: c.text, fontSize: '1rem', fontWeight: 800, marginTop: '0.2rem' }}>{value} {unit}</div>
+                      </div>
+                    ))) }
+                  </div>
+                </section>
+              )}
+
+              {selectedMeals.length > 0 && (
+                <section style={{ background: c.raised, border: `1px solid ${c.border}`, borderRadius: '14px', padding: '1rem' }}>
+                  <div style={{ fontWeight: 700, color: c.text, fontSize: '0.95rem' }}>Avaliação do nutricionista</div>
+                  <p style={{ margin: '0.3rem 0 0.8rem', color: c.muted, fontSize: '0.84rem', lineHeight: 1.45 }}>Escolha a cor que deve aparecer neste dia para organizar o acompanhamento do paciente.</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.55rem' }}>
+                    {REVIEW_STATUSES.map((key) => {
+                      const option = STATUS_CONFIG[key];
+                      const active = selectedInfo?.status === key;
+                      return (
+                        <button key={key} type="button" onClick={() => saveReviewStatus(key)} disabled={savingReview} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', padding: '0.55rem 0.75rem', borderRadius: '9px', border: `1px solid ${active ? option.color : c.border}`, background: active ? `${option.color}18` : c.card, color: active ? option.color : c.text, fontWeight: 700, fontSize: '0.8rem', cursor: savingReview ? 'wait' : 'pointer', opacity: savingReview ? 0.7 : 1 }}>
+                          <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: option.color }} />
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {reviewMessage && <div role="status" style={{ color: reviewMessage.startsWith('Avaliação salva') ? '#059669' : '#dc2626', fontSize: '0.82rem', marginTop: '0.7rem', fontWeight: 600 }}>{reviewMessage}</div>}
+                </section>
+              )}
 
               {/* Refeições separadas */}
               {parsedMeals && (() => {
@@ -597,7 +791,7 @@ const NutriCalendario = () => {
                 </div>
               )}
 
-              {!selectedInfo?.alimentacao && !selectedInfo?.notas && retornoSalvo?.data !== selectedDate && (
+              {selectedMeals.length === 0 && selectedWater.length === 0 && selectedMeasurements.length === 0 && !selectedInfo?.alimentacao && !selectedInfo?.notas && retornoSalvo?.data !== selectedDate && (
                 <div style={{ textAlign: 'center', color: c.muted, padding: '1rem', fontSize: '0.9rem' }}>
                   <i className="fas fa-info-circle" style={{ marginRight: '0.5rem' }} />
                   Nenhum detalhe registrado para este dia.

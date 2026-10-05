@@ -34,10 +34,11 @@ const apiRequest = async (path, options = {}) => {
   
   let storedUser = null;
   try { storedUser = JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch { storedUser = null; }
+  const isMultipart = typeof FormData !== 'undefined' && options.body instanceof FormData;
   const config = {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      ...(!isMultipart ? { 'Content-Type': 'application/json' } : {}),
       'X-CSRF-Token': Math.random().toString(36).substring(2),
       ...(storedUser?.token ? { Authorization: `Bearer ${storedUser.token}` } : {}),
       ...options.headers,
@@ -143,6 +144,12 @@ export const solicitacoesAPI = {
       body: JSON.stringify({ nutricionistaId: Number(nutricionistaId) }),
     });
   }
+};
+
+export const chatAPI = {
+  messages: (pacienteId) => apiRequest(`/api/chat/mensagens?pacienteId=${encodeURIComponent(pacienteId)}`),
+  send: (pacienteId, formData) => apiRequest(`/api/chat/mensagens?pacienteId=${encodeURIComponent(pacienteId)}`, { method: 'POST', body: formData }),
+  attachmentUrl: (id, pacienteId) => `${API_BASE_URL}/api/chat/mensagens/${id}/arquivo?pacienteId=${encodeURIComponent(pacienteId)}`,
 };
 
 // Admin

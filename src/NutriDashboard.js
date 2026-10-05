@@ -172,6 +172,13 @@ const NutriDashboard = () => {
                     >
                       Ver Ficha
                     </Link>
+                    <Link
+                      to={`/nutri-chat/${patient.Id || patient.id}`}
+                      className="btn btn-primary"
+                      style={{ marginLeft: '0.5rem', background: isDark ? '#334155' : '#0f766e', boxShadow: 'none' }}
+                    >
+                      Conversar
+                    </Link>
                     <button 
                       className="btn btn-warning"
                       style={{marginLeft: '0.5rem'}}

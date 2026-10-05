@@ -3,6 +3,8 @@ package com.nutrifybe.controller;
 import com.nutrifybe.model.Paciente;
 import com.nutrifybe.model.Nutricionista;
 import com.nutrifybe.model.SolicitacaoPendente;
+import com.nutrifybe.model.AvaliacaoNutricionista;
+import com.nutrifybe.repository.AvaliacaoNutricionistaRepository;
 import com.nutrifybe.repository.PacienteRepository;
 import com.nutrifybe.repository.NutricionistaRepository;
 import com.nutrifybe.repository.SolicitacaoPendenteRepository;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -30,16 +33,19 @@ public class AuthPacienteController {
     private final PacienteRepository repository;
     private final NutricionistaRepository nutricionistaRepository;
     private final SolicitacaoPendenteRepository solicitacaoRepository;
+    private final AvaliacaoNutricionistaRepository avaliacaoRepository;
     private final TokenService tokens;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public AuthPacienteController(PacienteRepository repository,
                                   NutricionistaRepository nutricionistaRepository,
                                   SolicitacaoPendenteRepository solicitacaoRepository,
+                                  AvaliacaoNutricionistaRepository avaliacaoRepository,
                                   TokenService tokens) {
         this.repository = repository;
         this.nutricionistaRepository = nutricionistaRepository;
         this.solicitacaoRepository = solicitacaoRepository;
+        this.avaliacaoRepository = avaliacaoRepository;
         this.tokens = tokens;
     }
 
@@ -199,6 +205,37 @@ public class AuthPacienteController {
         }
         criarSolicitacao(paciente);
         return ResponseEntity.ok(paciente);
+    }
+
+    /** O paciente encerra seu próprio acompanhamento após registrar a avaliação do profissional. */
+    @PostMapping("/me/vinculo/encerrar")
+    @Transactional
+    public ResponseEntity<?> encerrarVinculo(@RequestHeader(value = "Authorization", required = false) String auth,
+                                              @RequestBody Map<String, Object> body) {
+        Long id = tokens.validar(auth);
+        if (id == null) return erro(401, "Sessão inválida");
+        Paciente paciente = repository.findById(id).orElse(null);
+        if (paciente == null) return erro(404, "Paciente não encontrado");
+        if (paciente.getNutricionistaId() == null || !"accepted".equalsIgnoreCase(paciente.getStatus())) {
+            return erro(400, "Você não possui um vínculo ativo para encerrar");
+        }
+        Integer nota = Campos.inteiro(body.get("nota"));
+        if (nota == null || nota < 1 || nota > 5) return erro(400, "Informe uma avaliação de 1 a 5 estrelas");
+        String comentario = Campos.texto(body.get("comentario"));
+        if (comentario != null && comentario.length() > 1200) return erro(400, "O comentário deve ter no máximo 1.200 caracteres");
+
+        AvaliacaoNutricionista avaliacao = new AvaliacaoNutricionista();
+        avaliacao.setPacienteId(paciente.getId());
+        avaliacao.setNutricionistaId(paciente.getNutricionistaId());
+        avaliacao.setNota(nota);
+        avaliacao.setComentario(comentario);
+        avaliacao.setCriadoEm(LocalDateTime.now());
+        avaliacaoRepository.save(avaliacao);
+
+        paciente.setNutricionistaId(null);
+        paciente.setStatus("solo");
+        repository.save(paciente);
+        return ResponseEntity.ok(Map.of("success", true, "paciente", paciente));
     }
 
     private Map<String, Object> resposta(Paciente p) {
