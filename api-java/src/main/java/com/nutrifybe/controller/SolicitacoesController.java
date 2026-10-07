@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -37,7 +38,19 @@ public class SolicitacoesController {
 
     @GetMapping
     public List<Map<String, Object>> getAll() {
-        return repository.findAll().stream().map(pedido -> Map.<String, Object>of("id", pedido.getId())).toList();
+        return repository.findAll().stream()
+                .filter(this::isPendingLink)
+                .map(pedido -> Map.<String, Object>of("id", pedido.getId()))
+                .toList();
+    }
+
+    private boolean isPendingLink(SolicitacaoPendente pedido) {
+        if (pedido.getEmail() == null || pedido.getNutricionistaId() == null) return false;
+        return pacienteRepository.findFirstByEmailIgnoreCase(pedido.getEmail())
+                .filter(paciente -> "pending".equalsIgnoreCase(paciente.getStatus())
+                        && Objects.equals(pedido.getNutricionistaId(), paciente.getNutricionistaId())
+                        && !Integer.valueOf(0).equals(paciente.getAtivo()))
+                .isPresent();
     }
 
     @PostMapping

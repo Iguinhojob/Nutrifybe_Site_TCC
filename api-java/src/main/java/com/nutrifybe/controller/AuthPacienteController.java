@@ -4,7 +4,9 @@ import com.nutrifybe.model.Paciente;
 import com.nutrifybe.model.Nutricionista;
 import com.nutrifybe.model.SolicitacaoPendente;
 import com.nutrifybe.model.AvaliacaoNutricionista;
+import com.nutrifybe.model.DenunciaNutricionista;
 import com.nutrifybe.repository.AvaliacaoNutricionistaRepository;
+import com.nutrifybe.repository.DenunciaNutricionistaRepository;
 import com.nutrifybe.repository.PacienteRepository;
 import com.nutrifybe.repository.NutricionistaRepository;
 import com.nutrifybe.repository.SolicitacaoPendenteRepository;
@@ -34,6 +36,7 @@ public class AuthPacienteController {
     private final NutricionistaRepository nutricionistaRepository;
     private final SolicitacaoPendenteRepository solicitacaoRepository;
     private final AvaliacaoNutricionistaRepository avaliacaoRepository;
+    private final DenunciaNutricionistaRepository denunciaRepository;
     private final TokenService tokens;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -41,11 +44,13 @@ public class AuthPacienteController {
                                   NutricionistaRepository nutricionistaRepository,
                                   SolicitacaoPendenteRepository solicitacaoRepository,
                                   AvaliacaoNutricionistaRepository avaliacaoRepository,
+                                  DenunciaNutricionistaRepository denunciaRepository,
                                   TokenService tokens) {
         this.repository = repository;
         this.nutricionistaRepository = nutricionistaRepository;
         this.solicitacaoRepository = solicitacaoRepository;
         this.avaliacaoRepository = avaliacaoRepository;
+        this.denunciaRepository = denunciaRepository;
         this.tokens = tokens;
     }
 
@@ -198,6 +203,9 @@ public class AuthPacienteController {
         if (op.isEmpty()) return erro(404, "Paciente nao encontrado");
 
         Paciente paciente = op.get();
+        if (paciente.getNutricionistaId() != null && !nutricionistaId.equals(paciente.getNutricionistaId())) {
+            return erro(409, "Encerre o vínculo atual antes de solicitar outro nutricionista");
+        }
         if (!nutricionistaId.equals(paciente.getNutricionistaId())) {
             paciente.setNutricionistaId(nutricionistaId);
             paciente.setStatus("pending");
@@ -223,6 +231,8 @@ public class AuthPacienteController {
         if (nota == null || nota < 1 || nota > 5) return erro(400, "Informe uma avaliação de 1 a 5 estrelas");
         String comentario = Campos.texto(body.get("comentario"));
         if (comentario != null && comentario.length() > 1200) return erro(400, "O comentário deve ter no máximo 1.200 caracteres");
+        String denuncia = Campos.texto(body.get("denuncia"));
+        if (denuncia != null && denuncia.length() > 2000) return erro(400, "A denúncia deve ter no máximo 2.000 caracteres");
 
         AvaliacaoNutricionista avaliacao = new AvaliacaoNutricionista();
         avaliacao.setPacienteId(paciente.getId());
@@ -231,6 +241,15 @@ public class AuthPacienteController {
         avaliacao.setComentario(comentario);
         avaliacao.setCriadoEm(LocalDateTime.now());
         avaliacaoRepository.save(avaliacao);
+
+        if (denuncia != null) {
+            DenunciaNutricionista registro = new DenunciaNutricionista();
+            registro.setPacienteId(paciente.getId());
+            registro.setNutricionistaId(paciente.getNutricionistaId());
+            registro.setDescricao(denuncia);
+            registro.setCriadoEm(LocalDateTime.now());
+            denunciaRepository.save(registro);
+        }
 
         paciente.setNutricionistaId(null);
         paciente.setStatus("solo");

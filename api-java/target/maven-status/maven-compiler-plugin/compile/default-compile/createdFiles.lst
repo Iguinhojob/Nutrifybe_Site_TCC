@@ -11,6 +11,7 @@ com\nutrifybe\repository\DiarioMedidaRepository.class
 com\nutrifybe\repository\PacienteRepository.class
 com\nutrifybe\model\ActivityLog.class
 com\nutrifybe\model\DiarioRefeicao.class
+com\nutrifybe\repository\DenunciaNutricionistaRepository.class
 com\nutrifybe\repository\NutricionistaRepository.class
 com\nutrifybe\config\CorsConfig$1.class
 com\nutrifybe\controller\AcompanhamentoNutricionalController.class
@@ -29,3 +30,4 @@ com\nutrifybe\controller\DiarioController.class
 com\nutrifybe\repository\SolicitacaoPendenteRepository.class
 com\nutrifybe\controller\AdminController.class
 com\nutrifybe\controller\NutricionistasController.class
+com\nutrifybe\model\DenunciaNutricionista.class

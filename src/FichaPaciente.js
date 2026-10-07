@@ -60,6 +60,10 @@ export default function FichaPaciente() {
             <div><h1 style={{ color: C.text, margin: 0 }}>{paciente.nome}</h1><p style={{ color: C.muted, margin: '5px 0 0' }}>{paciente.email} · Acompanhamento ativo</p></div>
           </div>
           <div style={{ display: 'flex', gap: 9, flexWrap: 'wrap' }}>
+            <Link className="btn patient-chat-link" to={`/nutri-chat/${paciente.id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: dark ? '#1d3936' : '#ecfeff', border: `1px solid ${dark ? '#285b55' : '#a5f3fc'}`, color: dark ? '#99f6e4' : '#0e7490', boxShadow: 'none', textDecoration: 'none' }}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z" /></svg>
+              Abrir chat
+            </Link>
             <Link className="btn btn-primary" to={`/nutri-prescricao/${paciente.id}`}>Prescrever dieta</Link>
             <Link className="btn btn-outline" to={`/nutri-calendario/${paciente.id}`}>Calendário e consultas</Link>
           </div>

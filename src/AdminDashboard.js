@@ -6,6 +6,9 @@ import api from './services/api';
 import { jsPDF } from 'jspdf';
 import './css/style.css';
 const fundoImage = '/images/fundo_index.png';
+const nutriId = (nutri) => nutri?.id ?? nutri?.Id;
+const nutriStatus = (nutri) => String(nutri?.status ?? nutri?.Status ?? '').toLowerCase();
+const fieldText = (value) => String(value ?? '').trim().toLowerCase();
 
 const AdminDashboard = () => {
   const [managedNutricionists, setManagedNutricionists] = useState([]);
@@ -76,12 +79,14 @@ const AdminDashboard = () => {
       const stats = {
         totalPacientes: pacientes.length,
         pacientesAtivos: pacientes.filter(p => p.ativo == 1).length,
-        nutricionistasAtivos: nutricionistas.filter(n => n.Status === 'approved' && n.ativo == 1).length,
+        nutricionistasAtivos: nutricionistas.filter(n => nutriStatus(n) === 'approved' && Number(n.ativo) === 1).length,
         solicitacoesPendentes: (await api.solicitacoesAPI.getAll()).length
       };
       setSystemStats(stats);
+      return true;
     } catch (error) {
       console.error('Erro ao recarregar dados:', error);
+      return false;
     }
   };
 
@@ -108,7 +113,7 @@ const AdminDashboard = () => {
         const stats = {
           totalPacientes: pacientes.length,
           pacientesAtivos: pacientes.filter(p => p.ativo == 1).length,
-          nutricionistasAtivos: nutricionistas.filter(n => n.status === 'approved' && n.ativo == 1).length,
+          nutricionistasAtivos: nutricionistas.filter(n => nutriStatus(n) === 'approved' && Number(n.ativo) === 1).length,
           solicitacoesPendentes: (await api.solicitacoesAPI.getAll()).length
         };
         setSystemStats(stats);
@@ -132,21 +137,29 @@ const AdminDashboard = () => {
 
   const handleNutriAction = async (id, action) => {
     try {
-      const nutri = managedNutricionists.find(n => n.id === id);
-      if (!nutri) return;
+      const nutri = managedNutricionists.find(n => String(nutriId(n)) === String(id));
+      if (!nutri || id == null) throw new Error('Nutricionista não encontrado. Atualize a lista e tente novamente.');
+      const idToUse = nutriId(nutri);
+      if (['delete', 'deactivate', 'reject'].includes(action)) {
+        const actionText = action === 'delete' ? 'excluir' : action === 'deactivate' ? 'desativar' : 'rejeitar';
+        const detail = action === 'delete' ? 'Esta ação não pode ser desfeita.' : action === 'deactivate' ? 'O profissional perderá acesso até ser reativado.' : 'O cadastro ficará rejeitado.';
+        if (!window.confirm(`Tem certeza que deseja ${actionText} ${nutri.nome}?\n\n${detail}`)) return false;
+      }
 
       let updateData = {};
       
       if (action === 'approve') {
         updateData = { status: 'approved', ativo: 1 };
-        addToActivityLog('Aprovado', nutri.nome);
+        await nutricionistasAPI.update(idToUse, updateData);
+        await addToActivityLog('Aprovado', nutri.nome);
       } else if (action === 'reject') {
         updateData = { status: 'rejected' };
-        addToActivityLog('Rejeitado', nutri.nome);
+        await nutricionistasAPI.update(idToUse, updateData);
+        await addToActivityLog('Rejeitado', nutri.nome);
       } else if (action === 'delete') {
         try {
-          await nutricionistasAPI.delete(id);
-          addToActivityLog('Excluído', nutri.nome);
+          await nutricionistasAPI.delete(idToUse);
+          await addToActivityLog('Excluído', nutri.nome);
         } catch (error) {
           console.error('Erro ao excluir nutricionista:', error);
           alert('Erro ao excluir nutricionista: ' + error.message);
@@ -154,21 +167,26 @@ const AdminDashboard = () => {
         }
       } else if (action === 'activate') {
         updateData = { ativo: 1 };
-        addToActivityLog('Ativado', nutri.nome);
+        await nutricionistasAPI.update(idToUse, updateData);
+        await addToActivityLog('Ativado', nutri.nome);
       } else if (action === 'deactivate') {
         updateData = { ativo: 0 };
-        addToActivityLog('Desativado', nutri.nome);
+        await nutricionistasAPI.update(idToUse, updateData);
+        await addToActivityLog('Desativado', nutri.nome);
       }
       
-      if (Object.keys(updateData).length > 0) {
-        await nutricionistasAPI.update(id, updateData);
-      }
-
       // Recarregar todos os dados
-      await reloadData();
+      const refreshed = await reloadData();
+      if (!refreshed) {
+        setManagedNutricionists(current => action === 'delete'
+          ? current.filter(item => String(nutriId(item)) !== String(idToUse))
+          : current.map(item => String(nutriId(item)) === String(idToUse) ? { ...item, ...updateData } : item));
+      }
+      return true;
     } catch (error) {
       console.error('Erro na ação do nutricionista:', error);
-      alert('Erro ao executar ação.');
+      alert(`Erro ao ${action === 'delete' ? 'excluir' : 'atualizar'} nutricionista: ${error.message || 'falha inesperada'}`);
+      return false;
     }
   };
 
@@ -184,7 +202,7 @@ const AdminDashboard = () => {
     }
 
     try {
-      if (managedNutricionists.some(n => n.email === email || n.crn === crn)) {
+      if (managedNutricionists.some(n => fieldText(n.email) === fieldText(email) || fieldText(n.crn) === fieldText(crn))) {
         setAddMessage('Já existe um nutricionista com este email ou CRN.');
         return;
       }
@@ -195,7 +213,7 @@ const AdminDashboard = () => {
         crn,
         senha,
         status: 'pending',
-        ativo: true,
+        ativo: 1,
         telefone: '',
         especialidade: ''
       });
@@ -223,9 +241,7 @@ const AdminDashboard = () => {
       return;
     }
 
-    const foundNutri = managedNutricionists.find(n => 
-      n.crn.toLowerCase() === consultCrn.toLowerCase()
-    );
+    const foundNutri = managedNutricionists.find(n => fieldText(n.crn) === fieldText(consultCrn));
 
     if (foundNutri) {
       setConsultResult(foundNutri);
@@ -235,22 +251,30 @@ const AdminDashboard = () => {
     }
   };
 
-  const getPendingNutris = () => managedNutricionists.filter(n => n.status === 'pending');
-  const getApprovedNutris = () => managedNutricionists.filter(n => n.status === 'approved');
-  const getRejectedNutris = () => managedNutricionists.filter(n => n.status === 'rejected');
+  const handleConsultNutriAction = async (action) => {
+    const completed = await handleNutriAction(nutriId(consultResult), action);
+    if (!completed) return;
+    setConsultResult(null);
+    setConsultMessage('');
+    setConsultCrn('');
+  };
+
+  const getPendingNutris = () => managedNutricionists.filter(n => nutriStatus(n) === 'pending');
+  const getApprovedNutris = () => managedNutricionists.filter(n => nutriStatus(n) === 'approved');
+  const getRejectedNutris = () => managedNutricionists.filter(n => nutriStatus(n) === 'rejected');
   
   const getFilteredNutris = useMemo(() => {
     let filtered = managedNutricionists;
     
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(n => n.status === statusFilter);
+      filtered = filtered.filter(n => nutriStatus(n) === statusFilter);
     }
     
     if (searchTerm) {
       filtered = filtered.filter(n => 
-        n.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        n.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        n.crn.toLowerCase().includes(searchTerm.toLowerCase())
+        fieldText(n.nome).includes(fieldText(searchTerm)) ||
+        fieldText(n.email).includes(fieldText(searchTerm)) ||
+        fieldText(n.crn).includes(fieldText(searchTerm))
       );
     }
     
@@ -260,9 +284,9 @@ const AdminDashboard = () => {
   const stats = useMemo(() => {
     return {
       total: managedNutricionists.length,
-      pending: managedNutricionists.filter(n => n.status === 'pending').length,
-      approved: managedNutricionists.filter(n => n.status === 'approved').length,
-      rejected: managedNutricionists.filter(n => n.status === 'rejected').length
+      pending: managedNutricionists.filter(n => nutriStatus(n) === 'pending').length,
+      approved: managedNutricionists.filter(n => nutriStatus(n) === 'approved').length,
+      rejected: managedNutricionists.filter(n => nutriStatus(n) === 'rejected').length
     };
   }, [managedNutricionists]);
 
@@ -368,7 +392,7 @@ const AdminDashboard = () => {
 
           {activeTab === 'dashboard' && (
             <>
-              <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem'}}>
+              <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem', marginBottom: '3rem'}}>
                 <div style={{background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
                   <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{stats.total}</h3>
                   <p style={{margin: 0, opacity: 0.9}}>Total Nutricionistas</p>
@@ -381,10 +405,10 @@ const AdminDashboard = () => {
                   <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{systemStats.totalPacientes || 0}</h3>
                   <p style={{margin: 0, opacity: 0.9}}>Total Pacientes</p>
                 </div>
-                <div style={{background: 'linear-gradient(135deg, #43e97b, #38f9d7)', color: 'white', padding: '1.5rem', borderRadius: '16px', textAlign: 'center'}}>
-                  <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{systemStats.solicitacoesPendentes || 0}</h3>
-                  <p style={{margin: 0, opacity: 0.9}}>Solicitações Pendentes</p>
-                </div>
+                <button type="button" onClick={() => { setSearchTerm(''); setActiveTab('manage'); setStatusFilter('pending'); }} style={{background: 'linear-gradient(135deg, #43e97b, #38f9d7)', color: 'white', padding: '1.5rem', border: 0, borderRadius: '16px', textAlign: 'center', cursor: 'pointer', font: 'inherit'}} aria-label={`${stats.pending} nutricionistas pendentes; abrir fila`}>
+                  <h3 style={{margin: '0 0 0.5rem 0', fontSize: '2rem'}}>{stats.pending}</h3>
+                  <p style={{margin: 0, opacity: 0.9}}>Nutricionistas Pendentes · ver fila</p>
+                </button>
               </div>
               
               <div style={{background: dm.bg, padding: '2rem', borderRadius: '16px', border: `1px solid ${dm.border}`}}>
@@ -420,12 +444,12 @@ const AdminDashboard = () => {
                         <p><strong>Status:</strong> 
                           <span style={{ 
                             fontWeight: 'bold', 
-                            color: consultResult.status === 'approved' ? 'green' : 
-                                   consultResult.status === 'pending' ? 'orange' : 'red' 
+                            color: nutriStatus(consultResult) === 'approved' ? 'green' :
+                                   nutriStatus(consultResult) === 'pending' ? 'orange' : 'red'
                           }}>
-                            {consultResult.status ? consultResult.status.toUpperCase() : 'N/A'}
+                            {nutriStatus(consultResult) ? nutriStatus(consultResult).toUpperCase() : 'N/A'}
                           </span>
-                          {consultResult.status === 'approved' && (
+                          {nutriStatus(consultResult) === 'approved' && (
                             <span style={{
                               marginLeft: '1rem',
                               fontWeight: 'bold',
@@ -440,52 +464,28 @@ const AdminDashboard = () => {
                         <button 
                           className="nutri-action-btn btn-delete"
                           onClick={() => {
-                            if (window.confirm(`Tem certeza que deseja excluir o nutricionista ${consultResult.nome}?\n\nEsta ação não pode ser desfeita!`)) {
-                              handleNutriAction(consultResult.Id, 'delete');
-                              setConsultResult(null);
-                              setConsultMessage('');
-                              setConsultCrn('');
-                            }
+                            void handleConsultNutriAction('delete');
                           }}
                         >
                           Excluir
                         </button>
-                        {consultResult.status === 'pending' && (
-                          <button 
-                            className="nutri-action-btn btn-approve"
-                            onClick={() => {
-                              handleNutriAction(consultResult.id, 'approve');
-                              setConsultResult(null);
-                              setConsultMessage('');
-                              setConsultCrn('');
-                            }}
-                          >
-                            Aprovar
-                          </button>
-                        )}
-                        {consultResult.status === 'approved' && (
+                        {nutriStatus(consultResult) === 'pending' && <>
+                          <button className="nutri-action-btn btn-approve" onClick={() => void handleConsultNutriAction('approve')}>Aprovar</button>
+                          <button className="nutri-action-btn btn-delete" onClick={() => void handleConsultNutriAction('reject')}>Rejeitar</button>
+                        </>}
+                        {nutriStatus(consultResult) === 'approved' && (
                           <>
                             {consultResult.ativo == 1 ? (
                               <button 
                                 className="nutri-action-btn btn-warning"
-                                onClick={() => {
-                                  handleNutriAction(consultResult.id, 'deactivate');
-                                  setConsultResult(null);
-                                  setConsultMessage('');
-                                  setConsultCrn('');
-                                }}
+                                onClick={() => void handleConsultNutriAction('deactivate')}
                               >
                                 Desativar
                               </button>
                             ) : (
                               <button 
                                 className="nutri-action-btn btn-success"
-                                onClick={() => {
-                                  handleNutriAction(consultResult.id, 'activate');
-                                  setConsultResult(null);
-                                  setConsultMessage('');
-                                  setConsultCrn('');
-                                }}
+                                onClick={() => void handleConsultNutriAction('activate')}
                               >
                                 Ativar
                               </button>
@@ -603,12 +603,12 @@ const AdminDashboard = () => {
                             fontSize: '0.75rem',
                             fontWeight: 'bold',
                             color: 'white',
-                            background: nutri.status === 'approved' ? '#10b981' : 
-                                       nutri.status === 'pending' ? '#f59e0b' : '#ef4444'
+                            background: nutriStatus(nutri) === 'approved' ? '#10b981' :
+                                       nutriStatus(nutri) === 'pending' ? '#f59e0b' : '#ef4444'
                           }}>
-                            {nutri.status === 'approved' ? 'APROVADO' : nutri.status === 'pending' ? 'PENDENTE' : 'REJEITADO'}
+                            {nutriStatus(nutri) === 'approved' ? 'APROVADO' : nutriStatus(nutri) === 'pending' ? 'PENDENTE' : 'REJEITADO'}
                           </span>
-                          {nutri.status === 'approved' && (
+                          {nutriStatus(nutri) === 'approved' && (
                             <span style={{
                               padding: '0.25rem 0.75rem',
                               borderRadius: '20px',
@@ -620,18 +620,21 @@ const AdminDashboard = () => {
                               {nutri.ativo == 1 ? 'ATIVO' : 'INATIVO'}
                             </span>
                           )}
-                          {nutri.status === 'pending' && (
+                          {nutriStatus(nutri) === 'pending' && (
                             <button 
                               style={{padding: '0.5rem 1rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer'}}
-                              onClick={() => handleNutriAction(nutri.id, 'approve')}
+                              onClick={() => handleNutriAction(nutriId(nutri), 'approve')}
                             >
                               Aprovar
                             </button>
                           )}
-                          {nutri.status === 'approved' && (
+                          {nutriStatus(nutri) === 'pending' && (
+                            <button style={{padding: '0.5rem 1rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer'}} onClick={() => handleNutriAction(nutriId(nutri), 'reject')}>Rejeitar</button>
+                          )}
+                          {nutriStatus(nutri) === 'approved' && (
                             <button 
                               style={{padding: '0.5rem 1rem', background: nutri.ativo == 1 ? '#f59e0b' : '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer'}}
-                              onClick={() => handleNutriAction(nutri.id, nutri.ativo == 1 ? 'deactivate' : 'activate')}
+                              onClick={() => handleNutriAction(nutriId(nutri), nutri.ativo == 1 ? 'deactivate' : 'activate')}
                             >
                               {nutri.ativo == 1 ? 'Desativar' : 'Ativar'}
                             </button>
@@ -639,9 +642,7 @@ const AdminDashboard = () => {
                           <button 
                             style={{padding: '0.5rem 1rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer'}}
                             onClick={() => {
-                              if (window.confirm(`Tem certeza que deseja excluir o nutricionista ${nutri.nome}?\n\nEsta ação não pode ser desfeita!`)) {
-                                handleNutriAction(nutri.id, 'delete');
-                              }
+                              handleNutriAction(nutriId(nutri), 'delete');
                             }}
                           >
                             Excluir
@@ -792,7 +793,7 @@ const AdminDashboard = () => {
                   <p className="no-items-message">Nenhum paciente encontrado.</p>
                 ) : (
                   allPatients.map(patient => {
-                    const nutri = managedNutricionists.find(n => n.id === patient.nutricionista_id);
+                    const nutri = managedNutricionists.find(n => String(nutriId(n)) === String(patient.nutricionistaId ?? patient.nutricionista_id));
                     return (
                       <div key={patient.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: patient.ativo == 1 ? dm.card2 : (isDark ? '#2d1a1a' : '#fef2f2'), borderRadius: '8px', marginBottom: '0.5rem', border: `1px solid ${patient.ativo == 1 ? dm.border : (isDark ? '#5a2a2a' : '#fecaca')}`}}>
                         <div style={{flex: 1}}>
@@ -805,7 +806,7 @@ const AdminDashboard = () => {
                             <br />
                             👩‍⚕️ {nutri?.nome || 'Sem nutricionista'} • 🎯 {patient.objetivo}
                             <br />
-                            📅 {new Date(patient.data_criacao).toLocaleDateString()}
+                            📅 {(patient.dataCriacao || patient.data_criacao ? new Date(patient.dataCriacao || patient.data_criacao).toLocaleDateString() : 'Data não informada')}
                           </div>
                         </div>
                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end'}}>
@@ -832,6 +833,7 @@ const AdminDashboard = () => {
                                 fontWeight: '500'
                               }}
                               onClick={async () => {
+                                if (patient.ativo == 1 && !window.confirm(`Tem certeza que deseja desativar a conta de ${patient.nome}?`)) return;
                                 try {
                                   await api.pacientesAPI.update(patient.id, { ativo: patient.ativo == 1 ? 0 : 1 });
                                   addToActivityLog(patient.ativo == 1 ? 'Paciente Desativado' : 'Paciente Ativado', patient.nome);
@@ -855,7 +857,7 @@ const AdminDashboard = () => {
                                 fontWeight: '500'
                               }}
                               onClick={async () => {
-                                if (window.confirm(`Excluir paciente ${patient.nome}?`)) {
+                                if (window.confirm(`Tem certeza que deseja excluir o paciente ${patient.nome}? Esta ação não pode ser desfeita.`)) {
                                   try {
                                     await api.pacientesAPI.delete(patient.id);
                                     addToActivityLog('Paciente Excluído', patient.nome);
@@ -934,7 +936,7 @@ const AdminDashboard = () => {
                         yPos = 20;
                       }
                       
-                      const nutri = managedNutricionists.find(n => n.id === patient.nutricionista_id);
+                      const nutri = managedNutricionists.find(n => String(nutriId(n)) === String(patient.nutricionistaId ?? patient.nutricionista_id));
                       const status = patient.ativo == 1 ? 'ATIVO' : 'INATIVO';
                       const statusColor = patient.ativo == 1 ? [16, 185, 129] : [239, 68, 68];
                       
@@ -960,7 +962,7 @@ const AdminDashboard = () => {
                       yPos += 6;
                       doc.text(`Objetivo: ${patient.objetivo || 'Não informado'}`, 25, yPos);
                       yPos += 6;
-                      doc.text(`Cadastro: ${new Date(patient.data_criacao).toLocaleDateString()}`, 25, yPos);
+                      doc.text(`Cadastro: ${(patient.dataCriacao || patient.data_criacao ? new Date(patient.dataCriacao || patient.data_criacao).toLocaleDateString() : 'Data não informada')}`, 25, yPos);
                       yPos += 12;
                     });
                     
@@ -995,7 +997,7 @@ const AdminDashboard = () => {
                     <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Nutricionistas Ativos: <strong>{systemStats.nutricionistasAtivos}</strong></li>
                     <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Total de Pacientes: <strong>{systemStats.totalPacientes}</strong></li>
                     <li style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`, color: dm.text}}>Pacientes Ativos: <strong>{systemStats.pacientesAtivos}</strong></li>
-                    <li style={{padding: '0.5rem 0', color: dm.text}}>Solicitações Pendentes: <strong>{systemStats.solicitacoesPendentes}</strong></li>
+                    <li style={{padding: '0.5rem 0', color: dm.text}}>Solicitações de vínculo pendentes: <strong>{systemStats.solicitacoesPendentes}</strong></li>
                   </ul>
                 </div>
                 
@@ -1042,7 +1044,7 @@ const AdminDashboard = () => {
                     const dashboardStats = [
                       { label: 'Nutricionistas', value: managedNutricionists.length, active: systemStats.nutricionistasAtivos },
                       { label: 'Pacientes', value: systemStats.totalPacientes, active: systemStats.pacientesAtivos },
-                      { label: 'Solicitações', value: systemStats.solicitacoesPendentes, active: 0 }
+                      { label: 'Vínculos pendentes', value: systemStats.solicitacoesPendentes, active: 0 }
                     ];
                     
                     let xPos = 20;
@@ -1085,12 +1087,12 @@ const AdminDashboard = () => {
                         doc.addPage();
                         yPos = 20;
                       }
-                      const statusColor = nutri.status === 'approved' ? [34, 197, 94] : [239, 68, 68];
+                      const statusColor = nutriStatus(nutri) === 'approved' ? [34, 197, 94] : [239, 68, 68];
                       doc.setTextColor(0, 0, 0);
                       doc.text(`${index + 1}. ${nutri.nome}`, 20, yPos);
                       doc.text(nutri.email, 80, yPos);
                       doc.setTextColor(...statusColor);
-                      doc.text(nutri.status?.toUpperCase() || 'N/A', 150, yPos);
+                      doc.text(nutriStatus(nutri).toUpperCase() || 'N/A', 150, yPos);
                       yPos += 8;
                     });
                     

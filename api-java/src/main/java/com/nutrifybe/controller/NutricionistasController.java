@@ -1,6 +1,8 @@
 package com.nutrifybe.controller;
 
 import com.nutrifybe.model.Nutricionista;
+import com.nutrifybe.model.AvaliacaoNutricionista;
+import com.nutrifybe.repository.AvaliacaoNutricionistaRepository;
 import com.nutrifybe.repository.NutricionistaRepository;
 import com.nutrifybe.security.TokenService;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +19,13 @@ import java.util.Optional;
 public class NutricionistasController {
 
     private final NutricionistaRepository repository;
+    private final AvaliacaoNutricionistaRepository avaliacaoRepository;
     private final TokenService tokens;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public NutricionistasController(NutricionistaRepository repository, TokenService tokens) {
+    public NutricionistasController(NutricionistaRepository repository, AvaliacaoNutricionistaRepository avaliacaoRepository, TokenService tokens) {
         this.repository = repository;
+        this.avaliacaoRepository = avaliacaoRepository;
         this.tokens = tokens;
     }
 
@@ -35,6 +39,24 @@ public class NutricionistasController {
         return repository.findById(id)
                 .map(n -> ResponseEntity.ok((Object) publico(n)))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/avaliacoes")
+    public ResponseEntity<?> getAvaliacoes(@PathVariable Long id) {
+        if (!repository.existsById(id)) return ResponseEntity.notFound().build();
+        List<AvaliacaoNutricionista> avaliacoes = avaliacaoRepository.findTop100ByNutricionistaIdOrderByCriadoEmDesc(id);
+        List<Map<String, Object>> publicas = avaliacoes.stream().map(avaliacao -> {
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("nota", avaliacao.getNota());
+            item.put("comentario", avaliacao.getComentario());
+            item.put("criadoEm", avaliacao.getCriadoEm());
+            return item;
+        }).toList();
+        Map<String, Object> resultado = new LinkedHashMap<>();
+        resultado.put("media", avaliacaoRepository.averageNota(id));
+        resultado.put("total", avaliacaoRepository.countByNutricionistaId(id));
+        resultado.put("avaliacoes", publicas);
+        return ResponseEntity.ok(resultado);
     }
 
     @PostMapping

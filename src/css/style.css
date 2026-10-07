@@ -5714,3 +5714,18 @@ body.dark-mode .hbtn-nutri:hover {
 body.dark-mode .nutri-theme .nutri-card::before {
     background: linear-gradient(90deg, #A78BFA, #7C3AED, #C4B5FD) !important;
 }
+
+/* Corrige o preenchimento de texto ciano herdado do tema claro nas páginas públicas. */
+body.dark-mode .public-theme .team-title,
+body.dark-mode .public-theme .faq-title,
+body.dark-mode .public-theme .contact-icon,
+body.dark-mode .public-theme .support-link {
+    color: var(--dm-purple) !important;
+    -webkit-text-fill-color: var(--dm-purple) !important;
+    background: none !important;
+}
+
+body.dark-mode .public-theme .faq-question {
+    color: var(--dm-text) !important;
+    -webkit-text-fill-color: var(--dm-text) !important;
+}

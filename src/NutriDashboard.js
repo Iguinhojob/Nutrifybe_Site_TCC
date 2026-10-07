@@ -89,6 +89,9 @@ const NutriDashboard = () => {
     try {
       const selectedNutri = managedNutricionists.find(n => String(n.Id || n.id) === String(selectedNutriId));
       if (!selectedNutri) return;
+      const patientName = selectNutriModal.patient.Nome || selectNutriModal.patient.nome;
+      const nutritionistName = selectedNutri.Nome || selectedNutri.nome;
+      if (!window.confirm(`Tem certeza que deseja transferir ${patientName} para ${nutritionistName}?`)) return;
 
       const patientId = selectNutriModal.patient.Id || selectNutriModal.patient.id;
       console.log('Transferindo paciente ID:', patientId, 'para nutricionista ID:', selectedNutriId);
@@ -172,13 +175,6 @@ const NutriDashboard = () => {
                     >
                       Ver Ficha
                     </Link>
-                    <Link
-                      to={`/nutri-chat/${patient.Id || patient.id}`}
-                      className="btn btn-primary"
-                      style={{ marginLeft: '0.5rem', background: isDark ? '#334155' : '#0f766e', boxShadow: 'none' }}
-                    >
-                      Conversar
-                    </Link>
                     <button 
                       className="btn btn-warning"
                       style={{marginLeft: '0.5rem'}}
@@ -223,6 +219,8 @@ const NutriDashboard = () => {
           <button 
             className="btn btn-warning" 
             onClick={async () => {
+              const patientName = transferModal.patient.Nome || transferModal.patient.nome;
+              if (!window.confirm(`Tem certeza que deseja encerrar o vínculo de ${patientName}? O cadastro e o histórico serão preservados.`)) return;
               try {
                 const patientId = transferModal.patient.Id || transferModal.patient.id;
                 await pacientesAPI.endService(patientId);

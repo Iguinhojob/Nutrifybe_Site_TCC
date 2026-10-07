@@ -54,13 +54,14 @@ const NutriSolicitacoes = () => {
   };
 
   const rejectPatientRequest = async (id) => {
+    const request = pendingRequests.find(req => String(req.id || req.Id) === String(id));
+    if (!request || !window.confirm(`Tem certeza que deseja recusar a solicitação de ${request.Nome || request.nome}?`)) return;
     try {
-      const rejectedPatient = pendingRequests.find(req => (req.id || req.Id) === id);
       await solicitacoesAPI.denyScoped(id);
-      const updatedPending = pendingRequests.filter(req => (req.id || req.Id) !== id);
+      const updatedPending = pendingRequests.filter(req => String(req.id || req.Id) !== String(id));
       setPendingRequests(updatedPending);
       
-      alert(`Paciente ${rejectedPatient.Nome || rejectedPatient.nome} recusado.`);
+      alert(`Paciente ${request.Nome || request.nome} recusado.`);
     } catch (error) {
       console.error('Erro ao recusar paciente:', error);
       alert('Erro ao recusar paciente.');

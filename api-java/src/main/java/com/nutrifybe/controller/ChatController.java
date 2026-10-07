@@ -47,7 +47,7 @@ public class ChatController {
     public ResponseEntity<?> listar(@RequestHeader(value = "Authorization", required = false) String auth,
                                     @RequestParam(required = false) Long pacienteId) {
         Acesso acesso = resolver(auth, pacienteId);
-        if (acesso == null) return erro(403, "Chat disponível apenas para paciente e nutricionista com vínculo ativo.");
+        if (acesso == null) return erroAcesso(auth, "Chat disponível apenas para paciente e nutricionista com vínculo ativo.");
         List<ChatMensagem> lista = mensagens.findTop100ByPacienteIdAndNutricionistaIdOrderByIdDesc(acesso.pacienteId, acesso.nutricionistaId);
         LocalDateTime agora = LocalDateTime.now();
         lista.stream().filter(m -> !acesso.tipo.equals(m.getRemetenteTipo()) && m.getLidoEm() == null)
@@ -61,7 +61,7 @@ public class ChatController {
                                     @RequestParam(required = false) String texto,
                                     @RequestPart(required = false) MultipartFile arquivo) {
         Acesso acesso = resolver(auth, pacienteId);
-        if (acesso == null) return erro(403, "Chat disponível apenas para paciente e nutricionista com vínculo ativo.");
+        if (acesso == null) return erroAcesso(auth, "Chat disponível apenas para paciente e nutricionista com vínculo ativo.");
         String mensagem = texto == null ? "" : texto.trim();
         if (mensagem.length() > 4000) return erro(400, "A mensagem deve ter no máximo 4.000 caracteres.");
         if (mensagem.isEmpty() && (arquivo == null || arquivo.isEmpty())) return erro(400, "Escreva uma mensagem ou anexe um arquivo.");
@@ -90,7 +90,7 @@ public class ChatController {
     public ResponseEntity<?> baixar(@RequestHeader(value = "Authorization", required = false) String auth,
                                     @RequestParam(required = false) Long pacienteId, @PathVariable Long id) {
         Acesso acesso = resolver(auth, pacienteId);
-        if (acesso == null) return erro(403, "Acesso ao anexo não autorizado.");
+        if (acesso == null) return erroAcesso(auth, "Acesso ao anexo não autorizado.");
         ChatMensagem m = mensagens.findByIdAndPacienteIdAndNutricionistaId(id, acesso.pacienteId, acesso.nutricionistaId).orElse(null);
         if (m == null || m.getArquivoDados() == null) return erro(404, "Anexo não encontrado.");
         String encoded = URLEncoder.encode(m.getArquivoNome(), StandardCharsets.UTF_8).replace("+", "%20");
@@ -142,6 +142,13 @@ public class ChatController {
 
     private ResponseEntity<Map<String, Object>> erro(int status, String message) {
         return ResponseEntity.status(status).body(Map.of("success", false, "message", message));
+    }
+
+    private ResponseEntity<Map<String, Object>> erroAcesso(String auth, String mensagemVinculo) {
+        if (tokens.validar(auth) == null && tokens.validarNutricionista(auth) == null) {
+            return erro(401, "Sessão inválida ou expirada. Entre novamente.");
+        }
+        return erro(403, mensagemVinculo);
     }
 
     private record Acesso(Long pacienteId, Long nutricionistaId, String tipo, Long remetenteId, String nome) {}
