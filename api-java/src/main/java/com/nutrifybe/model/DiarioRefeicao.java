@@ -26,6 +26,8 @@ public class DiarioRefeicao {
 
     private Double gorduras;
 
+    private Double fibras;
+
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String itens;
 
@@ -36,6 +38,11 @@ public class DiarioRefeicao {
 
     @Column(name = "criado_em")
     private String criadoEm;
+    @Column(name = "data_registro")
+    private String entryDate;
+
+    public String getEntryDate() { return entryDate != null ? entryDate : criadoEm != null && criadoEm.length() >= 10 ? criadoEm.substring(0, 10) : null; }
+    public void setEntryDate(String entryDate) { this.entryDate = entryDate; }
 
     public Long getId() { return id; }
     public Long getPacienteId() { return pacienteId; }
@@ -52,6 +59,8 @@ public class DiarioRefeicao {
     public void setProteinas(Double proteinas) { this.proteinas = proteinas; }
     public Double getGorduras() { return gorduras; }
     public void setGorduras(Double gorduras) { this.gorduras = gorduras; }
+    public Double getFibras() { return fibras; }
+    public void setFibras(Double fibras) { this.fibras = fibras; }
     public String getItens() { return itens; }
     public void setItens(String itens) { this.itens = itens; }
     public String getOrigem() { return origem; }

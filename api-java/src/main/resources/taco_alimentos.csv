@@ -1,0 +1,592 @@
+id,nome,categoria,kcal_100g,proteina_100g,gordura_100g,carboidrato_100g,fibra_100g
+1,"Arroz, integral, cozido",Cereais e derivados,124,2.6,1.0,25.8,2.7
+2,"Arroz, integral, cru",Cereais e derivados,360,7.3,1.9,77.5,4.8
+3,"Arroz, tipo 1, cozido",Cereais e derivados,128,2.5,0.2,28.1,1.6
+4,"Arroz, tipo 1, cru",Cereais e derivados,358,7.2,0.3,78.8,1.6
+5,"Arroz, tipo 2, cozido",Cereais e derivados,130,2.6,0.4,28.2,1.1
+6,"Arroz, tipo 2, cru",Cereais e derivados,358,7.2,0.3,78.9,1.7
+7,"Aveia, flocos, crua",Cereais e derivados,394,13.9,8.5,66.6,9.1
+8,"Biscoito, doce, maisena",Cereais e derivados,443,8.1,12.0,75.2,2.1
+9,"Biscoito, doce, recheado com chocolate",Cereais e derivados,472,6.4,19.6,70.5,3.0
+10,"Biscoito, doce, recheado com morango",Cereais e derivados,471,5.7,19.6,71.0,1.5
+11,"Biscoito, doce, wafer, recheado de chocolate",Cereais e derivados,502,5.6,24.7,67.5,1.8
+12,"Biscoito, doce, wafer, recheado de morango",Cereais e derivados,513,4.5,26.4,67.4,0.8
+13,"Biscoito, salgado, cream cracker",Cereais e derivados,432,10.1,14.4,68.7,2.5
+14,"Bolo, mistura para",Cereais e derivados,419,6.2,6.1,84.7,1.7
+15,"Bolo, pronto, aipim",Cereais e derivados,324,4.4,12.7,47.9,0.7
+16,"Bolo, pronto, chocolate",Cereais e derivados,410,6.2,18.5,54.7,1.4
+17,"Bolo, pronto, coco",Cereais e derivados,333,5.7,11.3,52.3,1.1
+18,"Bolo, pronto, milho",Cereais e derivados,311,4.8,12.4,45.1,0.7
+19,"Canjica, branca, crua",Cereais e derivados,358,7.2,1.0,78.1,5.5
+20,"Canjica, com leite integral",Cereais e derivados,112,2.4,1.2,23.6,1.2
+21,"Cereais, milho, flocos, com sal",Cereais e derivados,370,7.3,1.6,80.8,5.3
+22,"Cereais, milho, flocos, sem sal",Cereais e derivados,363,6.9,1.2,80.4,1.8
+23,"Cereais, mingau, milho, infantil",Cereais e derivados,394,6.4,1.1,87.3,3.2
+24,"Cereais, mistura para vitamina, trigo, cevada e aveia",Cereais e derivados,381,8.9,2.1,81.6,5.0
+25,"Cereal matinal, milho",Cereais e derivados,365,7.2,1.0,83.8,4.1
+26,"Cereal matinal, milho, açúcar",Cereais e derivados,377,4.7,0.7,88.8,2.1
+27,"Creme de arroz, pó",Cereais e derivados,386,7.0,1.2,83.9,1.1
+28,"Creme de milho, pó",Cereais e derivados,333,4.8,1.6,86.1,3.7
+29,"Curau, milho verde",Cereais e derivados,78,2.4,1.6,13.9,0.5
+30,"Curau, milho verde, mistura para",Cereais e derivados,402,2.2,13.4,79.8,2.5
+31,"Farinha, de arroz, enriquecida",Cereais e derivados,363,1.3,0.3,85.5,0.6
+32,"Farinha, de centeio, integral",Cereais e derivados,336,12.5,1.8,73.3,15.5
+33,"Farinha, de milho, amarela",Cereais e derivados,351,7.2,1.5,79.1,5.5
+34,"Farinha, de rosca",Cereais e derivados,371,11.4,1.5,75.8,4.8
+35,"Farinha, de trigo",Cereais e derivados,360,9.8,1.4,75.1,2.3
+36,"Farinha, láctea, de cereais",Cereais e derivados,415,11.9,5.8,77.8,1.9
+37,"Lasanha, massa fresca, cozida",Cereais e derivados,164,5.8,1.2,32.5,1.6
+38,"Lasanha, massa fresca, crua",Cereais e derivados,220,7.0,1.3,45.1,1.6
+39,"Macarrão, instantâneo",Cereais e derivados,436,8.8,17.2,62.4,5.6
+40,"Macarrão, trigo, cru",Cereais e derivados,371,10.0,1.3,77.9,2.9
+41,"Macarrão, trigo, cru, com ovos",Cereais e derivados,371,10.3,2.0,76.6,2.3
+42,"Milho, amido, cru",Cereais e derivados,361,0.6,0.0,87.1,0.7
+43,"Milho, fubá, cru",Cereais e derivados,353,7.2,1.9,78.9,4.7
+44,"Milho, verde, cru",Cereais e derivados,138,6.6,0.6,28.6,3.9
+45,"Milho, verde, enlatado, drenado",Cereais e derivados,98,3.2,2.4,17.1,4.6
+46,"Mingau tradicional, pó",Cereais e derivados,373,0.6,0.4,89.3,0.9
+47,"Pamonha, barra para cozimento, pré-cozida",Cereais e derivados,171,2.6,4.8,30.7,2.4
+48,"Pão, aveia, forma",Cereais e derivados,343,12.4,5.7,59.6,6.0
+49,"Pão, de soja",Cereais e derivados,309,11.3,3.6,56.5,5.7
+50,"Pão, glúten, forma",Cereais e derivados,253,12.0,2.7,44.1,2.5
+51,"Pão, milho, forma",Cereais e derivados,292,8.3,3.1,56.4,4.3
+52,"Pão, trigo, forma, integral",Cereais e derivados,253,9.4,3.7,49.9,6.9
+53,"Pão, trigo, francês",Cereais e derivados,300,8.0,3.1,58.6,2.3
+54,"Pão, trigo, sovado",Cereais e derivados,311,8.4,2.8,61.5,2.4
+55,"Pastel, de carne, cru",Cereais e derivados,289,10.7,8.8,42.0,1.0
+56,"Pastel, de carne, frito",Cereais e derivados,388,10.1,20.1,43.8,1.0
+57,"Pastel, de queijo, cru",Cereais e derivados,308,9.9,9.6,45.9,1.1
+58,"Pastel, de queijo, frito",Cereais e derivados,422,8.7,22.7,48.1,0.9
+59,"Pastel, massa, crua",Cereais e derivados,310,6.9,5.5,57.4,1.4
+60,"Pastel, massa, frita",Cereais e derivados,570,6.0,40.9,49.3,1.3
+61,"Pipoca, com óleo de soja, sem sal",Cereais e derivados,448,9.9,15.9,70.3,14.3
+62,"Polenta, pré-cozida",Cereais e derivados,103,2.3,0.3,23.3,2.4
+63,"Torrada, pão francês",Cereais e derivados,377,10.5,3.3,74.6,3.4
+64,"Abóbora, cabotian, cozida","Verduras, hortaliças e derivados",48,1.4,0.7,10.8,2.5
+65,"Abóbora, cabotian, crua","Verduras, hortaliças e derivados",39,1.7,0.5,8.4,2.2
+66,"Abóbora, menina brasileira, crua","Verduras, hortaliças e derivados",14,0.6,0.0,3.3,1.2
+67,"Abóbora, moranga, crua","Verduras, hortaliças e derivados",12,1.0,0.1,2.7,1.7
+68,"Abóbora, moranga, refogada","Verduras, hortaliças e derivados",29,0.4,0.8,6.0,1.5
+69,"Abóbora, pescoço, crua","Verduras, hortaliças e derivados",24,0.7,0.1,6.1,2.3
+70,"Abobrinha, italiana, cozida","Verduras, hortaliças e derivados",15,1.1,0.2,3.0,1.6
+71,"Abobrinha, italiana, crua","Verduras, hortaliças e derivados",19,1.1,0.1,4.3,1.4
+72,"Abobrinha, italiana, refogada","Verduras, hortaliças e derivados",24,1.1,0.8,4.2,1.4
+73,"Abobrinha, paulista, crua","Verduras, hortaliças e derivados",31,0.6,0.1,7.9,2.6
+74,"Acelga, crua","Verduras, hortaliças e derivados",21,1.4,0.1,4.6,1.1
+75,"Agrião, cru","Verduras, hortaliças e derivados",17,2.7,0.2,2.3,2.1
+76,"Aipo, cru","Verduras, hortaliças e derivados",19,0.8,0.1,4.3,1.0
+77,"Alface, americana, crua","Verduras, hortaliças e derivados",9,0.6,0.1,1.7,1.0
+78,"Alface, crespa, crua","Verduras, hortaliças e derivados",11,1.3,0.2,1.7,1.8
+79,"Alface, lisa, crua","Verduras, hortaliças e derivados",14,1.7,0.1,2.4,2.3
+80,"Alface, roxa, crua","Verduras, hortaliças e derivados",13,0.9,0.2,2.5,2.0
+81,"Alfavaca, crua","Verduras, hortaliças e derivados",29,2.7,0.5,5.2,4.1
+82,"Alho, cru","Verduras, hortaliças e derivados",113,7.0,0.2,23.9,4.3
+83,"Alho-poró, cru","Verduras, hortaliças e derivados",32,1.4,0.1,6.9,2.5
+84,"Almeirão, cru","Verduras, hortaliças e derivados",18,1.8,0.2,3.3,2.6
+85,"Almeirão, refogado","Verduras, hortaliças e derivados",65,1.7,4.8,5.7,3.4
+86,"Batata, baroa, cozida","Verduras, hortaliças e derivados",80,0.9,0.2,18.9,1.8
+87,"Batata, baroa, crua","Verduras, hortaliças e derivados",101,1.0,0.2,24.0,2.1
+88,"Batata, doce, cozida","Verduras, hortaliças e derivados",77,0.6,0.1,18.4,2.2
+89,"Batata, doce, crua","Verduras, hortaliças e derivados",118,1.3,0.1,28.2,2.6
+90,"Batata, frita, tipo chips, industrializada","Verduras, hortaliças e derivados",543,5.6,36.6,51.2,2.5
+91,"Batata, inglesa, cozida","Verduras, hortaliças e derivados",52,1.2,0.0,11.9,1.3
+92,"Batata, inglesa, crua","Verduras, hortaliças e derivados",64,1.8,0.0,14.7,1.2
+93,"Batata, inglesa, frita","Verduras, hortaliças e derivados",267,5.0,13.1,35.6,8.1
+94,"Batata, inglesa, sauté","Verduras, hortaliças e derivados",68,1.3,0.9,14.1,1.4
+95,"Berinjela, cozida","Verduras, hortaliças e derivados",19,0.7,0.1,4.5,2.5
+96,"Berinjela, crua","Verduras, hortaliças e derivados",20,1.2,0.1,4.4,2.9
+97,"Beterraba, cozida","Verduras, hortaliças e derivados",32,1.3,0.1,7.2,1.9
+98,"Beterraba, crua","Verduras, hortaliças e derivados",49,1.9,0.1,11.1,3.4
+99,"Biscoito, polvilho doce","Verduras, hortaliças e derivados",438,1.3,12.2,80.5,1.2
+100,"Brócolis, cozido","Verduras, hortaliças e derivados",25,2.1,0.5,4.4,3.4
+101,"Brócolis, cru","Verduras, hortaliças e derivados",25,3.6,0.3,4.0,2.9
+102,"Cará, cozido","Verduras, hortaliças e derivados",78,1.5,0.1,18.9,2.6
+103,"Cará, cru","Verduras, hortaliças e derivados",96,2.3,0.1,23.0,7.3
+104,"Caruru, cru","Verduras, hortaliças e derivados",34,3.2,0.6,6.0,4.5
+105,"Catalonha, crua","Verduras, hortaliças e derivados",24,1.9,0.3,4.8,2.0
+106,"Catalonha, refogada","Verduras, hortaliças e derivados",63,2.0,4.8,4.8,3.7
+107,"Cebola, crua","Verduras, hortaliças e derivados",39,1.7,0.1,8.9,2.2
+108,"Cebolinha, crua","Verduras, hortaliças e derivados",20,1.9,0.4,3.4,3.6
+109,"Cenoura, cozida","Verduras, hortaliças e derivados",30,0.8,0.2,6.7,2.6
+110,"Cenoura, crua","Verduras, hortaliças e derivados",34,1.3,0.2,7.7,3.2
+111,"Chicória, crua","Verduras, hortaliças e derivados",14,1.1,0.1,2.9,2.2
+112,"Chuchu, cozido","Verduras, hortaliças e derivados",19,0.4,0.0,4.8,1.0
+113,"Chuchu, cru","Verduras, hortaliças e derivados",17,0.7,0.1,4.1,1.3
+114,"Coentro, folhas desidratadas","Verduras, hortaliças e derivados",309,20.9,10.4,48.0,37.3
+115,"Couve, manteiga, crua","Verduras, hortaliças e derivados",27,2.9,0.5,4.3,3.1
+116,"Couve, manteiga, refogada ","Verduras, hortaliças e derivados",90,1.7,6.6,8.7,5.7
+117,"Couve-flor, crua","Verduras, hortaliças e derivados",23,1.9,0.2,4.5,2.4
+118,"Couve-flor, cozida","Verduras, hortaliças e derivados",19,1.2,0.3,3.9,2.1
+119,"Espinafre, Nova Zelândia, cru","Verduras, hortaliças e derivados",16,2.0,0.2,2.6,2.1
+120,"Espinafre, Nova Zelândia, refogado","Verduras, hortaliças e derivados",67,2.7,5.4,4.2,2.5
+121,"Farinha, de mandioca, crua","Verduras, hortaliças e derivados",361,1.6,0.3,87.9,6.4
+122,"Farinha, de mandioca, torrada","Verduras, hortaliças e derivados",365,1.2,0.3,89.2,6.5
+123,"Farinha, de puba","Verduras, hortaliças e derivados",360,1.6,0.5,87.3,4.2
+124,"Fécula, de mandioca","Verduras, hortaliças e derivados",331,0.5,0.3,81.1,0.6
+125,"Feijão, broto, cru","Verduras, hortaliças e derivados",39,4.2,0.1,7.8,2.0
+126,"Inhame, cru","Verduras, hortaliças e derivados",97,2.1,0.2,23.2,1.7
+127,"Jiló, cru","Verduras, hortaliças e derivados",27,1.4,0.2,6.2,4.8
+128,"Jurubeba, crua","Verduras, hortaliças e derivados",126,4.4,3.9,23.1,23.9
+129,"Mandioca, cozida","Verduras, hortaliças e derivados",125,0.6,0.3,30.1,1.6
+130,"Mandioca, crua","Verduras, hortaliças e derivados",151,1.1,0.3,36.2,1.9
+131,"Mandioca, farofa, temperada","Verduras, hortaliças e derivados",406,2.1,9.1,80.3,7.8
+132,"Mandioca, frita","Verduras, hortaliças e derivados",300,1.4,11.2,50.3,1.9
+133,"Manjericão, cru","Verduras, hortaliças e derivados",21,2.0,0.4,3.6,3.3
+134,"Maxixe, cru","Verduras, hortaliças e derivados",14,1.4,0.1,2.7,2.2
+135,"Mostarda, folha, crua","Verduras, hortaliças e derivados",18,2.1,0.2,3.2,1.9
+136,"Nhoque, batata, cozido","Verduras, hortaliças e derivados",181,5.9,1.9,36.8,1.8
+137,"Nabo, cru","Verduras, hortaliças e derivados",18,1.2,0.1,4.1,2.6
+138,"Palmito, juçara, em conserva","Verduras, hortaliças e derivados",23,1.8,0.4,4.3,3.2
+139,"Palmito, pupunha, em conserva","Verduras, hortaliças e derivados",29,2.5,0.5,5.5,2.6
+140,"Pão, de queijo, assado","Verduras, hortaliças e derivados",363,5.1,24.6,34.2,0.6
+141,"Pão, de queijo, cru","Verduras, hortaliças e derivados",295,3.6,14.0,38.5,1.0
+142,"Pepino, cru","Verduras, hortaliças e derivados",10,0.9,0.0,2.0,1.1
+143,"Pimentão, amarelo, cru","Verduras, hortaliças e derivados",28,1.2,0.4,6.0,1.9
+144,"Pimentão, verde, cru","Verduras, hortaliças e derivados",21,1.1,0.2,4.9,2.6
+145,"Pimentão, vermelho, cru","Verduras, hortaliças e derivados",23,1.0,0.1,5.5,1.6
+146,"Polvilho, doce","Verduras, hortaliças e derivados",351,0.4,0.0,86.8,0.2
+147,"Quiabo, cru","Verduras, hortaliças e derivados",30,1.9,0.3,6.4,4.6
+148,"Rabanete, cru","Verduras, hortaliças e derivados",14,1.4,0.1,2.7,2.2
+149,"Repolho, branco, cru","Verduras, hortaliças e derivados",17,0.9,0.1,3.9,1.9
+150,"Repolho, roxo, cru","Verduras, hortaliças e derivados",31,1.9,0.1,7.2,2.0
+151,"Repolho, roxo, refogado","Verduras, hortaliças e derivados",42,1.8,1.2,7.6,1.8
+152,"Rúcula, crua","Verduras, hortaliças e derivados",13,1.8,0.1,2.2,1.7
+153,"Salsa, crua","Verduras, hortaliças e derivados",33,3.3,0.6,5.7,1.9
+154,"Seleta de legumes, enlatada","Verduras, hortaliças e derivados",57,3.4,0.4,12.7,3.1
+155,"Serralha, crua","Verduras, hortaliças e derivados",30,2.7,0.7,4.9,3.5
+156,"Taioba, crua","Verduras, hortaliças e derivados",34,2.9,0.9,5.4,4.5
+157,"Tomate, com semente, cru","Verduras, hortaliças e derivados",15,1.1,0.2,3.1,1.2
+158,"Tomate, extrato","Verduras, hortaliças e derivados",61,2.4,0.2,15.0,2.8
+159,"Tomate, molho industrializado","Verduras, hortaliças e derivados",38,1.4,0.9,7.7,3.1
+160,"Tomate, purê","Verduras, hortaliças e derivados",28,1.4,0.0,6.9,1.0
+161,"Tomate, salada","Verduras, hortaliças e derivados",21,0.8,0.0,5.1,2.3
+162,"Vagem, crua","Verduras, hortaliças e derivados",25,1.8,0.2,5.3,2.4
+163,"Abacate, cru",Frutas e derivados,96,1.2,8.4,6.0,6.3
+164,"Abacaxi, cru",Frutas e derivados,48,0.9,0.1,12.3,1.0
+165,"Abacaxi, polpa, congelada",Frutas e derivados,31,0.5,0.1,7.8,0.3
+166,"Abiu, cru",Frutas e derivados,62,0.8,0.7,14.9,1.7
+167,"Açaí, polpa, com xarope de guaraná e glucose",Frutas e derivados,110,0.7,3.7,21.5,1.7
+168,"Açaí, polpa, congelada",Frutas e derivados,58,0.8,3.9,6.2,2.6
+169,"Acerola, crua",Frutas e derivados,33,0.9,0.2,8.0,1.5
+170,"Acerola, polpa, congelada",Frutas e derivados,22,0.6,0.0,5.5,0.7
+171,"Ameixa, calda, enlatada ",Frutas e derivados,183,0.4,0.0,46.9,0.5
+172,"Ameixa, crua",Frutas e derivados,53,0.8,0.0,13.9,2.4
+173,"Ameixa, em calda, enlatada, drenada ",Frutas e derivados,177,1.0,0.3,47.7,4.5
+174,"Atemóia, crua",Frutas e derivados,97,1.0,0.3,25.3,2.1
+175,"Banana, da terra, crua",Frutas e derivados,128,1.4,0.2,33.7,1.5
+176,"Banana, doce em barra",Frutas e derivados,280,2.2,0.1,75.7,3.8
+177,"Banana, figo, crua",Frutas e derivados,105,1.1,0.1,27.8,2.8
+178,"Banana, maçã, crua",Frutas e derivados,87,1.8,0.1,22.3,2.6
+179,"Banana, nanica, crua",Frutas e derivados,92,1.4,0.1,23.8,1.9
+180,"Banana, ouro, crua",Frutas e derivados,112,1.5,0.2,29.3,2.0
+181,"Banana, pacova, crua",Frutas e derivados,78,1.2,0.1,20.3,2.0
+182,"Banana, prata, crua",Frutas e derivados,98,1.3,0.1,26.0,2.0
+183,"Cacau, cru",Frutas e derivados,74,1.0,0.1,19.4,2.2
+184,"Cajá-Manga, cru",Frutas e derivados,46,1.3,0.0,11.4,2.6
+185,"Cajá, polpa, congelada",Frutas e derivados,26,0.6,0.2,6.4,1.4
+186,"Caju, cru",Frutas e derivados,43,1.0,0.3,10.3,1.7
+187,"Caju, polpa, congelada",Frutas e derivados,37,0.5,0.2,9.4,0.8
+188,"Caju, suco concentrado, envasado",Frutas e derivados,45,0.4,0.2,10.7,0.6
+189,"Caqui, chocolate, cru",Frutas e derivados,71,0.4,0.1,19.3,6.5
+190,"Carambola, crua",Frutas e derivados,46,0.9,0.2,11.5,2.0
+191,"Ciriguela, crua",Frutas e derivados,76,1.4,0.4,18.9,3.9
+192,"Cupuaçu, cru",Frutas e derivados,49,1.2,1.0,10.4,3.1
+193,"Cupuaçu, polpa, congelada",Frutas e derivados,49,0.8,0.6,11.4,1.6
+194,"Figo, cru",Frutas e derivados,41,1.0,0.2,10.2,1.8
+195,"Figo, enlatado, em calda",Frutas e derivados,184,0.6,0.2,50.3,2.0
+196,"Fruta-pão, crua",Frutas e derivados,67,1.1,0.2,17.2,5.5
+197,"Goiaba, branca, com casca, crua",Frutas e derivados,52,0.9,0.5,12.4,6.3
+198,"Goiaba, doce em pasta",Frutas e derivados,269,0.6,0.0,74.1,3.7
+199,"Goiaba, doce, cascão",Frutas e derivados,286,0.4,0.1,78.7,4.4
+200,"Goiaba, vermelha, com casca, crua",Frutas e derivados,54,1.1,0.4,13.0,6.2
+201,"Graviola, crua",Frutas e derivados,62,0.8,0.2,15.8,1.9
+202,"Graviola, polpa, congelada",Frutas e derivados,38,0.6,0.1,9.8,1.2
+203,"Jabuticaba, crua",Frutas e derivados,58,0.6,0.1,15.3,2.3
+204,"Jaca, crua",Frutas e derivados,88,1.4,0.3,22.5,2.4
+205,"Jambo, cru",Frutas e derivados,27,0.9,0.1,6.5,5.1
+206,"Jamelão, cru",Frutas e derivados,41,0.5,0.1,10.6,1.8
+207,"Kiwi, cru",Frutas e derivados,51,1.3,0.6,11.5,2.7
+208,"Laranja, baía, crua",Frutas e derivados,45,1.0,0.1,11.5,1.1
+209,"Laranja, baía, suco",Frutas e derivados,37,0.7,0.0,8.7,0.0
+210,"Laranja, da terra, crua",Frutas e derivados,51,1.1,0.2,12.9,4.0
+211,"Laranja, da terra, suco",Frutas e derivados,41,0.7,0.1,9.6,1.0
+212,"Laranja, lima, crua",Frutas e derivados,46,1.1,0.1,11.5,1.8
+213,"Laranja, lima, suco",Frutas e derivados,39,0.7,0.1,9.2,0.4
+214,"Laranja, pêra, crua",Frutas e derivados,37,1.0,0.1,8.9,0.8
+215,"Laranja, pêra, suco",Frutas e derivados,33,0.7,0.1,7.6,0.0
+216,"Laranja, valência, crua",Frutas e derivados,46,0.8,0.2,11.7,1.7
+217,"Laranja, valência, suco",Frutas e derivados,36,0.5,0.1,8.6,0.4
+218,"Limão, cravo, suco",Frutas e derivados,14,0.3,0.0,5.2,0.0
+219,"Limão, galego, suco",Frutas e derivados,22,0.6,0.1,7.3,0.0
+220,"Limão, tahiti, cru",Frutas e derivados,32,0.9,0.1,11.1,1.2
+221,"Maçã, Argentina, com casca, crua",Frutas e derivados,63,0.2,0.2,16.6,2.0
+222,"Maçã, Fuji, com casca, crua",Frutas e derivados,56,0.3,0.0,15.2,1.3
+223,"Macaúba, crua",Frutas e derivados,404,2.1,40.7,13.9,13.4
+224," Mamão, doce em calda, drenado",Frutas e derivados,196,0.2,0.1,54.0,1.3
+225,"Mamão, Formosa, cru",Frutas e derivados,45,0.8,0.1,11.6,1.8
+226,"Mamão, Papaia, cru",Frutas e derivados,40,0.5,0.1,10.4,1.0
+227," Mamão verde, doce em calda, drenado",Frutas e derivados,209,0.3,0.1,57.6,1.2
+228,"Manga, Haden, crua",Frutas e derivados,64,0.4,0.3,16.7,1.6
+229,"Manga, Palmer, crua",Frutas e derivados,72,0.4,0.2,19.4,1.6
+230,"Manga, polpa, congelada",Frutas e derivados,48,0.4,0.2,12.5,1.1
+231,"Manga, Tommy Atkins, crua",Frutas e derivados,51,0.9,0.2,12.8,2.1
+232,"Maracujá, cru",Frutas e derivados,68,2.0,2.1,12.3,1.1
+233,"Maracujá, polpa, congelada",Frutas e derivados,39,0.8,0.2,9.6,0.5
+234,"Maracujá, suco concentrado, envasado",Frutas e derivados,42,0.8,0.2,9.6,0.4
+235,"Melancia, crua",Frutas e derivados,33,0.9,0.0,8.1,0.1
+236,"Melão, cru",Frutas e derivados,29,0.7,0.0,7.5,0.3
+237,"Mexerica, Murcote, crua",Frutas e derivados,58,0.9,0.1,14.9,3.1
+238,"Mexerica, Rio, crua",Frutas e derivados,37,0.7,0.1,9.3,2.7
+239,"Morango, cru",Frutas e derivados,30,0.9,0.3,6.8,1.7
+240,"Nêspera, crua",Frutas e derivados,43,0.3,0.0,11.5,3.0
+241,"Pequi, cru",Frutas e derivados,205,2.3,18.0,13.0,19.0
+242,"Pêra, Park, crua",Frutas e derivados,61,0.2,0.2,16.1,3.0
+243,"Pêra, Williams, crua",Frutas e derivados,53,0.6,0.1,14.0,3.0
+244,"Pêssego, Aurora, cru",Frutas e derivados,36,0.8,0.0,9.3,1.4
+245,"Pêssego, enlatado, em calda",Frutas e derivados,63,0.7,0.0,16.9,1.0
+246,"Pinha, crua",Frutas e derivados,88,1.5,0.3,22.4,3.4
+247,"Pitanga, crua",Frutas e derivados,41,0.9,0.2,10.2,3.2
+248,"Pitanga, polpa, congelada",Frutas e derivados,19,0.3,0.1,4.8,0.7
+249,"Romã, crua",Frutas e derivados,56,0.4,0.0,15.1,0.4
+250,"Tamarindo, cru",Frutas e derivados,276,3.2,0.5,72.5,6.4
+251,"Tangerina, Poncã, crua",Frutas e derivados,38,0.8,0.1,9.6,0.9
+252,"Tangerina, Poncã, suco",Frutas e derivados,36,0.5,0.0,8.8,0.0
+253,"Tucumã, cru",Frutas e derivados,262,2.1,19.1,26.5,12.7
+254,"Umbu, cru",Frutas e derivados,37,0.8,0.0,9.4,2.0
+255,"Umbu, polpa, congelada",Frutas e derivados,34,0.5,0.1,8.8,1.3
+256,"Uva, Itália, crua",Frutas e derivados,53,0.7,0.2,13.6,0.9
+257,"Uva, Rubi, crua",Frutas e derivados,49,0.6,0.2,12.7,0.9
+258,"Uva, suco concentrado, envasado",Frutas e derivados,58,0.0,0.0,14.7,0.2
+259,"Azeite, de dendê",Gorduras e óleos,884,0,100.0,0,0
+260,"Azeite, de oliva, extra virgem",Gorduras e óleos,884,0,100.0,0,0
+261,"Manteiga, com sal",Gorduras e óleos,726,0.4,82.4,0.1,0
+262,"Manteiga, sem sal",Gorduras e óleos,758,0.4,86.0,0.0,0
+263,"Margarina, com óleo hidrogenado, com sal (65% de lipídeos)",Gorduras e óleos,596,0.0,67.4,0.0,0
+264,"Margarina, com óleo hidrogenado, sem sal (80% de lipídeos)",Gorduras e óleos,723,0.0,81.7,0.0,0
+265,"Margarina, com óleo interesterificado, com sal (65%de lipídeos)",Gorduras e óleos,594,0.0,67.2,0.0,0
+266,"Margarina, com óleo interesterificado, sem sal (65% de lipídeos)",Gorduras e óleos,593,0.0,67.1,0.0,0
+267,"Óleo, de babaçu",Gorduras e óleos,884,0,100.0,0,0
+268,"Óleo, de canola",Gorduras e óleos,884,0,100.0,0,0
+269,"Óleo, de girassol",Gorduras e óleos,884,0,100.0,0,0
+270,"Óleo, de milho",Gorduras e óleos,884,0,100.0,0,0
+271,"Óleo, de pequi",Gorduras e óleos,884,0,100.0,0,0
+272,"Óleo, de soja",Gorduras e óleos,884,0,100.0,0,0
+273,"Abadejo, filé, congelado, assado",Pescados e frutos do mar,112,23.5,1.2,0.0,0
+274,"Abadejo, filé, congelado,cozido",Pescados e frutos do mar,91,19.3,0.9,0.0,0
+275,"Abadejo, filé, congelado, cru",Pescados e frutos do mar,59,13.1,0.4,0.0,0
+276,"Abadejo, filé, congelado, grelhado",Pescados e frutos do mar,130,27.6,1.3,0.0,0
+277,"Atum, conserva em óleo",Pescados e frutos do mar,166,26.2,6.0,0.0,0
+278,"Atum, fresco, cru",Pescados e frutos do mar,118,25.7,0.9,0.0,0
+279,"Bacalhau, salgado, cru",Pescados e frutos do mar,136,29.0,1.3,0.0,0
+280,"Bacalhau, salgado, refogado",Pescados e frutos do mar,140,24.0,3.6,1.2,0
+281,"Cação, posta, com farinha de trigo, frita",Pescados e frutos do mar,208,25.0,10.0,3.1,0.5
+282,"Cação, posta, cozida",Pescados e frutos do mar,116,25.6,0.7,0.0,0
+283,"Cação, posta, crua",Pescados e frutos do mar,83,17.9,0.8,0.0,0
+284,"Camarão, Rio Grande, grande, cozido",Pescados e frutos do mar,90,19.0,1.0,0.0,0
+285,"Camarão, Rio Grande, grande, cru",Pescados e frutos do mar,47,10.0,0.5,0.0,0
+286,"Camarão, Sete Barbas, sem cabeça, com casca, frito",Pescados e frutos do mar,231,18.4,15.6,2.9,0
+287,"Caranguejo, cozido",Pescados e frutos do mar,83,18.5,0.4,0.0,0
+288,"Corimba, cru",Pescados e frutos do mar,128,17.4,6.0,0.0,0
+289,"Corimbatá, assado",Pescados e frutos do mar,261,19.9,19.6,0.0,0
+290,"Corimbatá, cozido",Pescados e frutos do mar,239,20.1,16.9,0.0,0
+291,"Corvina de água doce, crua",Pescados e frutos do mar,101,18.9,2.2,0.0,0
+292,"Corvina do mar, crua",Pescados e frutos do mar,94,18.6,1.6,0.0,0
+293,"Corvina grande, assada",Pescados e frutos do mar,147,26.8,3.6,0.0,0
+294,"Corvina grande, cozida",Pescados e frutos do mar,100,23.4,2.6,0.0,0
+295,"Dourada de água doce, fresca",Pescados e frutos do mar,131,18.8,5.6,0.0,0
+296,"Lambari, congelado, cru",Pescados e frutos do mar,131,16.8,6.5,0.0,0
+297,"Lambari, congelado, frito",Pescados e frutos do mar,327,28.4,22.8,0.0,0
+298,"Lambari, fresco, cru",Pescados e frutos do mar,152,15.7,9.4,0.0,0
+299,"Manjuba, com farinha de trigo, frita",Pescados e frutos do mar,344,23.5,22.6,10.2,0.4
+300,"Manjuba, frita",Pescados e frutos do mar,349,30.1,24.5,0.0,0
+301,"Merluza, filé, assado",Pescados e frutos do mar,122,26.6,0.9,0.0,0
+302,"Merluza, filé, cru",Pescados e frutos do mar,89,16.6,2.0,0.0,0
+303,"Merluza, filé, frito",Pescados e frutos do mar,192,26.9,8.5,0.0,0
+304,"Pescada, branca, crua",Pescados e frutos do mar,111,16.3,4.6,0.0,0
+305,"Pescada, branca, frita",Pescados e frutos do mar,223,27.4,11.8,0.0,0
+306,"Pescada, filé, com farinha de trigo, frito",Pescados e frutos do mar,283,21.4,19.1,5.0,0.0
+307,"Pescada, filé, cru",Pescados e frutos do mar,107,16.7,4.0,0.0,0
+308,"Pescada, filé, frito",Pescados e frutos do mar,154,28.6,3.6,0.0,0
+309,"Pescada, filé, molho escabeche",Pescados e frutos do mar,142,11.8,8.0,5.0,0.8
+310,"Pescadinha, crua",Pescados e frutos do mar,76,15.5,1.1,0.0,0
+311,"Pintado, assado",Pescados e frutos do mar,192,36.5,4.0,0.0,0
+312,"Pintado, cru",Pescados e frutos do mar,91,18.6,1.3,0.0,0
+313,"Pintado, grelhado",Pescados e frutos do mar,152,30.8,2.3,0.0,0
+314,"Porquinho, cru",Pescados e frutos do mar,93,20.5,0.6,0.0,0
+315,"Salmão, filé, com pele, fresco,  grelhado",Pescados e frutos do mar,229,23.9,14.0,0.0,0
+316,"Salmão, sem pele, fresco, cru",Pescados e frutos do mar,170,19.3,9.7,0.0,0
+317,"Salmão, sem pele, fresco, grelhado",Pescados e frutos do mar,243,26.1,14.5,0.0,0
+318,"Sardinha, assada",Pescados e frutos do mar,164,32.2,3.0,0.0,0
+319,"Sardinha, conserva em óleo",Pescados e frutos do mar,285,15.9,24.0,0.0,0
+320,"Sardinha, frita",Pescados e frutos do mar,257,33.4,12.7,0.0,0
+321,"Sardinha, inteira, crua",Pescados e frutos do mar,114,21.1,2.7,0.0,0
+322,"Tucunaré, filé, congelado, cru",Pescados e frutos do mar,88,18.0,1.2,0.0,0
+323,Apresuntado,Carnes e derivados,129,13.5,6.7,2.9,0
+324,"Caldo de carne, tablete",Carnes e derivados,241,7.8,16.6,15.1,0.6
+325,"Caldo de galinha, tablete",Carnes e derivados,251,6.3,20.4,10.6,11.8
+326,"Carne, bovina, acém, moído, cozido",Carnes e derivados,212,26.7,10.9,0.0,0
+327,"Carne, bovina, acém, moído, cru",Carnes e derivados,137,19.4,5.9,0.0,0
+328,"Carne, bovina, acém, sem gordura, cozido",Carnes e derivados,215,27.3,10.9,0.0,0
+329,"Carne, bovina, acém, sem gordura, cru",Carnes e derivados,144,20.8,6.1,0.0,0
+330,"Carne, bovina, almôndegas, cruas",Carnes e derivados,189,12.3,11.2,9.8,0
+331,"Carne, bovina, almôndegas, fritas",Carnes e derivados,272,18.2,15.8,14.3,0
+332,"Carne, bovina, bucho, cozido",Carnes e derivados,133,21.6,4.5,0.0,0
+333,"Carne, bovina, bucho, cru",Carnes e derivados,137,20.5,5.5,0.0,0
+334,"Carne, bovina, capa de contra-filé, com gordura, crua",Carnes e derivados,217,19.2,15.0,0.0,0
+335,"Carne, bovina, capa de contra-filé, com gordura, grelhada",Carnes e derivados,312,30.7,20.0,0.0,0
+336,"Carne, bovina, capa de contra-filé, sem gordura, crua",Carnes e derivados,131,21.5,4.3,0.0,0
+337,"Carne, bovina, capa de contra-filé, sem gordura, grelhada",Carnes e derivados,239,35.1,10.0,0.0,0
+338,"Carne, bovina, charque, cozido",Carnes e derivados,263,36.4,11.9,0.0,0
+339,"Carne, bovina, charque, cru",Carnes e derivados,249,22.7,16.8,0.0,0
+340,"Carne, bovina, contra-filé, à milanesa",Carnes e derivados,352,20.6,24.0,12.2,0.4
+341,"Carne, bovina, contra-filé de costela, cru",Carnes e derivados,202,19.8,13.1,0.0,0
+342,"Carne, bovina, contra-filé de costela, grelhado",Carnes e derivados,275,29.9,16.3,0.0,0
+343,"Carne, bovina, contra-filé, com gordura, cru",Carnes e derivados,206,21.2,12.8,0.0,0
+344,"Carne, bovina, contra-filé, com gordura, grelhado",Carnes e derivados,278,32.4,15.5,0.0,0
+345,"Carne, bovina, contra-filé, sem gordura, cru",Carnes e derivados,157,24.0,6.0,0.0,0
+346,"Carne, bovina, contra-filé, sem gordura, grelhado",Carnes e derivados,194,35.9,4.5,0.0,0
+347,"Carne, bovina, costela, assada",Carnes e derivados,373,28.8,27.7,0.0,0
+348,"Carne, bovina, costela, crua",Carnes e derivados,358,16.7,31.8,0.0,0
+349,"Carne, bovina, coxão duro, sem gordura, cozido",Carnes e derivados,217,31.9,8.9,0.0,0
+350,"Carne, bovina, coxão duro, sem gordura, cru",Carnes e derivados,148,21.5,6.2,0.0,0
+351,"Carne, bovina, coxão mole, sem gordura, cozido",Carnes e derivados,219,32.4,8.9,0.0,0
+352,"Carne, bovina, coxão mole, sem gordura, cru",Carnes e derivados,169,21.2,8.7,0.0,0
+353,"Carne, bovina, cupim, assado",Carnes e derivados,330,28.6,23.0,0.0,0
+354,"Carne, bovina, cupim, cru",Carnes e derivados,221,19.5,15.3,0.0,0
+355,"Carne, bovina, fígado, cru",Carnes e derivados,141,20.7,5.4,1.1,0
+356,"Carne, bovina, fígado, grelhado",Carnes e derivados,225,29.9,9.0,4.2,0
+357,"Carne, bovina, filé mingnon, sem gordura, cru",Carnes e derivados,143,21.6,5.6,0.0,0
+358,"Carne, bovina, filé mingnon, sem gordura, grelhado",Carnes e derivados,220,32.8,8.8,0.0,0
+359,"Carne, bovina, flanco, sem gordura, cozido",Carnes e derivados,196,29.4,7.8,0.0,0
+360,"Carne, bovina, flanco, sem gordura, cru",Carnes e derivados,141,20.0,6.2,0.0,0
+361,"Carne, bovina, fraldinha, com gordura, cozida",Carnes e derivados,338,24.2,26.0,0.0,0
+362,"Carne, bovina, fraldinha, com gordura, crua",Carnes e derivados,221,17.6,16.1,0.0,0
+363,"Carne, bovina, lagarto, cozido",Carnes e derivados,222,32.9,9.1,0.0,0
+364,"Carne, bovina, lagarto, cru",Carnes e derivados,135,20.5,5.2,0.0,0
+365,"Carne, bovina, língua, cozida",Carnes e derivados,315,21.4,24.8,0.0,0
+366,"Carne, bovina, língua, crua",Carnes e derivados,215,17.1,15.8,0.0,0
+367,"Carne, bovina, maminha, crua",Carnes e derivados,153,20.9,7.0,0.0,0
+368,"Carne, bovina, maminha, grelhada",Carnes e derivados,153,30.7,2.4,0.0,0
+369,"Carne, bovina, miolo de alcatra, sem gordura, cru",Carnes e derivados,163,21.6,7.8,0.0,0
+370,"Carne, bovina, miolo de alcatra, sem gordura, grelhado",Carnes e derivados,241,31.9,11.6,0.0,0
+371,"Carne, bovina, músculo, sem gordura, cozido",Carnes e derivados,194,31.2,6.7,0.0,0
+372,"Carne, bovina, músculo, sem gordura, cru",Carnes e derivados,142,21.6,5.5,0.0,0
+373,"Carne, bovina, paleta, com gordura, crua",Carnes e derivados,159,21.4,7.5,0.0,0
+374,"Carne, bovina, paleta, sem gordura, cozida",Carnes e derivados,194,29.7,7.4,0.0,0
+375,"Carne, bovina, paleta, sem gordura, crua",Carnes e derivados,141,21.0,5.7,0.0,0
+376,"Carne, bovina, patinho, sem gordura, cru",Carnes e derivados,133,21.7,4.5,0.0,0
+377,"Carne, bovina, patinho, sem gordura, grelhado",Carnes e derivados,219,35.9,7.3,0.0,0
+378,"Carne, bovina, peito, sem gordura, cozido",Carnes e derivados,338,22.2,27.0,0.0,0
+379,"Carne, bovina, peito, sem gordura, cru",Carnes e derivados,259,17.6,20.4,0.0,0
+380,"Carne, bovina, picanha, com gordura, crua",Carnes e derivados,213,18.8,14.7,0.0,0
+381,"Carne, bovina, picanha, com gordura, grelhada",Carnes e derivados,289,26.4,19.5,0.0,0
+382,"Carne, bovina, picanha, sem gordura, crua",Carnes e derivados,134,21.3,4.7,0.0,0
+383,"Carne, bovina, picanha, sem gordura, grelhada",Carnes e derivados,238,31.9,11.3,0.0,0
+384,"Carne, bovina, seca, cozida",Carnes e derivados,313,26.9,21.9,0.0,0
+385,"Carne, bovina, seca, crua",Carnes e derivados,313,19.7,25.4,0.0,0
+386,"Coxinha de frango, frita",Carnes e derivados,283,9.6,11.8,34.5,5.0
+387,"Croquete, de carne, cru",Carnes e derivados,246,12.0,15.6,13.9,0
+388,"Croquete, de carne, frito",Carnes e derivados,347,16.9,22.7,18.1,0
+389,"Empada de frango, pré-cozida, assada",Carnes e derivados,358,6.9,15.6,47.5,2.2
+390,"Empada, de frango, pré-cozida",Carnes e derivados,377,7.3,22.9,35.5,2.2
+391,"Frango, asa, com pele, crua",Carnes e derivados,213,18.1,15.1,0.0,0
+392,"Frango, caipira, inteiro, com pele, cozido",Carnes e derivados,243,23.9,15.6,0.0,0
+393,"Frango, caipira, inteiro, sem pele, cozido",Carnes e derivados,196,29.6,7.7,0.0,0
+394,"Frango, coração, cru",Carnes e derivados,222,12.6,18.6,0.0,0
+395,"Frango, coração, grelhado",Carnes e derivados,207,22.4,12.1,0.6,0
+396,"Frango, coxa, com pele, assada",Carnes e derivados,215,28.5,10.4,0.1,0
+397,"Frango, coxa, com pele, crua",Carnes e derivados,161,17.1,9.8,0.0,0
+398,"Frango, coxa, sem pele, cozida",Carnes e derivados,167,26.9,5.8,0.0,0
+399,"Frango, coxa, sem pele, crua",Carnes e derivados,120,17.8,4.9,0.0,0
+400,"Frango, fígado, cru",Carnes e derivados,106,17.6,3.5,0.0,0
+401,"Frango, filé, à milanesa",Carnes e derivados,221,28.5,7.8,7.5,1.1
+402,"Frango, inteiro, com pele, cru",Carnes e derivados,226,16.4,17.3,0.0,0
+403,"Frango, inteiro, sem pele, assado",Carnes e derivados,187,28.0,7.5,0.0,0
+404,"Frango, inteiro, sem pele, cozido",Carnes e derivados,170,25.0,7.1,0.0,0
+405,"Frango, inteiro, sem pele, cru",Carnes e derivados,129,20.6,4.6,0.0,0
+406,"Frango, peito, com pele, assado",Carnes e derivados,212,33.4,7.6,0.0,0
+407,"Frango, peito, com pele, cru",Carnes e derivados,149,20.8,6.7,0.0,0
+408,"Frango, peito, sem pele, cozido",Carnes e derivados,163,31.5,3.2,0.0,0
+409,"Frango, peito, sem pele, cru",Carnes e derivados,119,21.5,3.0,0.0,0
+410,"Frango, peito, sem pele, grelhado",Carnes e derivados,159,32.0,2.5,0.0,0
+411,"Frango, sobrecoxa, com pele, assada",Carnes e derivados,260,28.7,15.2,0.0,0
+412,"Frango, sobrecoxa, com pele, crua",Carnes e derivados,255,15.5,20.9,0.0,0
+413,"Frango, sobrecoxa, sem pele, assada",Carnes e derivados,233,29.2,12.0,0.0,0
+414,"Frango, sobrecoxa, sem pele, crua",Carnes e derivados,162,17.6,9.6,0.0,0
+415,"Hambúrguer, bovino, cru",Carnes e derivados,215,13.2,16.2,4.2,0
+416,"Hambúrguer, bovino, frito",Carnes e derivados,258,20.0,17.0,6.3,0
+417,"Hambúrguer, bovino, grelhado",Carnes e derivados,210,13.2,12.4,11.3,0
+418,"Lingüiça, frango, crua",Carnes e derivados,218,14.2,17.4,0.0,0
+419,"Lingüiça, frango, frita",Carnes e derivados,245,18.3,18.5,0.0,0
+420,"Lingüiça, frango, grelhada",Carnes e derivados,244,18.2,18.4,0.0,0
+421,"Lingüiça, porco, crua",Carnes e derivados,227,16.1,17.6,0.0,0
+422,"Lingüiça, porco, frita",Carnes e derivados,280,20.5,21.3,0.0,0
+423,"Lingüiça, porco, grelhada",Carnes e derivados,296,23.2,21.9,0.0,0
+424,Mortadela,Carnes e derivados,269,12.0,21.6,5.8,0
+425,"Peru, congelado, assado",Carnes e derivados,163,26.2,5.7,0.0,0
+426,"Peru, congelado, cru",Carnes e derivados,94,18.1,1.8,0.0,0
+427,"Porco, bisteca, crua",Carnes e derivados,164,21.5,8.0,0.0,0
+428,"Porco, bisteca, frita",Carnes e derivados,311,33.7,18.5,0.0,0
+429,"Porco, bisteca, grelhada",Carnes e derivados,280,28.9,17.4,0.0,0
+430,"Porco, costela, assada",Carnes e derivados,402,30.2,30.3,0.0,0
+431,"Porco, costela, crua",Carnes e derivados,256,18.0,19.8,0.0,0
+432,"Porco, lombo, assado",Carnes e derivados,210,35.7,6.4,0.0,0
+433,"Porco, lombo, cru",Carnes e derivados,176,22.6,8.8,0.0,0
+434,"Porco, orelha, salgada, crua",Carnes e derivados,258,18.5,19.9,0.0,0
+435,"Porco, pernil, assado",Carnes e derivados,262,32.1,13.9,0.0,0
+436,"Porco, pernil, cru",Carnes e derivados,186,20.1,11.1,0.0,0
+437,"Porco, rabo, salgado, cru",Carnes e derivados,377,15.6,34.5,0.0,0
+438,"Presunto, com capa de gordura",Carnes e derivados,128,14.4,6.8,1.4,0
+439,"Presunto, sem capa de gordura",Carnes e derivados,94,14.3,2.7,2.1,0
+440,"Quibe, assado",Carnes e derivados,136,14.6,2.7,12.9,1.9
+441,"Quibe, cru",Carnes e derivados,109,12.4,1.7,10.8,1.6
+442,"Quibe, frito",Carnes e derivados,254,14.9,15.8,12.3,0
+443,Salame,Carnes e derivados,398,25.8,30.6,2.9,0
+444,"Toucinho, cru",Carnes e derivados,593,11.5,60.3,0.0,0
+445,"Toucinho, frito",Carnes e derivados,697,27.3,64.3,0.0,0
+446,"Bebida láctea, pêssego",Leite e derivados,55,2.1,1.9,7.6,0.3
+447,Creme de Leite,Leite e derivados,221,1.5,22.5,4.5,0
+448,"Iogurte, natural",Leite e derivados,51,4.1,3.0,1.9,0
+449,"Iogurte, natural, desnatado",Leite e derivados,41,3.8,0.3,5.8,0
+451,"Iogurte, sabor morango",Leite e derivados,70,2.7,2.3,9.7,0.2
+452,"Iogurte, sabor pêssego",Leite e derivados,68,2.5,2.3,9.4,0.7
+453,"Leite, condensado",Leite e derivados,313,7.7,6.7,57.0,0
+454,"Leite, de cabra",Leite e derivados,66,3.1,3.8,5.2,0
+455,"Leite, de vaca, achocolatado",Leite e derivados,83,2.1,2.2,14.2,0.6
+456,"Leite, de vaca, desnatado, pó",Leite e derivados,362,34.7,0.9,53.0,0
+459,"Leite, de vaca, integral, pó",Leite e derivados,497,25.4,26.9,39.2,0
+460,"Leite, fermentado",Leite e derivados,70,1.9,0.1,15.7,0
+461,"Queijo, minas, frescal",Leite e derivados,264,17.4,20.2,3.2,0
+462,"Queijo, minas, meia cura",Leite e derivados,321,21.2,24.6,3.6,0
+463,"Queijo, mozarela",Leite e derivados,330,22.6,25.2,3.0,0
+464,"Queijo, parmesão",Leite e derivados,453,35.6,33.5,1.7,0
+465,"Queijo, pasteurizado",Leite e derivados,303,9.4,27.4,5.7,0
+466,"Queijo, petit suisse, morango",Leite e derivados,121,5.8,2.8,18.5,0
+467,"Queijo, prato",Leite e derivados,360,22.7,29.1,1.9,0
+468,"Queijo, requeijão, cremoso",Leite e derivados,257,9.6,23.4,2.4,0
+469,"Queijo, ricota",Leite e derivados,140,12.6,8.1,3.8,0
+470,"Bebida isotônica, sabores variados",Bebidas (alcoólicas e não alcoólicas),26,0.0,0.0,6.4,0
+471,"Café, infusão 10%",Bebidas (alcoólicas e não alcoólicas),9,0.7,0.1,1.5,0
+472,"Cana, aguardente 1",Bebidas (alcoólicas e não alcoólicas),216,0,0,0,0
+473,"Cana, caldo de",Bebidas (alcoólicas e não alcoólicas),65,0.0,0.0,18.2,0.1
+474,"Cerveja, pilsen 2",Bebidas (alcoólicas e não alcoólicas),41,0.6,0.0,3.3,0
+475,"Chá, erva-doce, infusão 5%",Bebidas (alcoólicas e não alcoólicas),1,0.0,0.0,0.4,0
+476,"Chá, mate, infusão 5%",Bebidas (alcoólicas e não alcoólicas),3,0.0,0.1,0.6,0
+477,"Chá, preto, infusão 5%",Bebidas (alcoólicas e não alcoólicas),2,0.0,0.0,0.6,0
+478,"Coco, água de",Bebidas (alcoólicas e não alcoólicas),22,0.0,0.0,5.3,0.1
+479,"Refrigerante, tipo água tônica",Bebidas (alcoólicas e não alcoólicas),31,0.0,0.0,8.0,0
+480,"Refrigerante, tipo cola",Bebidas (alcoólicas e não alcoólicas),34,0.0,0.0,8.7,0
+481,"Refrigerante, tipo guaraná",Bebidas (alcoólicas e não alcoólicas),39,0.0,0.0,10.0,0
+482,"Refrigerante, tipo laranja",Bebidas (alcoólicas e não alcoólicas),46,0.0,0.0,11.8,0
+483,"Refrigerante, tipo limão",Bebidas (alcoólicas e não alcoólicas),40,0.0,0.0,10.3,0
+484,"Omelete, de queijo",Ovos e derivados,268,15.6,22.0,0.4,0
+485,"Ovo, de codorna, inteiro, cru",Ovos e derivados,177,13.7,12.7,0.8,0
+486,"Ovo, de galinha, clara, cozida/10minutos",Ovos e derivados,59,13.4,0.1,0.0,0
+487,"Ovo, de galinha, gema, cozida/10minutos",Ovos e derivados,353,15.9,30.8,1.6,0
+488,"Ovo, de galinha, inteiro, cozido/10minutos",Ovos e derivados,146,13.3,9.5,0.6,0
+489,"Ovo, de galinha, inteiro, cru",Ovos e derivados,143,13.0,8.9,1.6,0
+490,"Ovo, de galinha, inteiro, frito",Ovos e derivados,240,15.6,18.6,1.2,0
+491,"Achocolatado, pó",Produtos açucarados,401,4.2,2.2,91.2,3.9
+492,"Açúcar, cristal",Produtos açucarados,387,0.3,0.0,99.6,0
+493,"Açúcar, mascavo",Produtos açucarados,369,0.8,0.1,94.5,0
+494,"Açúcar, refinado",Produtos açucarados,387,0.3,0.0,99.5,0
+495,"Chocolate, ao leite",Produtos açucarados,540,7.2,30.3,59.6,2.2
+496,"Chocolate, ao leite, com castanha do Pará",Produtos açucarados,559,7.4,34.2,55.4,2.5
+497,"Chocolate, ao leite, dietético",Produtos açucarados,557,6.9,33.8,56.3,2.8
+498,"Chocolate, meio amargo",Produtos açucarados,475,4.9,29.9,62.4,4.9
+499,Cocada branca,Produtos açucarados,449,1.1,13.6,81.4,3.6
+500,"Doce, de abóbora, cremoso",Produtos açucarados,199,0.9,0.2,54.6,2.3
+501,"Doce, de leite, cremoso",Produtos açucarados,306,5.5,6.0,59.5,0
+502,"Geléia, mocotó, natural",Produtos açucarados,106,2.1,0.1,24.2,0
+503,Glicose de milho,Produtos açucarados,292,0.0,0.0,79.4,0
+504,Maria mole,Produtos açucarados,301,3.8,0.2,73.6,0.7
+505,"Maria mole, coco queimado",Produtos açucarados,307,3.9,0.1,75.1,0.6
+506,Marmelada,Produtos açucarados,257,0.4,0.1,70.8,4.1
+507,"Mel, de abelha",Produtos açucarados,309,0.0,0.0,84.0,0
+508,Melado,Produtos açucarados,297,0.0,0.0,76.6,0
+509,Quindim,Produtos açucarados,411,4.7,24.4,46.3,3.2
+510,Rapadura,Produtos açucarados,352,1.0,0.1,90.8,0
+511,"Café, pó, torrado",Miscelâneas,419,14.7,11.9,65.8,51.2
+512,"Capuccino, pó",Miscelâneas,417,11.3,8.6,73.6,2.4
+513,"Fermento em pó, químico",Miscelâneas,90,0.5,0.1,43.9,0
+514,"Fermento, biológico, levedura, tablete",Miscelâneas,90,17.0,1.5,7.7,4.2
+515,"Gelatina, sabores variados, pó",Miscelâneas,380,8.9,0.0,89.2,0
+518,Shoyu,Miscelâneas,61,3.3,0.3,11.6,0
+519,Tempero a base de sal,Miscelâneas,21,2.7,0.3,2.1,0.6
+520,"Azeitona, preta, conserva",Outros alimentos industrializados,194,1.2,20.3,5.5,4.6
+521,"Azeitona, verde, conserva",Outros alimentos industrializados,137,0.9,14.2,4.1,3.8
+522,"Chantilly, spray, com gordura vegetal",Outros alimentos industrializados,315,0.5,27.3,16.9,0
+523,"Leite, de coco",Outros alimentos industrializados,166,1.0,18.4,2.2,0.7
+524,"Maionese, tradicional com ovos",Outros alimentos industrializados,302,0.6,30.5,7.9,0
+525,Acarajé,Alimentos preparados,289,8.3,19.9,19.1,9.4
+526,Arroz carreteiro,Alimentos preparados,154,10.8,7.1,11.6,1.5
+527,"Baião de dois, arroz e feijão-de-corda",Alimentos preparados,136,6.2,3.2,20.4,5.1
+528,Barreado,Alimentos preparados,165,18.3,9.5,0.2,0.1
+529,"Bife à cavalo, com contra filé",Alimentos preparados,291,23.7,21.1,0.0,0
+530,Bolinho de arroz,Alimentos preparados,274,8.0,8.3,41.7,2.7
+531,Camarão à baiana,Alimentos preparados,101,7.9,6.0,3.2,0.4
+532,"Charuto, de repolho",Alimentos preparados,78,6.8,1.1,10.1,1.5
+533,"Cuscuz, de milho, cozido com sal",Alimentos preparados,113,2.2,0.7,25.3,2.1
+534,"Cuscuz, paulista",Alimentos preparados,142,2.6,4.6,22.5,2.4
+535,"Cuxá, molho",Alimentos preparados,80,5.6,3.6,5.7,3.0
+536,Dobradinha,Alimentos preparados,125,19.8,4.4,0.0,0
+537,Estrogonofe de carne,Alimentos preparados,173,15.0,10.8,3.0,0
+538,Estrogonofe de frango,Alimentos preparados,157,17.6,8.0,2.6,0
+539,Feijão tropeiro mineiro,Alimentos preparados,152,10.2,6.8,19.6,3.6
+540,Feijoada,Alimentos preparados,117,8.7,6.5,11.6,5.1
+541,"Frango, com açafrão",Alimentos preparados,113,9.7,6.2,4.1,0.2
+542,"Macarrão, molho bolognesa",Alimentos preparados,120,4.9,0.9,22.5,0.8
+543,Maniçoba,Alimentos preparados,134,10.0,8.7,3.4,2.2
+544,Quibebe,Alimentos preparados,86,8.6,2.7,6.6,1.7
+545,"Salada, de legumes, com maionese",Alimentos preparados,96,1.1,7.0,8.9,2.2
+546,"Salada, de legumes, cozida no vapor",Alimentos preparados,35,2.0,0.3,7.1,2.5
+547,"Salpicão, de frango",Alimentos preparados,148,13.9,7.8,4.6,0.4
+548,Sarapatel,Alimentos preparados,123,18.5,4.4,1.1,0
+549,Tabule,Alimentos preparados,57,2.0,1.2,10.6,2.1
+550,Tacacá,Alimentos preparados,47,7.0,0.4,3.4,0.2
+551,"Tapioca, com manteiga",Alimentos preparados,348,0.1,10.9,63.6,0.0
+552,"Tucupi, com pimenta-de-cheiro",Alimentos preparados,27,2.1,0.3,4.7,0.2
+553,Vaca atolada,Alimentos preparados,145,5.1,9.3,10.1,2.3
+554,Vatapá,Alimentos preparados,255,6.0,23.2,9.7,1.7
+555,Virado à paulista,Alimentos preparados,307,10.2,25.6,14.1,2.2
+556,Yakisoba,Alimentos preparados,113,7.5,2.6,18.3,1.1
+557,"Amendoim, grão, cru",Leguminosas e derivados,544,27.2,43.9,20.3,8.0
+558,"Amendoim, torrado, salgado",Leguminosas e derivados,606,22.5,54.0,18.7,7.8
+559,"Ervilha, em vagem",Leguminosas e derivados,88,7.5,0.5,14.2,9.7
+560,"Ervilha, enlatada, drenada",Leguminosas e derivados,74,4.6,0.4,13.4,5.1
+561,"Feijão, carioca, cozido",Leguminosas e derivados,76,4.8,0.5,13.6,8.5
+562,"Feijão, carioca, cru",Leguminosas e derivados,329,20.0,1.3,61.2,18.4
+563,"Feijão, fradinho, cozido",Leguminosas e derivados,78,5.1,0.6,13.5,7.5
+564,"Feijão, fradinho, cru",Leguminosas e derivados,339,20.2,2.4,61.2,23.6
+565,"Feijão, jalo, cozido",Leguminosas e derivados,93,6.1,0.5,16.5,13.9
+566,"Feijão, jalo, cru",Leguminosas e derivados,328,20.1,0.9,61.5,30.3
+567,"Feijão, preto, cozido",Leguminosas e derivados,77,4.5,0.5,14.0,8.4
+568,"Feijão, preto, cru",Leguminosas e derivados,324,21.3,1.2,58.8,21.8
+569,"Feijão, rajado, cozido",Leguminosas e derivados,85,5.5,0.4,15.3,9.3
+570,"Feijão, rajado, cru",Leguminosas e derivados,326,17.3,1.2,62.9,24.0
+571,"Feijão, rosinha, cozido",Leguminosas e derivados,68,4.5,0.5,11.8,4.8
+572,"Feijão, rosinha, cru",Leguminosas e derivados,337,20.9,1.3,62.2,20.6
+573,"Feijão, roxo, cozido",Leguminosas e derivados,77,5.7,0.5,12.9,11.5
+574,"Feijão, roxo, cru",Leguminosas e derivados,331,22.2,1.2,60.0,33.8
+575,"Grão-de-bico, cru",Leguminosas e derivados,355,21.2,5.4,57.9,12.4
+576,"Guandu, cru",Leguminosas e derivados,344,19.0,2.1,64.0,21.3
+577,"Lentilha, cozida",Leguminosas e derivados,93,6.3,0.5,16.3,7.9
+578,"Lentilha, crua",Leguminosas e derivados,339,23.2,0.8,62.0,16.9
+579,"Paçoca, amendoim",Leguminosas e derivados,487,16.0,26.1,52.4,7.3
+580,"Pé-de-moleque, amendoim",Leguminosas e derivados,503,13.2,28.0,54.7,3.4
+581,"Soja, farinha",Leguminosas e derivados,404,36.0,14.6,38.4,20.2
+582,"Soja, extrato solúvel, natural, fluido",Leguminosas e derivados,39,2.4,1.6,4.3,0.4
+583,"Soja, extrato solúvel, pó",Leguminosas e derivados,459,35.7,26.2,28.5,7.3
+584,"Soja, queijo (tofu)",Leguminosas e derivados,64,6.6,4.0,2.1,0.8
+585,"Tremoço, cru",Leguminosas e derivados,381,33.6,10.3,43.8,32.3
+586,"Tremoço, em conserva",Leguminosas e derivados,121,11.1,3.8,12.4,14.4
+587,"Amêndoa, torrada, salgada",Nozes e sementes,581,18.6,47.3,29.5,11.6
+588,"Castanha-de-caju, torrada, salgada",Nozes e sementes,570,18.5,46.3,29.1,3.7
+589,"Castanha-do-Brasil, crua",Nozes e sementes,643,14.5,63.5,15.1,7.9
+590,"Coco, cru",Nozes e sementes,406,3.7,42.0,10.4,5.4
+592,"Farinha, de mesocarpo de babaçu, crua",Nozes e sementes,329,1.4,0.2,79.2,17.9
+593,"Gergelim, semente",Nozes e sementes,584,21.2,50.4,21.6,11.9
+594,"Linhaça, semente",Nozes e sementes,495,14.1,32.3,43.3,33.5
+595,"Pinhão, cozido",Nozes e sementes,174,3.0,0.7,43.9,15.6
+596,"Pupunha, cozida",Nozes e sementes,219,2.5,12.8,29.6,4.3
+597,"Noz, crua",Nozes e sementes,620,14.0,59.4,18.4,7.2

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Header from './Header';
 import { pacientesAPI } from './services/api';
+import { formatFoodText } from './foodNames';
 
 export default function FichaPaciente() {
   const { id } = useParams();
@@ -42,6 +43,14 @@ export default function FichaPaciente() {
     const parsed = JSON.parse(paciente?.prescricaoSemanal || 'null');
     if (parsed?.version === 1 && Array.isArray(parsed.meals)) planoAtual = parsed;
   } catch { /* Prescrição antiga em texto livre. */ }
+  const refeicoesDoDiario = Array.isArray(paciente?.refeicoes) ? paciente.refeicoes : [];
+  const diasDoDiario = Object.values(refeicoesDoDiario.reduce((dias, refeicao) => {
+    const dia = String(refeicao.criadoEm || '').slice(0, 10);
+    if (!dia) return dias;
+    (dias[dia] ||= []).push(refeicao);
+    return dias;
+  }, {})).sort((a, b) => b[0].criadoEm.localeCompare(a[0].criadoEm));
+  const somaDoDia = (refeicoes, campo) => refeicoes.reduce((total, refeicao) => total + Number(refeicao[campo] || 0), 0);
   const panel = { background: C.card, border: `1px solid ${C.border}`, borderRadius: 16, padding: 20, marginBottom: 16 };
   const label = { color: C.muted, fontSize: '.76rem', textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 800 };
   const value = { color: C.text, margin: '5px 0 0', fontWeight: 650, lineHeight: 1.5, overflowWrap: 'anywhere' };
@@ -89,6 +98,27 @@ export default function FichaPaciente() {
         <section style={panel}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}><h2 style={{ color: C.text, margin: 0 }}>Plano alimentar atual</h2><Link to={`/nutri-prescricao/${paciente.id}`} style={{ color: C.accent, fontWeight: 800 }}>Editar prescrição →</Link></div>
           {planoAtual ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(230px,1fr))', gap: 10, marginTop: 14 }}>{planoAtual.meals.map((meal, index) => <article key={index} style={{ background: C.soft, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14 }}><strong style={{ color: C.text }}>{meal.horario ? `${meal.horario} · ` : ''}{meal.nome || `Refeição ${index + 1}`}</strong>{meal.alimentos && <p style={{ color: C.muted, whiteSpace: 'pre-wrap', margin: '8px 0 4px' }}>{meal.alimentos}</p>}{meal.porcao && <small style={{ color: C.text }}>Porção: {meal.porcao}</small>}{meal.calorias != null && meal.calorias !== '' && <p style={{ color: C.primary, fontWeight: 850, margin: '7px 0 0' }}>{meal.calorias} kcal</p>}{meal.observacao && <p style={{ color: C.muted, margin: '6px 0 0' }}>Opção/observação: {meal.observacao}</p>}</article>)}{planoAtual.notes && <div style={{ gridColumn: '1 / -1', color: C.text, whiteSpace: 'pre-wrap', background: C.soft, padding: 14, borderRadius: 12 }}><strong>Orientações gerais</strong><br />{planoAtual.notes}</div>}</div> : paciente.prescricaoSemanal ? <div style={{ color: C.text, lineHeight: 1.75, whiteSpace: 'pre-wrap', marginTop: 12 }}>{paciente.prescricaoSemanal}</div> : <p style={{ color: C.muted, marginBottom: 0 }}>Ainda não há uma dieta prescrita para este paciente.</p>}
+        </section>
+
+        <section style={panel}>
+          <h2 style={{ color: C.text, margin: '0 0 5px' }}>Diário alimentar</h2>
+          <p style={{ color: C.muted, margin: '0 0 16px' }}>Consumo registrado pelo paciente · somente leitura</p>
+          {diasDoDiario.length ? <div style={{ display: 'grid', gap: 12 }}>{diasDoDiario.map((refeicoes) => {
+            const dia = String(refeicoes[0].criadoEm).slice(0, 10);
+            return <article key={dia} style={{ border: `1px solid ${C.border}`, borderRadius: 12, padding: 14, background: C.soft }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <strong style={{ color: C.text }}>{new Date(`${dia}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</strong>
+                <span style={{ color: C.primary, fontWeight: 850 }}>{somaDoDia(refeicoes, 'calorias').toFixed(0)} kcal</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, color: C.muted, fontSize: 13, margin: '8px 0 12px' }}>
+                <span>Carboidratos {somaDoDia(refeicoes, 'carboidratos').toFixed(1)} g</span><span>Proteínas {somaDoDia(refeicoes, 'proteinas').toFixed(1)} g</span><span>Gorduras {somaDoDia(refeicoes, 'gorduras').toFixed(1)} g</span><span>Fibras {somaDoDia(refeicoes, 'fibras').toFixed(1)} g</span>
+              </div>
+              {refeicoes.map(refeicao => <div key={refeicao.id} style={{ borderTop: `1px solid ${C.border}`, padding: '9px 0 3px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8 }}>
+                <div><strong style={{ color: C.text }}>{refeicao.nome || 'Refeição'}</strong>{refeicao.descricao && <div style={{ color: C.muted, fontSize: 12, marginTop: 3 }}>{formatFoodText(refeicao.descricao)}</div>}</div>
+                <span style={{ color: C.muted, fontSize: 12 }}>{Number(refeicao.calorias || 0).toFixed(0)} kcal · C {Number(refeicao.carboidratos || 0).toFixed(1)} g · P {Number(refeicao.proteinas || 0).toFixed(1)} g · G {Number(refeicao.gorduras || 0).toFixed(1)} g · F {Number(refeicao.fibras || 0).toFixed(1)} g</span>
+              </div>)}
+            </article>;
+          })}</div> : <p style={{ color: C.muted, marginBottom: 0 }}>O paciente ainda não registrou refeições no diário.</p>}
         </section>
       </main>
     </div>

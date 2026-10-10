@@ -199,3 +199,11 @@ A aplicação estará disponível em: `http://localhost:3000`
 - `npm run server` - JSON Server local
 - `npm run dev-local` - Frontend + JSON Server
 - `npm run iniciar` - Script personalizado de inicialização
+
+## Diário alimentar e fonte dos alimentos
+
+O catálogo de alimentos é armazenado pelo backend Spring Boot na tabela `alimentos`. Na primeira inicialização, `TacoImportador` carrega `api-java/src/main/resources/taco_alimentos.csv` somente quando a tabela está vazia. A API local `GET /alimentos?busca=arroz` pesquisa nomes sem diferenciar caixa ou acentos e retorna até 20 itens.
+
+Ao registrar itens com `alimentoId` e `gramas`, o backend recalcula calorias, carboidratos, proteínas, gorduras e fibras com os valores da tabela por 100 g e grava os valores calculados junto do item. `GET /api/diario/resumo?date=AAAA-MM-DD` retorna as refeições e os totais do dia. A ficha do nutricionista mostra o diário do paciente em modo somente leitura, protegido pelo vínculo aceito.
+
+**Fonte dos valores nutricionais:** TACO 4ª edição, NEPA/UNICAMP. Os valores são estimativas médias por 100 g.

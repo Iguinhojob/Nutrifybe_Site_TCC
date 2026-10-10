@@ -22,6 +22,8 @@ public class Paciente {
     private Double pesoMeta;
     @Column(name = "meta_agua")
     private Double metaAgua;
+    @Column(name = "meta_calorias")
+    private Integer metaCalorias;
     private String objetivo;
     private String atividade;
     private String motivacao;
@@ -71,6 +73,8 @@ public class Paciente {
     public Double getPesoMeta() { return pesoMeta; }
     public void setPesoMeta(Double pesoMeta) { this.pesoMeta = pesoMeta; }
     public Double getMetaAgua() { return metaAgua; }
+    public Integer getMetaCalorias() { return metaCalorias; }
+    public void setMetaCalorias(Integer metaCalorias) { this.metaCalorias = metaCalorias; }
     public void setMetaAgua(Double metaAgua) { this.metaAgua = metaAgua; }
     public String getObjetivo() { return objetivo; }
     public void setObjetivo(String objetivo) { this.objetivo = objetivo; }

@@ -1,3 +1,4 @@
+import { formatFoodText } from './foodNames';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
@@ -660,7 +661,7 @@ const NutriCalendario = () => {
                             <strong style={{ color: '#0891b2', whiteSpace: 'nowrap', fontSize: '0.9rem' }}>{formatNumber(meal.calorias)} kcal</strong>
                           </div>
                           {hasTime && <div style={{ color: c.muted, fontSize: '0.78rem', marginTop: '0.2rem' }}>{time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>}
-                          {(meal.descricao || meal.itens) && <div style={{ color: c.text, fontSize: '0.88rem', lineHeight: 1.5, marginTop: '0.55rem', whiteSpace: 'pre-wrap' }}>{meal.descricao || meal.itens}</div>}
+                          {(meal.descricao || meal.itens) && <div style={{ color: c.text, fontSize: '0.88rem', lineHeight: 1.5, marginTop: '0.55rem', whiteSpace: 'pre-wrap' }}>{formatFoodText(meal.descricao || meal.itens)}</div>}
                           <div style={{ color: c.muted, fontSize: '0.78rem', marginTop: '0.55rem' }}>C {formatNumber(meal.carboidratos, 1)} g · P {formatNumber(meal.proteinas, 1)} g · G {formatNumber(meal.gorduras, 1)} g</div>
                         </article>
                       );
