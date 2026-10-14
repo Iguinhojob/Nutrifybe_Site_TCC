@@ -103,3 +103,5 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+# Build do backend Java (o Dockerfile compila a partir do código-fonte)
+api-java/target/

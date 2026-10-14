@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { adminAPI } from './services/api';
@@ -11,6 +11,12 @@ const AdminLogin = () => {
   });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  // Abrir a tela de login encerra a sessão administrativa anterior (o botão "Sair" leva para cá).
+  useEffect(() => {
+    localStorage.removeItem('currentAdmin');
+    localStorage.removeItem('authToken');
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -47,9 +53,9 @@ const AdminLogin = () => {
           email: admin.email?.replace(/<[^>]*>/g, ''),
           foto: admin.foto || null,
           dataCriacao: admin.dataCriacao || null,
-          type: 'admin'
+          type: 'admin',
+          token: admin.token
         };
-        localStorage.setItem('authToken', 'admin_token_' + admin.id);
         localStorage.setItem('currentAdmin', JSON.stringify(sanitizedUser));
         setMessage('Login bem-sucedido! Redirecionando...');
         setTimeout(() => {

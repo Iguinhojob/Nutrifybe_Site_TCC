@@ -14,6 +14,7 @@ const Register = () => {
     confirmaSenha: ''
   });
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const headerLinks = [
@@ -52,13 +53,15 @@ const Register = () => {
       return;
     }
 
+    setSubmitting(true);
     try {
       // Verificar se já existe
       const nutricionistas = await nutricionistasAPI.getAll();
       const exists = nutricionistas.some(n => n.email === email || n.crn === crn);
       
       if (exists) {
-        setMessage('Já existe um nutricionista com este email ou CRN.');
+        setMessage('Já existe um nutricionista com este e-mail ou CRN. Se a conta é sua, entre ou recupere a senha.');
+        setSubmitting(false);
         return;
       }
 
@@ -73,13 +76,14 @@ const Register = () => {
         especialidade: ''
       });
       
-      setMessage('Registro realizado com sucesso! Aguarde aprovação do administrador.');
+      setMessage('Cadastro enviado com sucesso! Agora o administrador vai analisar seus dados. Você poderá entrar assim que a conta for aprovada. Redirecionando para o login…');
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (error) {
       console.error('Erro no registro:', error);
-      setMessage('Erro ao conectar com o servidor. Verifique se o banco de dados está rodando.');
+      setMessage('Não foi possível falar com o servidor. Verifique sua conexão e tente novamente em instantes.');
+      setSubmitting(false);
     }
   };
 
@@ -93,16 +97,18 @@ const Register = () => {
             <h2 className="form-title">Registrar</h2>
             <p className="form-subtitle">Crie sua conta de nutricionista</p>
             
-            <form className="form-body" onSubmit={handleSubmit}>
+            <form className="form-body" onSubmit={handleSubmit} noValidate>
               {message && (
-                <div className={`form-message ${message.includes('sucesso') ? 'success' : 'error'}`}>
+                <div className={`form-message ${message.includes('sucesso') ? 'success' : 'error'}`} role={message.includes('sucesso') ? 'status' : 'alert'}>
                   {message}
                 </div>
               )}
               
               <div className="form-group">
-                <label className="form-label">Nome Completo</label>
+                <label className="form-label" htmlFor="reg-nome">Nome Completo</label>
                 <input
+                  id="reg-nome"
+                  autoComplete="name"
                   type="text"
                   name="nomeCompleto"
                   className="form-input"
@@ -114,8 +120,10 @@ const Register = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">E-mail</label>
+                <label className="form-label" htmlFor="reg-email">E-mail</label>
                 <input
+                  id="reg-email"
+                  autoComplete="email"
                   type="email"
                   name="email"
                   className="form-input"
@@ -127,8 +135,10 @@ const Register = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">CRN</label>
+                <label className="form-label" htmlFor="reg-crn">CRN</label>
                 <input
+                  id="reg-crn"
+                  autoComplete="off"
                   type="text"
                   name="crn"
                   className="form-input"
@@ -140,21 +150,27 @@ const Register = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">Senha</label>
+                <label className="form-label" htmlFor="reg-senha">Senha</label>
                 <input
+                  id="reg-senha"
+                  autoComplete="new-password"
                   type="password"
                   name="senha"
                   className="form-input"
-                  placeholder="Digite sua senha"
+                  placeholder="Mínimo de 6 caracteres"
+                  aria-describedby="reg-senha-dica"
                   value={formData.senha}
                   onChange={handleInputChange}
                   required
                 />
+                <small id="reg-senha-dica" style={{ display: 'block', marginTop: '0.35rem', opacity: 0.85 }}>Use pelo menos 6 caracteres.</small>
               </div>
               
               <div className="form-group">
-                <label className="form-label">Confirmar Senha</label>
+                <label className="form-label" htmlFor="reg-conf">Confirmar Senha</label>
                 <input
+                  id="reg-conf"
+                  autoComplete="new-password"
                   type="password"
                   name="confirmaSenha"
                   className="form-input"
@@ -166,7 +182,7 @@ const Register = () => {
               </div>
               
               <div className="form-actions">
-                <button type="submit" className="btn btn-primary btn-lg">Registrar</button>
+                <button type="submit" className="btn btn-primary btn-lg" disabled={submitting} aria-busy={submitting}>{submitting ? 'Enviando…' : 'Registrar'}</button>
               </div>
             </form>
             

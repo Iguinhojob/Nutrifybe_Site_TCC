@@ -32,8 +32,10 @@ const apiRequest = async (path, options = {}) => {
   const url = `${API_BASE_URL}${endpoint(path)}`;
   console.log('API Request:', url);
   
+  // Nas telas administrativas usa o token do administrador; nas demais, o do nutricionista.
+  const isAdminArea = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
   let storedUser = null;
-  try { storedUser = JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch { storedUser = null; }
+  try { storedUser = JSON.parse(localStorage.getItem(isAdminArea ? 'currentAdmin' : 'currentUser') || 'null'); } catch { storedUser = null; }
   const isMultipart = typeof FormData !== 'undefined' && options.body instanceof FormData;
   const config = {
     ...options,
@@ -155,9 +157,15 @@ export const chatAPI = {
 // Admin
 export const adminAPI = {
   getAll: () => apiRequest('/api/admin'),
+  // A senha é conferida no servidor; o navegador recebe só os dados públicos e um token.
   login: async (email, senha) => {
-    const admins = await apiRequest('/api/admin');
-    return admins.find(a => a.email === email && a.senha === senha) || null;
+    try {
+      const response = await apiRequest('/api/admin/login', { method: 'POST', body: JSON.stringify({ email, senha }) });
+      return response?.success ? { ...response.admin, token: response.token } : null;
+    } catch (error) {
+      if (error.status === 401) return null;
+      throw error;
+    }
   },
   create: (data) => apiRequest('/api/admin', {
     method: 'POST',

@@ -1,8 +1,11 @@
 import { formatFoodText } from './foodNames';
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import Header from './Header';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import NutriLayout, { PageHeader, useShell } from './ui/NutriLayout';
+import { ConfirmDialog, ErrorState, LoadingState, useToast } from './ui/feedback';
 import { pacientesAPI } from './services/api';
+import { fmtDay, friendlyError, recordDay } from './ui/format';
+import Icon from './ui/icons';
 
 const MEAL_KEYWORDS = [
   { key: 'cafe',    label: 'Café da Manhã',    icon: '☕', color: '#f59e0b', terms: ['café','cafe','manhã','manha','breakfast','desjejum'] },
@@ -46,15 +49,8 @@ const STATUS_CONFIG = {
 const REVIEW_STATUSES = ['cumprido', 'parcialmente-cumprido', 'nao-cumprido'];
 const REGISTRO_COLOR = '#06b6d4';
 
-const dateKey = (value) => {
-  if (typeof value === 'string') {
-    const match = value.match(/^(\d{4}-\d{2}-\d{2})/);
-    if (match) return match[1];
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-};
+// Dia local do registro (usa entryDate quando existir, para não deslocar registros noturnos por causa do fuso).
+const dateKey = (record) => recordDay(record);
 
 const formatNumber = (value, digits = 0) => Number.isFinite(Number(value))
   ? Number(value).toFixed(digits)
@@ -65,15 +61,24 @@ const MONTHS_PT = [
   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
 ];
 
-const NutriCalendario = () => {
+const Calendario = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const toast = useToast();
+  const { handleAuthError } = useShell();
   const [patient, setPatient] = useState(null);
+  const [loadError, setLoadError] = useState('');
+  const [confirmRemove, setConfirmRemove] = useState(false);
+  const [removingRetorno, setRemovingRetorno] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear]   = useState(today.getFullYear());
-  const [isDark] = useState(() => document.body.classList.contains('dark-mode'));
+  const [isDark, setIsDark] = useState(() => document.body.classList.contains('dark-mode'));
+  useEffect(() => {
+    const obs = new MutationObserver(() => setIsDark(document.body.classList.contains('dark-mode')));
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
 
   // Retorno
   const [showRetornoForm, setShowRetornoForm] = useState(false);
@@ -83,17 +88,10 @@ const NutriCalendario = () => {
   const [savingReview, setSavingReview] = useState(false);
   const [reviewMessage, setReviewMessage] = useState('');
 
-  const headerLinks = [
-    { href: '/nutri-dashboard', text: 'Início' },
-    { href: '/nutri-solicitacoes', text: 'Solicitações Pendentes' },
-    { href: '/login', text: 'Sair', onClick: () => navigate('/login') },
-  ];
-
-  useEffect(() => {
-    (async () => {
+  const load = useCallback(async () => {
+      setLoadError('');
       try {
         const p = await pacientesAPI.getById(id);
-        if (!p) { navigate('/nutri-dashboard'); return; }
         if (typeof p.calendario === 'string') {
           try { p.calendario = JSON.parse(p.calendario); } catch { p.calendario = {}; }
         }
@@ -104,13 +102,17 @@ const NutriCalendario = () => {
         setPatient(p);
         if (p.retorno) {
           setRetornoSalvo(p.retorno);
-          setRetornoData(p.retorno);
+          setRetornoData({ data: '', hora: '', observacao: '', ...p.retorno });
         }
-      } catch {
-        navigate('/nutri-dashboard');
+      } catch (e) {
+        if (handleAuthError(e)) return;
+        setLoadError(e.status === 404
+          ? 'Este paciente não foi encontrado ou não tem mais vínculo ativo com você.'
+          : friendlyError(e, 'Não foi possível carregar o histórico deste paciente.'));
       }
-    })();
-  }, [id, navigate]);
+  }, [id, handleAuthError]);
+
+  useEffect(() => { load(); }, [load]);
 
   const navigateMonth = (dir) => {
     if (dir === 'prev') {
@@ -127,32 +129,46 @@ const NutriCalendario = () => {
     setSavingRetorno(true);
     try {
       const patientId = patient.Id || patient.id;
-      await pacientesAPI.updateClinical(patientId, { retorno: retornoData });
+      const response = await pacientesAPI.updateClinical(patientId, { retorno: retornoData });
       setRetornoSalvo({ ...retornoData });
       setShowRetornoForm(false);
+      const quando = `${fmtDay(retornoData.data, { weekday: 'long', day: 'numeric', month: 'long' })}${retornoData.hora ? ` às ${retornoData.hora}` : ''}`;
+      if (response && Object.prototype.hasOwnProperty.call(response, 'retorno')) {
+        toast.show({ tone: 'success', title: 'Retorno agendado', message: `Retorno marcado para ${quando}.` });
+      } else {
+        // API antiga: o campo "retorno" é ignorado pelo servidor e some ao recarregar a página.
+        toast.show({ tone: 'error', title: 'Retorno não foi salvo no servidor', message: 'A API em uso ainda não guarda retornos. Ele aparece só até você sair desta tela. Publique a versão atual do backend (api-java).' });
+      }
     } catch (e) {
-      alert('Erro ao salvar retorno: ' + e.message);
+      if (handleAuthError(e)) return;
+      toast.show({ tone: 'error', title: 'Não foi possível salvar o retorno', message: friendlyError(e, 'Tente novamente em instantes.') });
     } finally {
       setSavingRetorno(false);
     }
   };
 
   const removeRetorno = async () => {
-    if (!window.confirm('Remover agendamento de retorno?')) return;
+    setRemovingRetorno(true);
     try {
       const patientId = patient.Id || patient.id;
       await pacientesAPI.updateClinical(patientId, { retorno: null });
       setRetornoSalvo(null);
       setRetornoData({ data: '', hora: '', observacao: '' });
+      setConfirmRemove(false);
+      toast.show({ tone: 'info', title: 'Retorno removido', message: 'O agendamento foi cancelado.' });
     } catch (e) {
-      alert('Erro ao remover retorno: ' + e.message);
+      setConfirmRemove(false);
+      if (handleAuthError(e)) return;
+      toast.show({ tone: 'error', title: 'Não foi possível remover o retorno', message: friendlyError(e, 'Tente novamente.') });
+    } finally {
+      setRemovingRetorno(false);
     }
   };
 
   const mealsByDate = useMemo(() => {
     const grouped = {};
     (patient?.refeicoes || []).forEach((meal) => {
-      const key = dateKey(meal.criadoEm || meal.createdAt);
+      const key = dateKey(meal);
       if (!key) return;
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(meal);
@@ -163,7 +179,7 @@ const NutriCalendario = () => {
   const waterByDate = useMemo(() => {
     const grouped = {};
     (patient?.agua || []).forEach((record) => {
-      const key = dateKey(record.criadoEm || record.createdAt);
+      const key = dateKey(record);
       if (!key) return;
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(record);
@@ -174,7 +190,7 @@ const NutriCalendario = () => {
   const measurementsByDate = useMemo(() => {
     const grouped = {};
     (patient?.medidas || []).forEach((record) => {
-      const key = dateKey(record.criadoEm || record.createdAt);
+      const key = dateKey(record);
       if (!key) return;
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(record);
@@ -265,79 +281,43 @@ const NutriCalendario = () => {
       : '0 20px 60px rgba(99,102,241,0.12), 0 4px 16px rgba(0,0,0,0.06)',
   };
 
+  if (loadError) {
+    return <div className="nf-card"><ErrorState title="Histórico indisponível" onRetry={load}>{loadError}</ErrorState></div>;
+  }
   if (!patient) {
-    return (
-      <div className="nutri-theme" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', color: c.muted }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
-          <p>Carregando histórico...</p>
-        </div>
-      </div>
-    );
+    return <div className="nf-card"><LoadingState label="Carregando histórico…" /></div>;
   }
 
   const patientName = patient.Nome || patient.nome || 'Paciente';
   const cells = buildCalendar();
 
+  const pid = patient.Id || patient.id;
+
   return (
-    <div className="nutri-theme" style={{ minHeight: '100vh', background: c.bg }}>
-      <Header theme="nutri" links={headerLinks} />
-
-      <main style={{ padding: '2rem 1rem', maxWidth: '1000px', margin: '0 auto' }}>
-
-        {/* ── Cabeçalho da página ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-          <Link
-            to={`/nutri-prescricao/${patient.Id || patient.id}`}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: '2.5rem', height: '2.5rem', borderRadius: '50%',
-              background: c.card, border: `1px solid ${c.border}`,
-              color: c.accent, fontSize: '1.1rem', textDecoration: 'none',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)', flexShrink: 0,
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <i className="fas fa-arrow-left" />
-          </Link>
-          <div style={{ flex: 1 }}>
-            <h1 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 700, color: c.text }}>
-              Histórico de {patientName}
-            </h1>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: c.muted }}>
-              Registros enviados pelo aplicativo
-            </p>
-          </div>
-          <button
-            onClick={() => setShowRetornoForm(v => !v)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '0.5rem',
-              background: showRetornoForm
-                ? (isDark ? '#2A2D32' : '#ede9fe')
-                : 'linear-gradient(135deg, #10b981, #34d399)',
-              border: showRetornoForm ? `1px solid ${c.accent}` : 'none',
-              color: showRetornoForm ? c.accent : '#fff',
-              padding: '0.6rem 1.2rem', borderRadius: '12px',
-              fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer',
-              boxShadow: showRetornoForm ? 'none' : '0 4px 14px rgba(16,185,129,0.35)',
-              transition: 'all 0.2s', flexShrink: 0,
-            }}
-          >
-            <i className="fas fa-calendar-plus" />
-            {retornoSalvo ? 'Ver Retorno' : 'Agendar Retorno'}
-          </button>
-        </div>
+    <div>
+        <PageHeader
+          back={{ to: `/ficha-paciente/${pid}`, label: `Voltar à ficha de ${patientName}` }}
+          eyebrow="Histórico e retorno"
+          title={`Histórico de ${patientName}`}
+          description="Dias com registros enviados pelo aplicativo. Selecione um dia para ver os detalhes e avaliar a adesão ao plano."
+          actions={(
+            <button type="button" className={`nf-btn ${showRetornoForm ? 'secondary' : 'primary'}`} aria-expanded={showRetornoForm} aria-controls="form-retorno" onClick={() => setShowRetornoForm(v => !v)}>
+              <Icon name="calendar" size={17} />
+              {showRetornoForm ? 'Fechar agendamento' : retornoSalvo ? 'Alterar retorno' : 'Agendar retorno'}
+            </button>
+          )}
+        />
 
         {/* Banner retorno salvo */}
         {retornoSalvo && !showRetornoForm && (
           <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', justifyContent: 'space-between',
             background: c.retornoBg, border: `1px solid ${c.retornoBorder}`,
             borderRadius: '16px', padding: '1rem 1.5rem', marginBottom: '1.5rem',
             animation: 'fadeInUp 0.3s ease',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>📅</span>
+              <span style={{ fontSize: '1.5rem' }} aria-hidden="true">📅</span>
               <div>
                 <div style={{ fontWeight: 700, color: c.text, fontSize: '0.95rem' }}>Retorno agendado</div>
                 <div style={{ color: c.muted, fontSize: '0.85rem' }}>
@@ -350,11 +330,11 @@ const NutriCalendario = () => {
               </div>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button onClick={() => setShowRetornoForm(true)} style={{ background: 'none', border: `1px solid ${c.border}`, color: c.muted, padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem' }}>
-                <i className="fas fa-edit" />
+              <button type="button" className="nf-btn secondary sm" onClick={() => setShowRetornoForm(true)}>
+                <Icon name="edit" size={15} /> Alterar
               </button>
-              <button onClick={removeRetorno} style={{ background: 'none', border: '1px solid #fca5a5', color: '#ef4444', padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem' }}>
-                <i className="fas fa-trash" />
+              <button type="button" className="nf-btn danger-outline sm" onClick={() => setConfirmRemove(true)}>
+                <Icon name="trash" size={15} /> Remover
               </button>
             </div>
           </div>
@@ -362,7 +342,7 @@ const NutriCalendario = () => {
 
         {/* Formulário de retorno */}
         {showRetornoForm && (
-          <div style={{
+          <div id="form-retorno" style={{
             background: c.card, borderRadius: '20px', border: `1px solid ${c.border}`,
             marginBottom: '1.5rem', boxShadow: c.shadow, overflow: 'hidden',
             animation: 'fadeInUp 0.3s ease',
@@ -373,30 +353,30 @@ const NutriCalendario = () => {
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <span style={{ fontSize: '1.2rem' }}>📅</span>
-                <span style={{ fontWeight: 700, color: c.text }}>Agendar Retorno</span>
+                <span style={{ fontSize: '1.2rem' }} aria-hidden="true">📅</span>
+                <h2 style={{ fontWeight: 700, color: c.text, fontSize: '1rem', margin: 0 }}>Agendar retorno</h2>
               </div>
-              <button onClick={() => setShowRetornoForm(false)} style={{ background: 'none', border: 'none', color: c.muted, fontSize: '1.1rem', cursor: 'pointer' }}>
-                <i className="fas fa-times" />
+              <button type="button" aria-label="Fechar agendamento" onClick={() => setShowRetornoForm(false)} style={{ background: 'none', border: 'none', color: c.muted, fontSize: '1.1rem', cursor: 'pointer', padding: '0.4rem' }}>
+                <Icon name="x" size={18} />
               </button>
             </div>
-            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>Data *</label>
-                <input type="date" value={retornoData.data} onChange={e => setRetornoData(r => ({ ...r, data: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }} htmlFor="retorno-data">Data *</label>
+                <input id="retorno-data" type="date" required value={retornoData.data} onChange={e => setRetornoData(r => ({ ...r, data: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>Horário</label>
-                <input type="time" value={retornoData.hora} onChange={e => setRetornoData(r => ({ ...r, hora: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }} htmlFor="retorno-hora">Horário</label>
+                <input id="retorno-hora" type="time" value={retornoData.hora} onChange={e => setRetornoData(r => ({ ...r, hora: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
               </div>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>Observação</label>
-                <input type="text" placeholder="Ex: Trazer exames, consulta de rotina..." value={retornoData.observacao} onChange={e => setRetornoData(r => ({ ...r, observacao: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: c.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }} htmlFor="retorno-obs">Observação</label>
+                <input id="retorno-obs" type="text" placeholder="Ex: Trazer exames, consulta de rotina..." value={retornoData.observacao} onChange={e => setRetornoData(r => ({ ...r, observacao: e.target.value }))} style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: c.raised, color: c.text, fontSize: '0.95rem', boxSizing: 'border-box' }} />
               </div>
               <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-                <button onClick={() => setShowRetornoForm(false)} style={{ padding: '0.7rem 1.5rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: 'none', color: c.muted, cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
-                <button onClick={saveRetorno} disabled={!retornoData.data || savingRetorno} style={{ padding: '0.7rem 1.5rem', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #10b981, #34d399)', color: '#fff', cursor: retornoData.data ? 'pointer' : 'not-allowed', fontWeight: 700, opacity: retornoData.data ? 1 : 0.6, boxShadow: '0 4px 14px rgba(16,185,129,0.35)' }}>
-                  {savingRetorno ? 'Salvando...' : 'Salvar Retorno'}
+                <button type="button" onClick={() => setShowRetornoForm(false)} style={{ padding: '0.7rem 1.5rem', borderRadius: '10px', border: `1px solid ${c.border}`, background: 'none', color: c.muted, cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
+                <button type="button" onClick={saveRetorno} disabled={!retornoData.data || savingRetorno} style={{ padding: '0.7rem 1.5rem', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #10b981, #34d399)', color: '#fff', cursor: retornoData.data ? 'pointer' : 'not-allowed', fontWeight: 700, opacity: retornoData.data ? 1 : 0.6, boxShadow: '0 4px 14px rgba(16,185,129,0.35)' }}>
+                  {savingRetorno ? 'Salvando…' : 'Salvar retorno'}
                 </button>
               </div>
             </div>
@@ -436,6 +416,8 @@ const NutriCalendario = () => {
               : 'linear-gradient(135deg, #6366f1, #818cf8)',
           }}>
             <button
+              type="button"
+              aria-label="Mês anterior"
               onClick={() => navigateMonth('prev')}
               style={{
                 background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff',
@@ -446,20 +428,21 @@ const NutriCalendario = () => {
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
             >
-              <i className="fas fa-chevron-left" />
+              <Icon name="chevronLeft" size={20} />
             </button>
 
             <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#fff', fontSize: '1.3rem', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <h2 aria-live="polite" style={{ color: '#fff', fontSize: '1.3rem', fontWeight: 700, letterSpacing: '0.5px', margin: 0 }}>
                 {MONTHS_PT[month]} {year}
-              </div>
+              </h2>
               <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', marginTop: '0.2rem' }}>
-                <i className="fas fa-eye" style={{ marginRight: '0.4rem' }} />
-                Somente visualização
+                Selecione um dia marcado para ver os detalhes
               </div>
             </div>
 
             <button
+              type="button"
+              aria-label="Próximo mês"
               onClick={() => navigateMonth('next')}
               style={{
                 background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff',
@@ -470,12 +453,12 @@ const NutriCalendario = () => {
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
             >
-              <i className="fas fa-chevron-right" />
+              <Icon name="chevronRight" size={20} />
             </button>
           </div>
 
           {/* Grade */}
-          <div style={{ padding: '1.5rem' }}>
+          <div style={{ padding: 'clamp(0.5rem, 3vw, 1.5rem)' }}>
             {/* Nomes dos dias */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '4px' }}>
               {['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d => (
@@ -490,7 +473,7 @@ const NutriCalendario = () => {
             </div>
 
             {/* Células */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
+            <div className="nf-cal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '4px' }}>
               {cells.map(cell => {
                 if (cell.empty) return (
                   <div key={cell.key} style={{ background: c.emptyBg, borderRadius: '12px', minHeight: '80px' }} />
@@ -505,9 +488,21 @@ const NutriCalendario = () => {
                 const isSelected = selectedDate === dateStr;
                 const isRetorno = retornoSalvo?.data === dateStr;
 
+                const clickable = hasRegistro || !!info || isRetorno;
+                const describe = [
+                  fmtDay(dateStr, { weekday: 'long', day: 'numeric', month: 'long' }),
+                  isToday && 'hoje',
+                  hasMeal && (meals.length === 1 ? '1 refeição' : `${meals.length} refeições`),
+                  hasWater && 'água registrada',
+                  hasMeasurements && 'medidas registradas',
+                  st && `avaliação: ${st.label}`,
+                  isRetorno && 'retorno agendado',
+                ].filter(Boolean).join(', ');
+                const CellTag = clickable ? 'button' : 'div';
                 return (
-                  <div
+                  <CellTag
                     key={cell.key}
+                    {...(clickable ? { type: 'button', 'aria-pressed': isSelected, 'aria-label': describe, className: 'nf-cal-cell' } : {})}
                     onClick={() => {
                       if (!(hasRegistro || info || isRetorno)) return;
                       setReviewMessage('');
@@ -533,7 +528,7 @@ const NutriCalendario = () => {
                   >
                     <span style={{ fontSize: '0.9rem', fontWeight: 700, color: isToday ? '#fff' : c.text }}>{day}</span>
                     {isRetorno && (
-                      <div style={{ fontSize: '0.6rem', color: '#10b981', fontWeight: 700 }}>📅 Retorno</div>
+                      <div className="nf-cal-detail" style={{ fontSize: '0.6rem', color: '#10b981', fontWeight: 700 }}>📅 Retorno</div>
                     )}
 
                     {hasRegistro && (
@@ -543,7 +538,7 @@ const NutriCalendario = () => {
                           background: st?.color || (hasMeal ? REGISTRO_COLOR : '#0ea5e9'), flexShrink: 0,
                           boxShadow: `0 0 0 3px ${(st?.color || (hasMeal ? REGISTRO_COLOR : '#0ea5e9'))}22`,
                         }} />
-                        <div style={{
+                        <div className="nf-cal-detail" style={{
                           fontSize: '0.65rem',
                           color: isToday ? 'rgba(255,255,255,0.8)' : c.muted,
                           lineHeight: 1.3,
@@ -559,7 +554,7 @@ const NutriCalendario = () => {
                       }} />
                     )}
                     {!hasRegistro && info?.alimentacao && (
-                      <div style={{
+                      <div className="nf-cal-detail" style={{
                         fontSize: '0.65rem',
                         color: isToday ? 'rgba(255,255,255,0.8)' : c.muted,
                         lineHeight: 1.3, overflow: 'hidden',
@@ -569,7 +564,7 @@ const NutriCalendario = () => {
                         {info.alimentacao.split('\n')[0].substring(0, 30)}
                       </div>
                     )}
-                  </div>
+                  </CellTag>
                 );
               })}
             </div>
@@ -817,7 +812,19 @@ const NutriCalendario = () => {
             </div>
           </div>
         )}
-      </main>
+      <ConfirmDialog
+        open={confirmRemove}
+        tone="danger"
+        icon="calendar"
+        title="Remover o retorno agendado?"
+        confirmLabel="Remover retorno"
+        cancelLabel="Manter"
+        busy={removingRetorno}
+        onCancel={() => setConfirmRemove(false)}
+        onConfirm={removeRetorno}
+      >
+        <p>O agendamento de {retornoSalvo?.data ? fmtDay(retornoSalvo.data, { weekday: 'long', day: 'numeric', month: 'long' }) : 'retorno'} será cancelado. Os registros do paciente não são afetados.</p>
+      </ConfirmDialog>
 
       <style>{`
         @keyframes fadeInUp {
@@ -825,11 +832,14 @@ const NutriCalendario = () => {
           to   { opacity: 1; transform: translateY(0); }
         }
         @media (max-width: 600px) {
-          .cal-day-min { min-height: 56px !important; }
+          .nf-cal-detail { display: none !important; }
+          .nf-cal-cell, .nf-cal-grid > div { min-height: 48px !important; padding: 0.4rem !important; }
         }
       `}</style>
     </div>
   );
 };
 
-export default NutriCalendario;
+export default function NutriCalendario() {
+  return <NutriLayout><Calendario /></NutriLayout>;
+}

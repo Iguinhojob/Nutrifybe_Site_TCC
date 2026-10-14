@@ -2,6 +2,7 @@ package com.nutrifybe.controller;
 
 import com.nutrifybe.model.Paciente;
 import com.nutrifybe.repository.PacienteRepository;
+import com.nutrifybe.security.TokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,48 +16,62 @@ import java.util.stream.Collectors;
 public class PacientesController {
 
     private final PacienteRepository repository;
+    private final TokenService tokens;
 
-    public PacientesController(PacienteRepository repository) {
+    public PacientesController(PacienteRepository repository, TokenService tokens) {
         this.repository = repository;
+        this.tokens = tokens;
     }
 
+    /** Rotas de gestão de pacientes: uso exclusivo do painel administrativo. */
+    private boolean admin(String auth) { return tokens.validarAdmin(auth) != null; }
+    private static final ResponseEntity<?> NAO_AUTORIZADO = ResponseEntity.status(401)
+            .body(Map.of("success", false, "message", "Sessão de administrador inválida ou expirada"));
+
     @GetMapping
-    public List<Map<String, Object>> getAll() {
-        return repository.findAll().stream().map(this::resumoPublico).collect(Collectors.toList());
+    public ResponseEntity<?> getAll(@RequestHeader(value = "Authorization", required = false) String auth) {
+        if (!admin(auth)) return NAO_AUTORIZADO;
+        List<Map<String, Object>> lista = repository.findAll().stream().map(this::resumoPublico).collect(Collectors.toList());
+        return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@RequestHeader(value = "Authorization", required = false) String auth, @PathVariable Long id) {
+        if (!admin(auth)) return NAO_AUTORIZADO;
         return repository.findById(id)
                 .map(p -> ResponseEntity.ok((Object) resumoPublico(p)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Paciente paciente) {
+    public ResponseEntity<?> create(@RequestHeader(value = "Authorization", required = false) String auth, @RequestBody Paciente paciente) {
+        if (!admin(auth)) return NAO_AUTORIZADO;
         repository.save(paciente);
         return ResponseEntity.ok(Map.of("success", true));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> update(@RequestHeader(value = "Authorization", required = false) String auth,
+                                    @PathVariable Long id, @RequestBody Map<String, Object> body) {
+        if (!admin(auth)) return NAO_AUTORIZADO;
         if (body.containsKey("prescricaoSemanal") || body.containsKey("calendario")
                 || body.containsKey("nutricionistaId") || body.containsKey("status")) {
             return ResponseEntity.status(403).body(Map.of("success", false,
                     "message", "Dados do acompanhamento só podem ser alterados pelo fluxo autenticado do nutricionista"));
         }
         return repository.findById(id).map(paciente -> {
-            if (body.containsKey("ativo")) paciente.setAtivo((Integer) body.get("ativo"));
+            if (body.containsKey("ativo")) paciente.setAtivo(((Number) body.get("ativo")).intValue());
             if (body.containsKey("prescricaoSemanal")) paciente.setPrescricaoSemanal((String) body.get("prescricaoSemanal"));
             if (body.containsKey("nutricionistaId")) paciente.setNutricionistaId(Long.valueOf(body.get("nutricionistaId").toString()));
             if (body.containsKey("calendario")) paciente.setCalendario(body.get("calendario").toString());
             repository.save(paciente);
-            return ResponseEntity.ok(Map.of("success", true));
+            return ResponseEntity.ok((Object) Map.of("success", true));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@RequestHeader(value = "Authorization", required = false) String auth, @PathVariable Long id) {
+        if (!admin(auth)) return NAO_AUTORIZADO;
         repository.deleteById(id);
         return ResponseEntity.ok(Map.of("success", true));
     }

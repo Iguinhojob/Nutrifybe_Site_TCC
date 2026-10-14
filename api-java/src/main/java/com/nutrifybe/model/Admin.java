@@ -1,5 +1,6 @@
 package com.nutrifybe.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +12,7 @@ public class Admin {
     private Long id;
     private String nome;
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
     private String foto;
 
@@ -27,4 +29,5 @@ public class Admin {
     public String getFoto() { return foto; }
     public void setFoto(String foto) { this.foto = foto; }
     public String getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(String dataCriacao) { this.dataCriacao = dataCriacao; }
 }

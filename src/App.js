@@ -20,10 +20,12 @@ import PoliticaPrivacidade from './PoliticaPrivacidade';
 import FichaPaciente from './FichaPaciente';
 import NotFound from './NotFound';
 import NutriChat from './NutriChat';
+import { ToastProvider } from './ui/feedback';
 
 function App() {
   return (
     <Router>
+      <ToastProvider>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -44,6 +46,7 @@ function App() {
         <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </ToastProvider>
     </Router>
   );
 }

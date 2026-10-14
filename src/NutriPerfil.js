@@ -1,327 +1,162 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Header from './Header';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import NutriLayout, { PageHeader, useShell } from './ui/NutriLayout';
+import { Badge, LoadingState, Notice, useToast } from './ui/feedback';
+import Icon from './ui/icons';
 import { nutricionistasAPI } from './services/api';
+import { friendlyError, getStoredUser, initialOf } from './ui/format';
 
-const NutriPerfil = () => {
-  const navigate = useNavigate();
+const EMPTY = { nome: '', email: '', telefone: '', especialidade: '', descricao: '', foto: '' };
+const fromUser = (u) => ({
+  nome: u?.nome || u?.Nome || '',
+  email: u?.email || u?.Email || '',
+  telefone: u?.telefone || u?.Telefone || '',
+  especialidade: u?.especialidade || u?.Especialidade || '',
+  descricao: u?.descricao || u?.Descricao || '',
+  foto: u?.foto || u?.Foto || '',
+});
+
+function Perfil() {
+  const toast = useToast();
+  const { user, handleAuthError } = useShell();
   const [currentUser, setCurrentUser] = useState(null);
-  const [formData, setFormData] = useState({
-    nome: '', email: '', telefone: '', especialidade: '', descricao: '', foto: ''
-  });
+  const [formData, setFormData] = useState(EMPTY);
+  const [initial, setInitial] = useState(EMPTY);
   const [loading, setLoading] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [isDark, setIsDark] = useState(document.body.classList.contains('dark-mode'));
+  const [error, setError] = useState('');
+  const [loadWarning, setLoadWarning] = useState('');
 
   useEffect(() => {
-    const obs = new MutationObserver(() => setIsDark(document.body.classList.contains('dark-mode')));
-    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    return () => obs.disconnect();
-  }, []);
+    const userId = user?.id || user?.Id;
+    if (!userId) return;
+    nutricionistasAPI.getById(userId)
+      .then((data) => { setCurrentUser(data); setFormData(fromUser(data)); setInitial(fromUser(data)); })
+      .catch((e) => {
+        if (handleAuthError(e)) return;
+        // Mantém o comportamento anterior: usa os dados da sessão se a API falhar.
+        setCurrentUser(user); setFormData(fromUser(user)); setInitial(fromUser(user));
+        setLoadWarning('Não foi possível buscar seus dados mais recentes. Mostrando os dados salvos nesta sessão.');
+      });
+  }, [user, handleAuthError]);
 
-  const headerLinks = [
-    { href: '/nutri-dashboard', text: 'Dashboard' },
-    { href: '/nutri-solicitacoes', text: 'Solicitações' },
-    { href: '/', text: 'Sair', onClick: () => { localStorage.removeItem('currentUser'); navigate('/'); } }
-  ];
-
-  useEffect(() => {
-    const loadUserData = async () => {
-      const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      if (!user.id && !user.Id) { navigate('/login'); return; }
-      try {
-        const userData = await nutricionistasAPI.getById(user.id || user.Id);
-        setCurrentUser(userData);
-        setFormData({
-          nome: userData.nome || userData.Nome || '',
-          email: userData.email || userData.Email || '',
-          telefone: userData.telefone || userData.Telefone || '',
-          especialidade: userData.especialidade || userData.Especialidade || '',
-          descricao: userData.descricao || userData.Descricao || '',
-          foto: userData.foto || userData.Foto || ''
-        });
-      } catch {
-        setCurrentUser(user);
-        setFormData({
-          nome: user.nome || user.Nome || '',
-          email: user.email || user.Email || '',
-          telefone: user.telefone || user.Telefone || '',
-          especialidade: user.especialidade || user.Especialidade || '',
-          descricao: user.descricao || user.Descricao || '',
-          foto: user.foto || user.Foto || ''
-        });
-      }
-    };
-    loadUserData();
-  }, [navigate]);
-
-  const handleInputChange = (e) => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => setFormData(prev => ({ ...prev, foto: ev.target.result }));
-      reader.readAsDataURL(file);
-    }
+  const onPhoto = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setFormData((prev) => ({ ...prev, foto: ev.target.result }));
+    reader.readAsDataURL(file);
   };
 
-  const handleSave = async () => {
+  const dirty = JSON.stringify(formData) !== JSON.stringify(initial);
+
+  const save = async (event) => {
+    event.preventDefault();
     if (!currentUser) return;
-    setLoading(true);
+    if (!formData.nome.trim() || !formData.email.trim()) { setError('Nome e e-mail são obrigatórios.'); return; }
+    setLoading(true); setError('');
     try {
       const userId = currentUser.id || currentUser.Id;
       await nutricionistasAPI.update(userId, formData);
       const updated = await nutricionistasAPI.getById(userId);
-      localStorage.setItem('currentUser', JSON.stringify(updated));
+      // Preserva o token da sessão: a resposta do perfil não traz o token de acesso.
+      const stored = getStoredUser() || {};
+      localStorage.setItem('currentUser', JSON.stringify({ ...stored, ...updated, token: stored.token }));
       setCurrentUser(updated);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch {
-      alert('Erro ao atualizar perfil.');
+      setFormData(fromUser(updated));
+      setInitial(fromUser(updated));
+      toast.show({ tone: 'success', title: 'Perfil atualizado', message: 'Suas informações foram salvas.' });
+    } catch (e) {
+      if (handleAuthError(e)) return;
+      setError(friendlyError(e, 'Não foi possível salvar o perfil. Tente novamente.'));
     } finally {
       setLoading(false);
     }
   };
 
-  if (!currentUser) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Carregando...</div>;
+  if (!currentUser) return <div className="nf-card"><LoadingState label="Carregando seu perfil…" lines={2} /></div>;
 
   const crn = currentUser.crn || currentUser.Crn || currentUser.CRN || '';
   const dataCriacao = currentUser.dataCriacao || currentUser.DataCriacao || '';
+  const desde = dataCriacao && !Number.isNaN(new Date(dataCriacao).getTime()) ? new Date(dataCriacao).toLocaleDateString('pt-BR') : null;
 
   return (
-    <div className="nutri-theme">
-      <Header theme="minimal" />
+    <>
+      <PageHeader eyebrow="Conta" title="Meu perfil" description="Estas informações identificam você para os pacientes no aplicativo." />
 
-      <main style={{ padding: '5rem 1rem 2rem', minHeight: '100vh' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+      {loadWarning && <div style={{ marginBottom: 16 }}><Notice tone="warning">{loadWarning}</Notice></div>}
 
-          {saved && (
-            <div style={{
-              background: isDark ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : 'linear-gradient(135deg, #06b6d4, #38bdf8)',
-              color: 'white', borderRadius: '12px', padding: '1rem 1.5rem',
-              marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              boxShadow: isDark ? '0 4px 20px rgba(124,58,237,0.3)' : '0 4px 20px rgba(6,182,212,0.3)', fontWeight: 600
-            }}>
-              <i className="fas fa-check-circle" style={{ fontSize: '1.25rem' }}></i>
-              Perfil atualizado com sucesso!
+      <form onSubmit={save} className="nf-stack" noValidate>
+        <section className="nf-card" aria-labelledby="perfil-ident">
+          <h2 id="perfil-ident" className="nf-sr-only">Identificação</h2>
+          <div className="nf-row" style={{ gap: 18, alignItems: 'center' }}>
+            <div className="nf-avatar" style={{ width: 88, height: 88, fontSize: '2rem' }} aria-hidden="true">
+              {formData.foto ? <img src={formData.foto} alt="" /> : initialOf(formData.nome)}
             </div>
-          )}
-
-          <div style={{
-            background: isDark
-              ? 'linear-gradient(135deg, #4C1D95, #7C3AED)'
-              : 'linear-gradient(135deg, rgba(6,182,212,0.9), rgba(16,185,129,0.9))',
-            borderRadius: '24px 24px 0 0', padding: '2.5rem 2.5rem 4rem',
-            position: 'relative', overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute', top: '-40px', right: '-40px',
-              width: '200px', height: '200px', borderRadius: '50%',
-              background: 'rgba(255,255,255,0.08)'
-            }} />
-            <div style={{
-              position: 'absolute', bottom: '-20px', left: '10%',
-              width: '120px', height: '120px', borderRadius: '50%',
-              background: 'rgba(255,255,255,0.05)'
-            }} />
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', position: 'relative', zIndex: 1 }}>
-              <div style={{ position: 'relative', flexShrink: 0 }}>
-                <div style={{
-                  width: '110px', height: '110px', borderRadius: '50%',
-                  border: '4px solid rgba(255,255,255,0.8)',
-                  overflow: 'hidden', background: 'rgba(255,255,255,0.2)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
-                }}>
-                  {formData.foto
-                    ? <img src={formData.foto} alt="Foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <i className="fas fa-user" style={{ fontSize: '2.5rem', color: 'rgba(255,255,255,0.8)' }}></i>
-                  }
-                </div>
-                <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} id="foto-upload" />
-                <label htmlFor="foto-upload" style={{
-                  position: 'absolute', bottom: 0, right: 0,
-                  width: '32px', height: '32px', borderRadius: '50%',
-                  background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                  color: isDark ? '#8B6FCF' : '#06b6d4', fontSize: '0.85rem'
-                }}>
-                  <i className="fas fa-camera"></i>
-                </label>
+            <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+              <p style={{ fontFamily: 'var(--nf-font-display)', fontWeight: 700, fontSize: '1.2rem', color: 'var(--nf-text)' }}>{formData.nome || 'Nutricionista'}</p>
+              <p style={{ color: 'var(--nf-muted)' }}>{formData.especialidade || 'Especialidade não informada'}</p>
+              <div className="nf-row" style={{ marginTop: 6 }}>
+                {crn && <Badge tone="primary">CRN {crn}</Badge>}
+                {desde && <Badge tone="neutral" icon="calendar">Desde {desde}</Badge>}
               </div>
-
-              <div style={{ flex: 1 }}>
-                <h1 style={{ color: 'white', fontSize: '1.75rem', fontWeight: 800, margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
-                  {formData.nome || 'Nutricionista'}
-                </h1>
-                <p style={{ color: 'rgba(255,255,255,0.9)', margin: '0.25rem 0 0', fontSize: '1rem', fontWeight: 500 }}>
-                  {formData.especialidade || 'Especialidade não informada'}
-                </p>
-                {crn && (
-                  <span style={{
-                    display: 'inline-block', marginTop: '0.5rem',
-                    background: 'rgba(255,255,255,0.2)', color: 'white',
-                    padding: '0.25rem 0.75rem', borderRadius: '20px',
-                    fontSize: '0.85rem', fontWeight: 600, backdropFilter: 'blur(10px)'
-                  }}>
-                    CRN: {crn}
-                  </span>
-                )}
-              </div>
-
-              <button onClick={() => navigate('/nutri-dashboard')} style={{
-                background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)',
-                color: 'white', borderRadius: '10px', padding: '0.5rem 1rem',
-                cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem',
-                backdropFilter: 'blur(10px)', alignSelf: 'flex-start'
-              }}>
-                Voltar
-              </button>
+            </div>
+            <div className="nf-row">
+              <label htmlFor="foto-upload" className="nf-btn secondary sm" style={{ cursor: 'pointer' }}>
+                <Icon name="user" size={16} /> {formData.foto ? 'Trocar foto' : 'Adicionar foto'}
+              </label>
+              <input id="foto-upload" type="file" accept="image/*" onChange={onPhoto} className="nf-sr-only" />
+              {formData.foto && <button type="button" className="nf-btn ghost sm" onClick={() => setFormData((p) => ({ ...p, foto: '' }))}>Remover foto</button>}
             </div>
           </div>
+        </section>
 
-          <div style={{
-            background: isDark ? '#181A1D' : 'white',
-            borderRadius: '0 0 24px 24px',
-            boxShadow: isDark ? '0 20px 60px rgba(0,0,0,0.4)' : '0 20px 60px rgba(0,0,0,0.1)',
-            border: isDark ? '1px solid #2A2D32' : 'none',
-            padding: '2.5rem', marginTop: '-1px'
-          }}>
-
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2.5rem', flexWrap: 'wrap' }}>
-              {[
-                { icon: 'fa-envelope', label: 'Email', value: formData.email || '-' },
-                { icon: 'fa-phone', label: 'Telefone', value: formData.telefone || '-' },
-                { icon: 'fa-calendar', label: 'Membro desde', value: dataCriacao ? new Date(dataCriacao).toLocaleDateString() : '-' },
-              ].map((item, i) => (
-                <div key={i} style={{
-                  flex: '1', minWidth: '160px',
-                  background: isDark ? '#202228' : '#f8fafc',
-                  borderRadius: '12px', padding: '1rem',
-                  border: `1px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                    <i className={`fas ${item.icon}`} style={{ color: isDark ? '#8B6FCF' : '#06b6d4', fontSize: '0.85rem' }}></i>
-                    <span style={{ fontSize: '0.75rem', color: isDark ? '#9B9DA5' : '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.label}</span>
-                  </div>
-                  <p style={{ margin: 0, color: isDark ? '#F1F1F3' : '#1e293b', fontWeight: 600, fontSize: '0.9rem', wordBreak: 'break-all' }}>{item.value}</p>
-                </div>
-              ))}
+        <section className="nf-card" aria-labelledby="perfil-dados">
+          <div className="nf-card-head"><h2 id="perfil-dados">Informações profissionais</h2></div>
+          <div className="nf-grid cols-2">
+            <div className="nf-field">
+              <label htmlFor="p-nome">Nome completo<span className="req" aria-hidden="true">*</span></label>
+              <input id="p-nome" name="nome" className="nf-input" value={formData.nome} onChange={onChange} autoComplete="name" required aria-required="true" />
             </div>
-
-            <div style={{ borderTop: `1px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, paddingTop: '2rem' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: isDark ? '#F1F1F3' : '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <i className="fas fa-edit" style={{ color: isDark ? '#8B6FCF' : '#06b6d4' }}></i>
-                Editar Informações
-              </h2>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
-                    Nome Completo
-                  </label>
-                  <input type="text" name="nome" value={formData.nome} onChange={handleInputChange}
-                    placeholder="Seu nome completo"
-                    style={{ width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box', background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b' }}
-                    onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
-                    onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
-                    Email
-                  </label>
-                  <input type="email" name="email" value={formData.email} onChange={handleInputChange}
-                    placeholder="seu@email.com"
-                    style={{ width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box', background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b' }}
-                    onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
-                    onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
-                    Telefone
-                  </label>
-                  <input type="tel" name="telefone" value={formData.telefone} onChange={handleInputChange}
-                    placeholder="(00) 00000-0000"
-                    style={{ width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box', background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b' }}
-                    onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
-                    onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
-                    Especialidade
-                  </label>
-                  <input type="text" name="especialidade" value={formData.especialidade} onChange={handleInputChange}
-                    placeholder="Ex: Nutrição Esportiva"
-                    style={{ width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box', background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b' }}
-                    onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
-                    onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
-                  />
-                </div>
-              </div>
-
-              <div style={{ marginTop: '1.25rem' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#9B9DA5' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
-                  Descrição Profissional
-                </label>
-                <textarea name="descricao" value={formData.descricao} onChange={handleInputChange}
-                  placeholder="Conte sobre sua experiência, abordagem de trabalho, áreas de atuação e o que te diferencia como profissional..."
-                  rows={5}
-                  style={{
-                    width: '100%', padding: '0.875rem 1rem', border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`,
-                    borderRadius: '10px', fontSize: '0.95rem', outline: 'none',
-                    transition: 'border-color 0.2s', resize: 'vertical', lineHeight: 1.6,
-                    fontFamily: 'inherit', boxSizing: 'border-box',
-                    background: isDark ? '#202228' : 'white', color: isDark ? '#F1F1F3' : '#1e293b'
-                  }}
-                  onFocus={e => e.target.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'}
-                  onBlur={e => e.target.style.borderColor = isDark ? '#2A2D32' : '#e2e8f0'}
-                />
-                <p style={{ margin: '0.4rem 0 0', fontSize: '0.8rem', color: isDark ? '#9B9DA5' : '#94a3b8' }}>
-                  Esta descrição será visível para os pacientes ao escolherem um nutricionista.
-                </p>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', gap: '1rem' }}>
-                <button onClick={() => navigate('/nutri-dashboard')} style={{
-                  padding: '0.875rem 1.75rem', borderRadius: '10px',
-                  border: `2px solid ${isDark ? '#2A2D32' : '#e2e8f0'}`,
-                  background: isDark ? '#202228' : 'white',
-                  color: isDark ? '#9B9DA5' : '#64748b',
-                  fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem'
-                }}>
-                  Cancelar
-                </button>
-                <button onClick={handleSave} disabled={loading} style={{
-                  padding: '0.875rem 2rem', borderRadius: '10px', border: 'none',
-                  background: loading ? '#94a3b8' : isDark ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : 'linear-gradient(135deg, #06b6d4, #10b981)',
-                  color: 'white', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
-                  fontSize: '0.95rem', boxShadow: loading ? 'none' : '0 4px 20px rgba(6,182,212,0.4)',
-                  display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'all 0.2s'
-                }}>
-                  {loading
-                    ? <><i className="fas fa-spinner fa-spin"></i> Salvando...</>
-                    : <><i className="fas fa-save"></i> Salvar Alterações</>
-                  }
-                </button>
-              </div>
+            <div className="nf-field">
+              <label htmlFor="p-email">E-mail<span className="req" aria-hidden="true">*</span></label>
+              <input id="p-email" name="email" type="email" className="nf-input" value={formData.email} onChange={onChange} autoComplete="email" required aria-required="true" />
+              <span className="help">Também é usado para entrar no sistema.</span>
+            </div>
+            <div className="nf-field">
+              <label htmlFor="p-tel">Telefone</label>
+              <input id="p-tel" name="telefone" type="tel" className="nf-input" value={formData.telefone} onChange={onChange} placeholder="(00) 00000-0000" autoComplete="tel" />
+            </div>
+            <div className="nf-field">
+              <label htmlFor="p-esp">Especialidade</label>
+              <input id="p-esp" name="especialidade" className="nf-input" value={formData.especialidade} onChange={onChange} placeholder="Ex.: Nutrição esportiva" />
+            </div>
+            <div className="nf-field" style={{ gridColumn: '1 / -1' }}>
+              <label htmlFor="p-desc">Descrição profissional</label>
+              <textarea id="p-desc" name="descricao" className="nf-textarea" rows={5} value={formData.descricao} onChange={onChange}
+                placeholder="Conte sobre sua experiência, abordagem de trabalho e áreas de atuação." />
+              <span className="help">Aparece para os pacientes quando escolhem um nutricionista no aplicativo.</span>
             </div>
           </div>
-
-        </div>
-      </main>
-    </div>
+          {error && <div style={{ marginTop: 16 }}><Notice tone="danger" role="alert">{error}</Notice></div>}
+          <div className="nf-row" style={{ justifyContent: 'flex-end', marginTop: 20 }}>
+            <Link to="/nutri-dashboard" className="nf-btn secondary">{dirty ? 'Cancelar' : 'Voltar ao painel'}</Link>
+            <button type="submit" className="nf-btn primary" disabled={loading || !dirty}>
+              {loading ? <span className="nf-spinner" aria-hidden="true" /> : <Icon name="check" size={17} />}
+              {loading ? 'Salvando…' : 'Salvar alterações'}
+            </button>
+          </div>
+        </section>
+      </form>
+    </>
   );
-};
+}
 
-export default NutriPerfil;
+export default function NutriPerfil() {
+  return <NutriLayout narrow><Perfil /></NutriLayout>;
+}
+

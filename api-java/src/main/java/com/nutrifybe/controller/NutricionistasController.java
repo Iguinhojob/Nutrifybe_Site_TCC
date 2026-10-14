@@ -60,7 +60,16 @@ public class NutricionistasController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Nutricionista nutricionista) {
+    public ResponseEntity<?> create(@RequestHeader(value = "Authorization", required = false) String auth,
+                                    @RequestBody Nutricionista nutricionista) {
+        if (nutricionista.getSenha() == null || nutricionista.getSenha().length() < 6) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "A senha deve ter pelo menos 6 caracteres"));
+        }
+        // Cadastro público sempre entra como pendente; só um administrador pode criar já aprovado.
+        if (tokens.validarAdmin(auth) == null) {
+            nutricionista.setStatus("pending");
+            nutricionista.setAtivo(1);
+        }
         nutricionista.setSenha(passwordEncoder.encode(nutricionista.getSenha()));
         repository.save(nutricionista);
         return ResponseEntity.ok(Map.of("success", true));
@@ -83,10 +92,20 @@ public class NutricionistasController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> update(@RequestHeader(value = "Authorization", required = false) String auth,
+                                    @PathVariable Long id, @RequestBody Map<String, Object> body) {
+        // Administrador altera qualquer conta; o nutricionista altera apenas o próprio perfil.
+        boolean admin = tokens.validarAdmin(auth) != null;
+        boolean proprio = id.equals(tokens.validarNutricionista(auth));
+        if (!admin && !proprio) {
+            return ResponseEntity.status(401).body(Map.of("success", false, "message", "Sessão inválida ou sem permissão para alterar esta conta"));
+        }
+        if (!admin && (body.containsKey("status") || body.containsKey("ativo"))) {
+            return ResponseEntity.status(403).body(Map.of("success", false, "message", "Somente o administrador pode aprovar ou desativar contas"));
+        }
         return repository.findById(id).map(nutri -> {
             if (body.containsKey("status")) nutri.setStatus((String) body.get("status"));
-            if (body.containsKey("ativo")) nutri.setAtivo((Integer) body.get("ativo"));
+            if (body.containsKey("ativo")) nutri.setAtivo(((Number) body.get("ativo")).intValue());
             if (body.containsKey("nome")) nutri.setNome((String) body.get("nome"));
             if (body.containsKey("email")) nutri.setEmail((String) body.get("email"));
             if (body.containsKey("telefone")) nutri.setTelefone((String) body.get("telefone"));
@@ -95,12 +114,15 @@ public class NutricionistasController {
             if (body.containsKey("foto")) nutri.setFoto((String) body.get("foto"));
             if (body.containsKey("senha")) nutri.setSenha(passwordEncoder.encode((String) body.get("senha")));
             repository.save(nutri);
-            return ResponseEntity.ok(publico(nutri));
+            return ResponseEntity.ok((Object) publico(nutri));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@RequestHeader(value = "Authorization", required = false) String auth, @PathVariable Long id) {
+        if (tokens.validarAdmin(auth) == null) {
+            return ResponseEntity.status(401).body(Map.of("success", false, "message", "Somente o administrador pode excluir contas"));
+        }
         repository.deleteById(id);
         return ResponseEntity.ok(Map.of("success", true));
     }
