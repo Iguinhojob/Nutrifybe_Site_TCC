@@ -53,8 +53,11 @@ public class SolicitacoesController {
                 .isPresent();
     }
 
+    /** Rota antiga: as solicitações são criadas pelo app em /api/auth/me/vinculo. Mantida só para administradores. */
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody SolicitacaoPendente solicitacao) {
+    public ResponseEntity<?> create(@RequestHeader(value = "Authorization", required = false) String auth,
+                                    @RequestBody SolicitacaoPendente solicitacao) {
+        if (tokens.validarAdmin(auth) == null) return ResponseEntity.status(401).body(Map.of("message", "Sessão de administrador inválida"));
         repository.save(solicitacao);
         return ResponseEntity.ok(Map.of("success", true));
     }

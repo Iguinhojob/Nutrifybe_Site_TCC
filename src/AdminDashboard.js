@@ -94,7 +94,7 @@ const AdminDashboard = () => {
     const loadData = async () => {
       try {
         const admin = JSON.parse(localStorage.getItem('currentAdmin'));
-        if (!admin) {
+        if (!admin?.token) {
           navigate('/admin-login');
           return;
         }
@@ -119,6 +119,10 @@ const AdminDashboard = () => {
         setSystemStats(stats);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
+        if (error.status === 401) {
+          localStorage.removeItem('currentAdmin');
+          navigate('/admin-login');
+        }
       }
     };
     

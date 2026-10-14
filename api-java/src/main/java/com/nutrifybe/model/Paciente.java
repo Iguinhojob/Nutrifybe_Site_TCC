@@ -52,6 +52,10 @@ public class Paciente {
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String calendario;
 
+    /** Próximo retorno agendado pelo nutricionista (JSON com data, hora e observação). */
+    @Column(columnDefinition = "NVARCHAR(MAX)")
+    private String retorno;
+
     @Column(name = "data_criacao")
     private String dataCriacao;
 
@@ -102,6 +106,8 @@ public class Paciente {
     public void setPrescricaoSemanal(String prescricaoSemanal) { this.prescricaoSemanal = prescricaoSemanal; }
     public String getCalendario() { return calendario; }
     public void setCalendario(String calendario) { this.calendario = calendario; }
+    public String getRetorno() { return retorno; }
+    public void setRetorno(String retorno) { this.retorno = retorno; }
     public String getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(String dataCriacao) { this.dataCriacao = dataCriacao; }
     public String getSenha() { return senha; }

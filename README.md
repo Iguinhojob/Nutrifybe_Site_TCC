@@ -1,209 +1,54 @@
-# Nutrifybe - Sistema de Gestão Nutricional
+# Nutrifybe — site e API
 
-Sistema completo para gestão de consultas nutricionais com arquitetura moderna React + Node.js.
+Sistema de acompanhamento nutricional desenvolvido como TCC. É formado por três partes que usam a mesma API:
 
-## 🚀 Como Iniciar o Sistema
+| Parte | Tecnologia | Onde está |
+|---|---|---|
+| Site do nutricionista e do administrador | React 19 + React Router | este repositório (`src/`) |
+| API | Java 21 + Spring Boot 3 + SQL Server | este repositório (`api-java/`) |
+| App do paciente | React Native + Expo | repositório **TCC_M** |
 
-### 1. Instalar Dependências do Frontend
-```bash
-npm install
-```
+## Fluxo principal
+1. O paciente cria a conta no app, registra refeições (tabela TACO), água e medidas.
+2. O paciente escolhe um nutricionista e envia uma solicitação de acompanhamento.
+3. O nutricionista aceita ou recusa a solicitação no site.
+4. Com o vínculo aceito, o nutricionista vê o diário, a água e as medidas, envia o plano alimentar, agenda retornos e conversa com o paciente pelo chat.
+5. O administrador aprova ou desativa nutricionistas e acompanha os números do sistema.
 
-### 2. Iniciar o Backend (Java/Spring Boot)
-```bash
-cd api-java
-mvn spring-boot:run
-```
-A API estará disponível em: `http://localhost:8080`
+## Como rodar
 
-Para o site e o app mobile usarem a mesma API, configure `REACT_APP_API_URL` no site e `EXPO_PUBLIC_API_URL` no app com a mesma URL base. Em desenvolvimento local, use `http://localhost:8080`; em um celular fisico, use o IP local do computador. No Vercel, defina `REACT_APP_API_URL` com a URL do backend publicado e mantenha o backend atualizado com o codigo de `api-java`.
+### API (`api-java/`)
+1. Copie `api-java/.env.example` e preencha as variáveis de ambiente (banco, `JWT_SECRET` com pelo menos 32 caracteres e e-mail para recuperação de senha). **Nenhuma senha fica no código**: sem essas variáveis a API não inicia.
+2. Rode `cd api-java && mvn spring-boot:run`. A API sobe em `http://localhost:8080`.
+3. Em produção (por exemplo, no Render), cadastre as mesmas variáveis no painel do serviço. O `Dockerfile` compila a API a partir do código-fonte.
 
-### 3. Iniciar o Frontend (em outro terminal)
-```bash
-npm start
-```
-A aplicação estará disponível em: `http://localhost:3000`
+Na primeira inicialização, `TacoImportador` carrega `taco_alimentos.csv` na tabela `alimentos` (somente se a tabela estiver vazia).
 
-## 👥 Usuários de Teste
+### Site
+1. `npm install`
+2. Defina `REACT_APP_API_URL` com a URL da API (em desenvolvimento, `http://localhost:8080`).
+3. `npm start` para abrir em `http://localhost:3000`, ou `npm run build` para gerar a versão de produção (publicada na Vercel).
 
-### Admin
-- **Email:** admin@nutrifybe.com
-- **Senha:** admin123
+## Autenticação e segurança
+- **Paciente, nutricionista e administrador** entram por endpoints próprios (`/api/auth/login`, `/api/nutricionistas/login` e `/api/admin/login`). A senha é conferida no servidor e o cliente recebe um token assinado com HMAC-SHA256.
+- As senhas são guardadas com BCrypt. Contas de administrador antigas, salvas em texto puro, são convertidas para BCrypt no primeiro login.
+- As rotas administrativas (`/api/admin`, `/api/activityLog` e a gestão de pacientes em `/api/pacientes`) exigem o token de administrador.
+- O nutricionista só altera o próprio perfil. Aprovar, desativar ou excluir contas é tarefa exclusiva do administrador.
+- Os dados clínicos do paciente (`/api/nutri/pacientes/...`) só são entregues ao nutricionista com vínculo aceito.
 
-### Nutricionista
-- **Email:** nutri@teste.com
-- **CRN:** 12345
-- **Senha:** 123456
+## Principais endpoints
+| Área | Endpoints |
+|---|---|
+| Paciente (app) | `POST /api/auth/register`, `POST /api/auth/login`, `GET/PUT /api/auth/me`, `POST /api/auth/me/vinculo`, `POST /api/auth/me/vinculo/encerrar` |
+| Diário (app) | `/api/diario/refeicoes`, `/api/diario/agua`, `/api/diario/medidas`, `/api/diario/meta`, `/api/diario/resumo` |
+| Alimentos | `GET /api/alimentos?busca=arroz` (tabela TACO) |
+| Nutricionista | `POST /api/nutricionistas` (cadastro, entra como pendente), `POST /api/nutricionistas/login`, `GET /api/nutricionistas`, `GET /api/nutricionistas/{id}/avaliacoes` |
+| Acompanhamento | `GET /api/nutri/solicitacoes`, `PUT /api/nutri/solicitacoes/{id}/aceitar`, `DELETE /api/nutri/solicitacoes/{id}`, `GET/PUT /api/nutri/pacientes/{id}`, `POST /api/nutri/pacientes/{id}/transferir`, `DELETE /api/nutri/pacientes/{id}/vinculo` |
+| Chat | `GET/POST /api/chat/mensagens`, `GET /api/chat/mensagens/{id}/arquivo` |
+| Administração | `POST /api/admin/login`, `/api/admin`, `/api/activityLog`, `/api/pacientes` |
 
-## 🔧 Funcionalidades
+## Fonte dos valores nutricionais
+TACO 4ª edição, NEPA/UNICAMP. Os valores são estimativas médias por 100 g. Ao registrar itens com `alimentoId` e `gramas`, a API recalcula calorias, carboidratos, proteínas, gorduras e fibras com base na tabela e salva o resultado junto do registro.
 
-### Para Pacientes
-- ✅ Solicitar consulta nutricional
-- ✅ Escolher nutricionista disponível
-- ✅ Preencher dados pessoais completos (idade, peso, altura, objetivos)
-- ✅ Informar condições de saúde
-- ✅ Receber prescrições personalizadas
-
-### Para Nutricionistas
-- ✅ Login seguro com email, CRN e senha
-- ✅ Dashboard interativo com lista de pacientes
-- ✅ Gerenciar solicitações pendentes
-- ✅ Aceitar/recusar pacientes com justificativa
-- ✅ Visualizar fichas completas dos pacientes
-- ✅ Criar e editar prescrições semanais
-- ✅ Sistema de calendário para consultas
-- ✅ Transferir pacientes para outros nutricionistas
-- ✅ Encerrar atendimentos com motivo
-- ✅ Perfil profissional editável
-
-### Para Administradores
-- ✅ Login administrativo seguro
-- ✅ Dashboard com estatísticas em tempo real
-- ✅ Gerenciar nutricionistas (aprovar/rejeitar/excluir/ativar/desativar)
-- ✅ Adicionar nutricionistas manualmente
-- ✅ Busca avançada por CRN, nome ou email
-- ✅ Log de atividades detalhado com timestamps
-- ✅ Limpeza de logs
-- ✅ Monitoramento de pacientes ativos/inativos
-
-## 📊 Estrutura do Banco de Dados
-
-### Ambientes:
-- **Produção:** SQL Server Cloud (nutrifybe_db.mssql.somee.com)
-- **Desenvolvimento:** JSON Server local (db.json)
-
-### Tabelas Principais:
-- **Nutricionistas** - Dados completos dos profissionais (nome, email, CRN, especialidade, status, ativo)
-- **Pacientes** - Pacientes aceitos no sistema (dados pessoais, objetivos, nutricionista responsável)
-- **SolicitacoesPendentes** - Solicitações aguardando aprovação dos nutricionistas
-- **Admin** - Dados dos administradores do sistema
-- **ActivityLog** - Log detalhado de atividades com timestamps
-
-### Campos Importantes:
-- **Status:** pending, approved, rejected
-- **Ativo:** 0 (inativo), 1 (ativo)
-- **Timestamps:** data_criacao automática
-- **Relacionamentos:** nutricionista_id vincula pacientes aos profissionais
-
-## 🔄 APIs Disponíveis
-
-### Nutricionistas
-- `GET /api/nutricionistas` - Listar todos os nutricionistas
-- `POST /api/nutricionistas` - Criar novo nutricionista
-- `POST /api/nutricionistas/login` - Login com email, CRN e senha
-- `PUT /api/nutricionistas/:id` - Atualizar status/ativo
-- `DELETE /api/nutricionistas/:id` - Excluir nutricionista
-
-### Pacientes
-- `GET /api/pacientes` - Listar todos os pacientes
-- `POST /api/pacientes` - Criar novo paciente
-- `PUT /api/pacientes/:id` - Atualizar status ativo
-- `DELETE /api/pacientes/:id` - Excluir paciente
-
-### Solicitações Pendentes
-- `GET /api/solicitacoesPendentes` - Listar solicitações pendentes
-- `POST /api/solicitacoesPendentes` - Nova solicitação de consulta
-- `DELETE /api/solicitacoesPendentes/:id` - Remover solicitação
-
-### Administração
-- `GET /api/admin` - Listar administradores
-- `POST /api/admin` - Criar novo admin
-- `PUT /api/admin/:id` - Atualizar dados do admin
-- `DELETE /api/admin/:id` - Excluir admin
-- `GET /api/activityLog` - Buscar log de atividades
-- `POST /api/activityLog` - Adicionar nova atividade
-- `DELETE /api/activityLog` - Limpar todo o log
-
-## 🛠️ Tecnologias Utilizadas
-
-### Frontend
-- **React:** 19.1.1 (biblioteca principal)
-- **React Router DOM:** 7.9.2 (roteamento SPA)
-- **jsPDF:** 2.5.2 (geração de relatórios PDF)
-- **CSS:** Customizado com animações e temas responsivos
-
-### Backend
-- **Node.js + Express:** 4.18.2 (servidor API)
-- **mssql:** 10.0.1 (driver SQL Server)
-- **CORS:** 2.8.5 (política de origem cruzada)
-- **JSON Server:** 1.0.0-beta.3 (desenvolvimento local)
-
-### Banco de Dados
-- **Produção:** SQL Server Cloud
-- **Desenvolvimento:** JSON Server
-- **Driver:** mssql nativo (sem ORM)
-
-### Deploy
-- **Frontend:** Vercel
-- **Backend:** Configuração para produção
-- **Banco:** SQL Server hospedado
-
-## 📝 Fluxo de Uso
-
-1. **Paciente** acessa o site e solicita consulta
-2. **Paciente** preenche dados completos (idade, peso, altura, objetivos, condições de saúde)
-3. **Paciente** escolhe nutricionista disponível
-4. **Nutricionista** recebe solicitação no dashboard
-5. **Nutricionista** pode aceitar/recusar com justificativa
-6. **Nutricionista** gerencia pacientes aceitos (fichas, prescrições, calendário)
-7. **Nutricionista** pode transferir ou encerrar atendimentos
-8. **Admin** aprova novos nutricionistas e monitora sistema
-9. **Admin** visualiza estatísticas e logs de atividades
-
-## 🔒 Autenticação e Segurança
-
-- **Nutricionistas:** Email + CRN + Senha (validação tripla)
-- **Admin:** Email + Senha
-- **Sessões:** localStorage com dados do usuário
-- **Proteção:** Validação backend, tokens CSRF, sanitização de dados
-- **Status:** Sistema de aprovação para nutricionistas
-
-## 📱 Interface e UX
-
-### Responsividade Total
-- Desktop (design principal)
-- Tablet (adaptação de layout)
-- Mobile (interface otimizada)
-
-### Temas Visuais
-- **Público:** Gradiente roxo com partículas animadas
-- **Nutricionista:** Interface profissional verde
-- **Admin:** Dashboard administrativo
-
-### Recursos Visuais
-- Animações CSS personalizadas
-- Modais interativos
-- Feedback visual para ações
-- Mascote animado na página inicial
-
-## 🚨 Configuração e Deploy
-
-### Desenvolvimento Local
-- Frontend: `npm start` (porta 3000)
-- API: `cd api && node index.js` (porta 3001)
-- Alternativa: `npm run dev-local` (ambos simultaneamente)
-
-### Produção
-- **Frontend:** Vercel (https://nutrifybe.vercel.app)
-- **API:** Configuração para SQL Server cloud
-- **Banco:** nutrifybe_db.mssql.somee.com
-
-### Variáveis de Ambiente
-- `NODE_ENV=production` para usar SQL Server
-- `NODE_ENV=development` para usar JSON Server local
-
-## 📋 Scripts Disponíveis
-
-- `npm start` - Inicia frontend React
-- `npm run build` - Build para produção
-- `npm run server` - JSON Server local
-- `npm run dev-local` - Frontend + JSON Server
-- `npm run iniciar` - Script personalizado de inicialização
-
-## Diário alimentar e fonte dos alimentos
-
-O catálogo de alimentos é armazenado pelo backend Spring Boot na tabela `alimentos`. Na primeira inicialização, `TacoImportador` carrega `api-java/src/main/resources/taco_alimentos.csv` somente quando a tabela está vazia. A API local `GET /alimentos?busca=arroz` pesquisa nomes sem diferenciar caixa ou acentos e retorna até 20 itens.
-
-Ao registrar itens com `alimentoId` e `gramas`, o backend recalcula calorias, carboidratos, proteínas, gorduras e fibras com os valores da tabela por 100 g e grava os valores calculados junto do item. `GET /api/diario/resumo?date=AAAA-MM-DD` retorna as refeições e os totais do dia. A ficha do nutricionista mostra o diário do paciente em modo somente leitura, protegido pelo vínculo aceito.
-
-**Fonte dos valores nutricionais:** TACO 4ª edição, NEPA/UNICAMP. Os valores são estimativas médias por 100 g.
+## Documentação complementar
+- `docs/melhorias-interface.md`: mudanças de interface na área do nutricionista e limitações conhecidas.

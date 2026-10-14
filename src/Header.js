@@ -115,8 +115,9 @@ const Header = ({ theme = 'public', links = [] }) => {
       // Buscar dados atualizados do banco
       const updatedUserFromDB = await nutricionistasAPI.getById(currentUser.id || currentUser.Id);
       
-      // Atualizar localStorage com dados do banco
-      localStorage.setItem('currentUser', JSON.stringify(updatedUserFromDB));
+      // Atualizar localStorage com dados do banco, preservando o token da sessão
+      const stored = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      localStorage.setItem('currentUser', JSON.stringify({ ...stored, ...updatedUserFromDB, token: stored.token }));
       
       // Atualizar estados locais
       setCurrentUser(updatedUserFromDB);

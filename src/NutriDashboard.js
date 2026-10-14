@@ -1,292 +1,227 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Header from './Header';
-import Modal from './Modal';
-import { pacientesAPI, nutricionistasAPI } from './services/api';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import NutriLayout, { PageHeader, useShell } from './ui/NutriLayout';
+import { Badge, EmptyState, ErrorState, LoadingState, useToast } from './ui/feedback';
+import Icon from './ui/icons';
+import EncerrarVinculoDialog from './nutri/EncerrarVinculoDialog';
+import { pacientesAPI, solicitacoesAPI } from './services/api';
+import { firstName, fmtDay, friendlyError, idOf, initialOf, nameOf, parseJson, pick, plural, relativeDay, todayKey } from './ui/format';
 
-const NutriDashboard = () => {
-  const [acceptedPatients, setAcceptedPatients] = useState([]);
-  const [managedNutricionists, setManagedNutricionists] = useState([]);
-  const [transferModal, setTransferModal] = useState({ isOpen: false, patient: null });
-  const [selectNutriModal, setSelectNutriModal] = useState({ isOpen: false, patient: null, reason: '' });
-  const [transferReason, setTransferReason] = useState('');
-  const [searchNutri, setSearchNutri] = useState('');
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isDark, setIsDark] = useState(document.body.classList.contains('dark-mode'));
-  const navigate = useNavigate();
+function upcomingRetorno(patient) {
+  const r = parseJson(patient?.retorno, null);
+  if (!r?.data || r.data < todayKey()) return null;
+  return r;
+}
 
-  useEffect(() => {
-    const obs = new MutationObserver(() => setIsDark(document.body.classList.contains('dark-mode')));
-    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    return () => obs.disconnect();
-  }, []);
+function Dashboard() {
+  const { user, refreshPending, handleAuthError } = useShell();
+  const toast = useToast();
+  const [patients, setPatients] = useState(null);
+  const [requests, setRequests] = useState(null);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [ending, setEnding] = useState(null);
 
-  const dm = {
-    card:   isDark ? '#1e2d24' : 'white',
-    border: isDark ? 'rgba(255,255,255,0.08)' : '#ddd',
-    text:   isDark ? '#e0e0e0' : '#333',
-    text2:  isDark ? '#aaa'    : '#666',
-  };
-
-  const headerLinks = [
-    { href: '/nutri-dashboard', text: 'Início' },
-    { href: '/nutri-solicitacoes', text: 'Solicitações Pendentes' },
-    { href: '/nutri-perfil', text: 'Meu Perfil' },
-    { href: '/login', text: 'Sair', onClick: () => { localStorage.removeItem('currentUser'); navigate('/login'); } }
-  ];
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) {
-          navigate('/login');
-          return;
-        }
-        setCurrentUser(user);
-        
-        const pacientes = await pacientesAPI.getByNutricionista();
-        const nutricionistas = await nutricionistasAPI.getAll();
-        console.log('Todos os nutricionistas:', nutricionistas);
-        
-        setAcceptedPatients(pacientes);
-        const approvedNutris = nutricionistas.filter(n => (n.Status || n.status) === 'approved');
-        console.log('Nutricionistas aprovados:', approvedNutris);
-        setManagedNutricionists(approvedNutris);
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        if (error.status === 401) navigate('/login');
-      }
-    };
-    
-    loadData();
-  }, [navigate]);
-
-  const handleEndService = (patient) => {
-    console.log('handleEndService chamado:', patient);
-    console.log('Estado atual transferModal:', transferModal);
-    setTransferModal({ isOpen: true, patient });
-    setTransferReason('');
-    console.log('Modal deveria abrir agora');
-  };
-
-  const handleTransferReasonSubmit = () => {
-    if (!transferReason.trim()) {
-      alert('Por favor, escreva o motivo do encerramento.');
-      return;
-    }
-    
-    setTransferModal({ isOpen: false, patient: null });
-    setSelectNutriModal({ 
-      isOpen: true, 
-      patient: transferModal.patient, 
-      reason: transferReason 
-    });
-    setSearchNutri('');
-  };
-
-  const handleSelectNutri = async (selectedNutriId) => {
+  const load = useCallback(async () => {
+    setError('');
     try {
-      const selectedNutri = managedNutricionists.find(n => String(n.Id || n.id) === String(selectedNutriId));
-      if (!selectedNutri) return;
-      const patientName = selectNutriModal.patient.Nome || selectNutriModal.patient.nome;
-      const nutritionistName = selectedNutri.Nome || selectedNutri.nome;
-      if (!window.confirm(`Tem certeza que deseja transferir ${patientName} para ${nutritionistName}?`)) return;
-
-      const patientId = selectNutriModal.patient.Id || selectNutriModal.patient.id;
-      console.log('Transferindo paciente ID:', patientId, 'para nutricionista ID:', selectedNutriId);
-
-      // Atualizar paciente para novo nutricionista
-      await pacientesAPI.transfer(patientId, selectedNutriId);
-
-      // Atualizar lista local
-      const updatedPatients = acceptedPatients.filter(p => (p.Id || p.id) !== patientId);
-      setAcceptedPatients(updatedPatients);
-
-      alert(`Paciente ${selectNutriModal.patient.Nome || selectNutriModal.patient.nome} transferido para ${selectedNutri.Nome || selectedNutri.nome}.`);
-      
-      setSelectNutriModal({ isOpen: false, patient: null, reason: '' });
-      setTransferReason('');
-    } catch (error) {
-      console.error('Erro ao transferir paciente:', error);
-      alert('Erro ao transferir paciente: ' + error.message);
+      const [pacientes, solicitacoes] = await Promise.all([
+        pacientesAPI.getByNutricionista(),
+        solicitacoesAPI.getByNutricionista(),
+      ]);
+      setPatients(Array.isArray(pacientes) ? pacientes : []);
+      setRequests(Array.isArray(solicitacoes) ? solicitacoes : []);
+    } catch (e) {
+      if (handleAuthError(e)) return;
+      setError(friendlyError(e, 'Não foi possível carregar seus pacientes.'));
     }
-  };
+  }, [handleAuthError]);
 
-  const getFilteredNutris = () => {
-    console.log('managedNutricionists:', managedNutricionists);
-    console.log('currentUser:', currentUser);
-    
-    const availableNutris = managedNutricionists.filter(n => {
-      const isApproved = (n.Status || n.status) === 'approved';
-      const isDifferentUser = (n.Id || n.id) !== (currentUser?.Id || currentUser?.id);
-      console.log(`Nutricionista ${n.Nome || n.nome}: approved=${isApproved}, different=${isDifferentUser}`);
-      return isApproved && isDifferentUser;
+  useEffect(() => { load(); }, [load]);
+
+  const retornos = useMemo(() => (patients || [])
+    .map((p) => ({ patient: p, retorno: upcomingRetorno(p) }))
+    .filter((x) => x.retorno)
+    .sort((a, b) => `${a.retorno.data}${a.retorno.hora || ''}`.localeCompare(`${b.retorno.data}${b.retorno.hora || ''}`)), [patients]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const list = patients || [];
+    if (!q) return list;
+    return list.filter((p) => [nameOf(p, ''), pick(p, 'email', 'Email'), pick(p, 'objetivo', 'Objetivo')]
+      .some((v) => String(v || '').toLowerCase().includes(q)));
+  }, [patients, search]);
+
+  const loading = patients === null && !error;
+  const pending = requests || [];
+  const today = fmtDay(todayKey(), { weekday: 'long', day: 'numeric', month: 'long' });
+
+  const onEnded = ({ mode, patient, destinoNome }) => {
+    setPatients((list) => (list || []).filter((p) => String(idOf(p)) !== String(idOf(patient))));
+    setEnding(null);
+    refreshPending();
+    toast.show({
+      tone: 'success',
+      title: mode === 'transferir' ? 'Paciente transferido' : 'Acompanhamento encerrado',
+      message: mode === 'transferir'
+        ? `${nameOf(patient)} agora aguarda o aceite de ${destinoNome}.`
+        : `${nameOf(patient)} voltou ao modo solo no aplicativo. O histórico foi preservado.`,
     });
-    
-    console.log('availableNutris:', availableNutris);
-    
-    if (!searchNutri) return availableNutris;
-    
-    return availableNutris.filter(n => 
-      (n.Nome || n.nome || '').toLowerCase().includes(searchNutri.toLowerCase()) ||
-      (n.CRN || n.crn || '').toLowerCase().includes(searchNutri.toLowerCase()) ||
-      (n.Email || n.email || '').toLowerCase().includes(searchNutri.toLowerCase())
-    );
   };
-
-
 
   return (
-    <div className="nutri-theme">
-      <Header theme="minimal" />
-      
-      <main className="nutri-dashboard" style={{paddingTop: '4.5rem'}}>
-        <div className="nutri-welcome">
-          <h1 className="nutri-welcome-title">
-            Seja Bem Vindo(a) ao <span className="nutri-brand">Nutrifybe</span>
-          </h1>
-          <p className="nutri-subtitle">Gerencie seus pacientes e prescreva dietas personalizadas!</p>
-        </div>
+    <>
+      <PageHeader
+        eyebrow={today}
+        title={`Olá, ${firstName(pick(user, 'nome', 'Nome')) || 'nutricionista'}`}
+        docTitle="Painel"
+        description="Comece pelas solicitações que aguardam resposta e depois acompanhe seus pacientes."
+      />
 
-        <div className="nutri-card">
-          <div className="patients-list">
-            {acceptedPatients.length === 0 ? (
-              <p className="no-patients-message">Você não tem pacientes.</p>
-            ) : (
-              acceptedPatients.map(patient => (
-                <div key={patient.Id || patient.id} className="patient-item"
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = isDark ? '#A78BFA' : '#06b6d4'; e.currentTarget.style.boxShadow = isDark ? '0 4px 16px rgba(167,139,250,0.2)' : '0 4px 16px rgba(6,182,212,0.2)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.boxShadow = ''; }}
-                >
-                  <div className="patient-info">
-                    <i className="fas fa-user-circle patient-icon"></i>
-                    <div className="patient-details">
-                      <h3>{patient.Nome || patient.nome}</h3>
-                      <p>Email: {patient.Email || patient.email}</p>
-                      <p>Objetivo: {patient.Objetivo || patient.objetivo}</p>
-                    </div>
-                  </div>
-                  <div className="patient-actions">
-                    <Link 
-                      to={`/ficha-paciente/${patient.Id || patient.id}`} 
-                      className="btn btn-primary"
-                      style={{ background: isDark ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : 'linear-gradient(135deg, #06b6d4, #22d3ee)', boxShadow: 'none' }}
-                    >
-                      Ver Ficha
-                    </Link>
-                    <button 
-                      className="btn btn-warning"
-                      style={{marginLeft: '0.5rem'}}
-                      onClick={() => {
-                        console.log('Clicou em encerrar:', patient);
-                        handleEndService(patient);
-                      }}
-                    >
-                      Encerrar Atendimento
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </main>
+      {error ? (
+        <div className="nf-card"><ErrorState onRetry={load}>{error}</ErrorState></div>
+      ) : loading ? (
+        <div className="nf-card"><LoadingState label="Carregando seu painel…" /></div>
+      ) : (
+        <>
+          <section aria-labelledby="prioridades" className="nf-grid cols-3" style={{ marginBottom: 28 }}>
+            <h2 id="prioridades" className="nf-sr-only">Prioridades</h2>
 
-      <Modal
-        isOpen={transferModal.isOpen}
-        onClose={() => setTransferModal({ isOpen: false, patient: null })}
-        title="Encerrar e Transferir Atendimento"
-        className="transfer-modal"
-      >
-        <label htmlFor="transferReason">
-          Por favor, descreva o motivo do encerramento e transferência do atendimento de{' '}
-          <strong>{transferModal.patient?.Nome || transferModal.patient?.nome}</strong>:
-        </label>
-        <textarea
-          id="transferReason"
-          className="form-textarea"
-          placeholder="Ex: Paciente precisa de uma especialidade diferente, incompatibilidade de horários, etc."
-          value={transferReason}
-          onChange={(e) => setTransferReason(e.target.value)}
-          required
-          style={{width: '100%', minHeight: '100px', margin: '1rem 0'}}
-        />
-        <div style={{display: 'flex', gap: '1rem', marginTop: '1rem'}}>
-          <button className="btn btn-primary" onClick={handleTransferReasonSubmit}>
-            Transferir para Outro Nutricionista
-          </button>
-          <button 
-            className="btn btn-warning" 
-            onClick={async () => {
-              const patientName = transferModal.patient.Nome || transferModal.patient.nome;
-              if (!window.confirm(`Tem certeza que deseja encerrar o vínculo de ${patientName}? O cadastro e o histórico serão preservados.`)) return;
-              try {
-                const patientId = transferModal.patient.Id || transferModal.patient.id;
-                await pacientesAPI.endService(patientId);
-                const updatedPatients = acceptedPatients.filter(p => (p.Id || p.id) !== patientId);
-                setAcceptedPatients(updatedPatients);
-                
-                alert(`Atendimento de ${transferModal.patient.Nome || transferModal.patient.nome} foi encerrado. O cadastro e o histórico foram preservados.`);
-                setTransferModal({ isOpen: false, patient: null });
-                setTransferReason('');
-              } catch (error) {
-                console.error('Erro ao encerrar atendimento:', error);
-                alert('Erro ao encerrar atendimento: ' + error.message);
-              }
-            }}
-          >
-            Apenas Encerrar
-          </button>
-        </div>
-      </Modal>
-
-      <Modal
-        isOpen={selectNutriModal.isOpen}
-        onClose={() => setSelectNutriModal({ isOpen: false, patient: null, reason: '' })}
-        title="Transferir Paciente para qual Nutricionista?"
-      >
-        <p><strong>Paciente:</strong> {selectNutriModal.patient?.Nome || selectNutriModal.patient?.nome}</p>
-        <p><strong>Motivo:</strong> <em>{selectNutriModal.reason}</em></p>
-        <hr style={{ margin: '15px 0' }} />
-        
-        <label htmlFor="searchNutri" style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>
-          Pesquisar Nutricionista:
-        </label>
-        <input
-          type="text"
-          id="searchNutri"
-          className="form-input"
-          placeholder="Digite nome ou CRN para buscar..."
-          value={searchNutri}
-          onChange={(e) => setSearchNutri(e.target.value)}
-          style={{marginBottom: '1rem'}}
-        />
-        
-        <div style={{maxHeight: '300px', overflowY: 'auto'}}>
-          {getFilteredNutris().length === 0 ? (
-            <p>Nenhum nutricionista disponível.</p>
-          ) : (
-            getFilteredNutris().map(nutri => (
-              <div key={nutri.Id || nutri.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', border: `1px solid ${dm.border}`, borderRadius: '8px', marginBottom: '0.5rem', background: dm.card}}>
-                <div>
-                  <strong style={{color: dm.text}}>{nutri.Nome || nutri.nome}</strong><br />
-                  <small style={{color: dm.text2}}>{nutri.Email || nutri.email} (CRN: {nutri.CRN || nutri.crn})</small>
-                </div>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleSelectNutri(nutri.Id || nutri.id)}
-                >
-                  Selecionar
-                </button>
+            <article className={`nf-card nf-priority${pending.length ? ' is-urgent' : ''}`}>
+              <div className="nf-row" style={{ justifyContent: 'space-between' }}>
+                <h3 className="nf-section-title"><Icon name="inbox" size={19} /> Solicitações pendentes</h3>
+                {pending.length > 0 && <Badge tone="warning" icon="clock">Aguardando você</Badge>}
               </div>
-            ))
-          )}
-        </div>
-      </Modal>
+              <div className="count" aria-hidden="true">{pending.length}</div>
+              {pending.length ? (
+                <>
+                  <p className="nf-sr-only">{plural(pending.length, 'solicitação aguardando resposta', 'solicitações aguardando resposta')}</p>
+                  <ul className="nf-list" style={{ gap: 4 }}>
+                    {pending.slice(0, 3).map((r) => (
+                      <li key={idOf(r)} style={{ color: 'var(--nf-text-2)', fontSize: '.92rem' }}>
+                        <strong style={{ color: 'var(--nf-text)' }}>{nameOf(r)}</strong>
+                        {pick(r, 'objetivo', 'Objetivo') ? ` · ${pick(r, 'objetivo', 'Objetivo')}` : ''}
+                      </li>
+                    ))}
+                    {pending.length > 3 && <li style={{ color: 'var(--nf-muted)', fontSize: '.9rem' }}>e mais {pending.length - 3}</li>}
+                  </ul>
+                  <Link to="/nutri-solicitacoes" className="nf-btn primary">Revisar solicitações</Link>
+                </>
+              ) : (
+                <p style={{ color: 'var(--nf-muted)' }}>Nenhuma solicitação aguardando resposta. Novos pedidos feitos pelo aplicativo aparecem aqui.</p>
+              )}
+            </article>
 
-    </div>
+            <article className="nf-card nf-priority">
+              <h3 className="nf-section-title"><Icon name="calendar" size={19} /> Próximos retornos</h3>
+              {retornos.length ? (
+                <ul className="nf-list" style={{ gap: 8 }}>
+                  {retornos.slice(0, 3).map(({ patient, retorno }) => (
+                    <li key={idOf(patient)}>
+                      <Link to={`/nutri-calendario/${idOf(patient)}`} style={{ fontWeight: 600 }}>{nameOf(patient)}</Link>
+                      <div style={{ color: 'var(--nf-muted)', fontSize: '.88rem' }}>
+                        {fmtDay(retorno.data, { weekday: 'short', day: 'numeric', month: 'short' })}
+                        {retorno.hora ? ` às ${retorno.hora}` : ''} · {relativeDay(retorno.data)}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p style={{ color: 'var(--nf-muted)' }}>Nenhum retorno agendado. Você pode agendar pelo histórico de cada paciente.</p>
+              )}
+            </article>
+
+            <article className="nf-card nf-priority">
+              <h3 className="nf-section-title"><Icon name="users" size={19} /> Pacientes em acompanhamento</h3>
+              <div className="count" aria-hidden="true">{patients.length}</div>
+              <p style={{ color: 'var(--nf-muted)' }}>
+                {patients.length
+                  ? `${plural(patients.length, 'paciente compartilha', 'pacientes compartilham')} diário, medidas e conversa com você.`
+                  : 'Quando você aceitar uma solicitação, o paciente aparece aqui.'}
+              </p>
+              {patients.length > 0 && <a href="#pacientes" className="nf-btn secondary">Ver lista</a>}
+            </article>
+          </section>
+
+          <section aria-labelledby="pacientes" className="nf-card">
+            <div className="nf-card-head">
+              <div>
+                <h2 id="pacientes" tabIndex={-1}>Seus pacientes</h2>
+                <p>Abra a ficha para ver resumo, diário, evolução, plano alimentar e conversa.</p>
+              </div>
+              {patients.length > 0 && (
+                <div className="nf-search" style={{ flex: '0 1 320px', minWidth: 220 }}>
+                  <Icon name="search" size={18} />
+                  <label htmlFor="busca-paciente" className="nf-sr-only">Buscar paciente</label>
+                  <input id="busca-paciente" type="search" className="nf-input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nome, e-mail ou objetivo" autoComplete="off" />
+                </div>
+              )}
+            </div>
+
+            {patients.length === 0 ? (
+              <EmptyState
+                icon="users"
+                title="Você ainda não acompanha nenhum paciente"
+                action={pending.length > 0 && <Link to="/nutri-solicitacoes" className="nf-btn primary">Ver {plural(pending.length, 'solicitação', 'solicitações')}</Link>}
+              >
+                O paciente envia a solicitação pelo aplicativo Nutrifybe. Assim que você aceitar, ele aparece nesta lista.
+              </EmptyState>
+            ) : filtered.length === 0 ? (
+              <EmptyState icon="search" title="Nenhum paciente encontrado" action={<button type="button" className="nf-btn secondary" onClick={() => setSearch('')}>Limpar busca</button>}>
+                Nenhum paciente corresponde a “{search}”.
+              </EmptyState>
+            ) : (
+              <>
+                {search && <p role="status" style={{ color: 'var(--nf-muted)', fontSize: '.9rem', marginBottom: 10 }}>{plural(filtered.length, 'paciente encontrado', 'pacientes encontrados')}</p>}
+                <ul className="nf-list">
+                  {filtered.map((p) => {
+                    const pid = idOf(p);
+                    const retorno = upcomingRetorno(p);
+                    return (
+                      <li key={pid} className="nf-list-item">
+                        <div className="who">
+                          <span className="nf-avatar" aria-hidden="true">{initialOf(nameOf(p))}</span>
+                          <div>
+                            <div className="nf-row" style={{ gap: 8 }}>
+                              <span className="name">{nameOf(p)}</span>
+                              <Badge tone="success" icon="check">Vínculo ativo</Badge>
+                              {retorno && <Badge tone="info" icon="calendar">Retorno {fmtDay(retorno.data, { day: '2-digit', month: '2-digit' })}</Badge>}
+                            </div>
+                            <div className="meta">
+                              Objetivo: {pick(p, 'objetivo', 'Objetivo') || 'não informado'} · {pick(p, 'email', 'Email')}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="acts">
+                          <Link to={`/ficha-paciente/${pid}`} className="nf-btn primary sm" aria-label={`Abrir ficha de ${nameOf(p)}`}>Abrir ficha</Link>
+                          <Link to={`/ficha-paciente/${pid}?aba=conversa`} className="nf-btn secondary sm" aria-label={`Conversar com ${nameOf(p)}`}>
+                            <Icon name="chat" size={16} /> Conversa
+                          </Link>
+                          <button type="button" className="nf-btn danger-outline sm" onClick={() => setEnding(p)} aria-label={`Encerrar ou transferir acompanhamento de ${nameOf(p)}`}>
+                            Encerrar…
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            )}
+          </section>
+        </>
+      )}
+
+      <EncerrarVinculoDialog
+        open={!!ending}
+        patient={ending}
+        currentUserId={idOf(user)}
+        onClose={() => setEnding(null)}
+        onDone={onEnded}
+      />
+    </>
   );
-};
+}
 
-export default NutriDashboard;
+export default function NutriDashboard() {
+  return <NutriLayout><Dashboard /></NutriLayout>;
+}

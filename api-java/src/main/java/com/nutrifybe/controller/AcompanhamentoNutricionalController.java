@@ -11,6 +11,7 @@ import com.nutrifybe.repository.SolicitacaoPendenteRepository;
 import com.nutrifybe.model.Nutricionista;
 import com.nutrifybe.model.SolicitacaoPendente;
 import com.nutrifybe.security.TokenService;
+import com.nutrifybe.service.MetaCaloriasService;
 import com.nutrifybe.util.Campos;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +33,13 @@ public class AcompanhamentoNutricionalController {
     private final TokenService tokens;
     private final ObjectMapper json;
     private final SolicitacaoPendenteRepository solicitacoes;
+    private final MetaCaloriasService metas;
 
     public AcompanhamentoNutricionalController(PacienteRepository pacientes,
             NutricionistaRepository nutricionistas, DiarioRefeicaoRepository refeicoes,
             DiarioAguaRepository agua, DiarioMedidaRepository medidas, TokenService tokens,
-            ObjectMapper json, SolicitacaoPendenteRepository solicitacoes) {
+            ObjectMapper json, SolicitacaoPendenteRepository solicitacoes,
+            MetaCaloriasService metas) {
         this.pacientes = pacientes;
         this.nutricionistas = nutricionistas;
         this.refeicoes = refeicoes;
@@ -45,6 +48,7 @@ public class AcompanhamentoNutricionalController {
         this.tokens = tokens;
         this.json = json;
         this.solicitacoes = solicitacoes;
+        this.metas = metas;
     }
 
     @GetMapping
@@ -66,6 +70,8 @@ public class AcompanhamentoNutricionalController {
         ficha.put("refeicoes", refeicoes.findByPacienteIdOrderByCriadoEmDesc(pacienteId));
         ficha.put("agua", agua.findByPacienteIdOrderByCriadoEmDesc(pacienteId));
         ficha.put("medidas", medidas.findByPacienteIdOrderByCriadoEmDesc(pacienteId));
+        // Mesma meta diária que o aplicativo do paciente usa (plano ativo, meta pessoal ou padrão).
+        ficha.put("metaDiaria", metas.obter(paciente));
         return ResponseEntity.ok(ficha);
     }
 
@@ -87,6 +93,15 @@ public class AcompanhamentoNutricionalController {
                         : calendario instanceof String texto ? texto : json.writeValueAsString(calendario));
             } catch (Exception e) {
                 return erro(400, "Calendário inválido");
+            }
+        }
+        if (body.containsKey("retorno")) {
+            Object retorno = body.get("retorno");
+            try {
+                paciente.setRetorno(retorno == null ? null
+                        : retorno instanceof String texto ? texto : json.writeValueAsString(retorno));
+            } catch (Exception e) {
+                return erro(400, "Retorno inválido");
             }
         }
         pacientes.save(paciente);
@@ -178,6 +193,7 @@ public class AcompanhamentoNutricionalController {
         out.put("status", p.getStatus());
         out.put("prescricaoSemanal", p.getPrescricaoSemanal());
         out.put("calendario", p.getCalendario());
+        out.put("retorno", p.getRetorno());
         out.put("dataCriacao", p.getDataCriacao());
         return out;
     }

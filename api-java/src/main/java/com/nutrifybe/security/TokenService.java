@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
 
-/** Gera e valida o token de login do paciente (assinado com HMAC-SHA256). */
+/** Gera e valida os tokens de login de paciente, nutricionista e administrador (assinados com HMAC-SHA256). */
 @Service
 public class TokenService {
 
@@ -18,6 +18,9 @@ public class TokenService {
 
     public TokenService(@Value("${app.jwt.secret}") String segredo,
                         @Value("${app.jwt.horas:720}") long horas) {
+        if (segredo == null || segredo.isBlank() || segredo.length() < 32) {
+            throw new IllegalStateException("Defina a variável de ambiente JWT_SECRET com pelo menos 32 caracteres.");
+        }
         this.segredo = segredo.getBytes(StandardCharsets.UTF_8);
         this.horas = horas;
     }
@@ -28,6 +31,17 @@ public class TokenService {
 
     public String gerarNutricionista(Long nutricionistaId) {
         return gerarCorpo("nutri:" + nutricionistaId + ":" + (System.currentTimeMillis() / 1000 + horas * 3600));
+    }
+
+    public String gerarAdmin(Long adminId) {
+        return gerarCorpo("admin:" + adminId + ":" + (System.currentTimeMillis() / 1000 + horas * 3600));
+    }
+
+    /** Devolve o id do administrador do token, ou null se o token não for de administrador válido. */
+    public Long validarAdmin(String cabecalho) {
+        String[] partes = validarCorpo(cabecalho);
+        if (partes == null || partes.length != 3 || !"admin".equals(partes[0])) return null;
+        try { return Long.valueOf(partes[1]); } catch (NumberFormatException e) { return null; }
     }
 
     /** Recebe o cabeçalho "Authorization: Bearer ..." e devolve o id do paciente, ou null se inválido. */
