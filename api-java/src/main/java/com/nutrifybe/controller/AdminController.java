@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,9 +76,13 @@ public class AdminController {
                                     @PathVariable Long id, @RequestBody Map<String, Object> body) {
         if (tokens.validarAdmin(auth) == null) return naoAutorizado();
         return adminRepository.findById(id).map(admin -> {
+            if (body.containsKey("email") && !String.valueOf(body.get("email")).equalsIgnoreCase(admin.getEmail())) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Use a verificacao por e-mail para alterar o endereco da conta"));
+            }
+            if (body.containsKey("senha")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Use a verificacao por e-mail para alterar a senha"));
+            }
             if (body.containsKey("nome")) admin.setNome(texto(body.get("nome")));
-            if (body.containsKey("email")) admin.setEmail(texto(body.get("email")));
-            if (body.containsKey("senha") && body.get("senha") != null) admin.setSenha(passwordEncoder.encode(body.get("senha").toString()));
             if (body.containsKey("foto")) admin.setFoto(texto(body.get("foto")));
             adminRepository.save(admin);
             return ResponseEntity.ok((Object) Map.of("success", true));
@@ -102,6 +108,9 @@ public class AdminController {
     @PostMapping("/api/activityLog")
     public ResponseEntity<?> addLog(@RequestHeader(value = "Authorization", required = false) String auth, @RequestBody ActivityLog log) {
         if (tokens.validarAdmin(auth) == null) return naoAutorizado();
+        if (log.getTimestamp() == null || log.getTimestamp().isBlank()) {
+            log.setTimestamp(DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(Instant.now().atZone(ZoneId.of("America/Sao_Paulo"))));
+        }
         activityLogRepository.save(log);
         return ResponseEntity.ok(Map.of("success", true));
     }

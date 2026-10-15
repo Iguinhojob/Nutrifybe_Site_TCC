@@ -97,6 +97,15 @@ public class SolicitacoesController {
         if (!nutritionistId.equals(pending.getNutricionistaId())) {
             return ResponseEntity.status(403).body(Map.of("message", "Solicitacao pertence a outro nutricionista"));
         }
+        if (pending.isExpirada()) {
+            pacienteRepository.findFirstByEmailIgnoreCase(pending.getEmail()).ifPresent(patient -> {
+                if (nutritionistId.equals(patient.getNutricionistaId()) && "pending".equalsIgnoreCase(patient.getStatus())) {
+                    patient.setNutricionistaId(null); patient.setStatus("solo"); pacienteRepository.save(patient);
+                }
+            });
+            repository.delete(pending);
+            return ResponseEntity.status(410).body(Map.of("message", "O prazo de 24 horas para aceitar esta solicitação terminou"));
+        }
         Optional<Nutricionista> nutritionist = nutricionistaRepository.findById(nutritionistId);
         if (nutritionist.isEmpty() || !"approved".equalsIgnoreCase(nutritionist.get().getStatus())
                 || !Integer.valueOf(1).equals(nutritionist.get().getAtivo())) {

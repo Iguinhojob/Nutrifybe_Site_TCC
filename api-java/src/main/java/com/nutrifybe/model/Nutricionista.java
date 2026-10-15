@@ -19,7 +19,7 @@ public class Nutricionista {
     private String especialidade;
     private String descricao;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String foto;
 
     @Column(name = "data_criacao")

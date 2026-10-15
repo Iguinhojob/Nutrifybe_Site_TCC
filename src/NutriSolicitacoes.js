@@ -4,7 +4,7 @@ import NutriLayout, { PageHeader, useShell } from './ui/NutriLayout';
 import { Badge, ConfirmDialog, EmptyState, ErrorState, LoadingState, Notice, useToast } from './ui/feedback';
 import Icon from './ui/icons';
 import { solicitacoesAPI } from './services/api';
-import { bmi, fmtNum, friendlyError, idOf, initialOf, nameOf, pick, plural } from './ui/format';
+import { fmtNum, friendlyError, idOf, initialOf, nameOf, pick, plural } from './ui/format';
 
 function Field({ label, value, unit, wide }) {
   const empty = value === undefined || value === null || value === '';
@@ -57,6 +57,12 @@ function Solicitacoes() {
       });
     } catch (e) {
       if (handleAuthError(e)) return;
+      if (e.status === 410) {
+        removeLocal(id);
+        refreshPending();
+        toast.show({ tone: 'info', title: 'Prazo encerrado', message: 'A solicitação expirou após 24 horas e não pode mais ser aceita.' });
+        return;
+      }
       const msg = e.status === 409
         ? 'Este paciente já está vinculado a outro nutricionista, por isso não pode ser aceito.'
         : e.status === 404
@@ -103,7 +109,8 @@ function Solicitacoes() {
       />
 
       <div style={{ marginBottom: 20 }}>
-        <Notice tone="info" title="Como funciona">
+        <Notice tone="info" title="Prazo de resposta: até 24 horas">
+          Você tem até 24 horas após o envio para aceitar esta solicitação. Enquanto aguarda, o paciente pode usar o aplicativo em modo autônomo. Depois desse prazo, o pedido expira e não pode mais ser aceito.
           Ao <strong style={{ display: 'inline' }}>aceitar</strong>, o paciente passa a compartilhar com você o diário alimentar, as medidas e a conversa.
           Ao <strong style={{ display: 'inline' }}>recusar</strong>, ele continua usando o aplicativo no modo solo e pode escolher outro nutricionista.
         </Notice>
@@ -126,7 +133,8 @@ function Solicitacoes() {
             const id = idOf(r);
             const peso = pick(r, 'peso', 'Peso');
             const altura = pick(r, 'altura', 'Altura');
-            const imc = bmi(peso, altura);
+            const criadoEm = pick(r, 'dataCriacao', 'DataCriacao');
+            const expiraEm = criadoEm ? new Date(new Date(criadoEm).getTime() + 24 * 60 * 60 * 1000) : null;
             const busy = busyId === id;
             const headingId = `sol-${id}`;
             return (
@@ -141,12 +149,12 @@ function Solicitacoes() {
                   </div>
                   <Badge tone="warning" icon="clock">Aguardando resposta</Badge>
                 </div>
+                {expiraEm && <p style={{ color: 'var(--nf-muted)', margin: '-6px 0 14px' }}>Aceite até {expiraEm.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}.</p>}
                 <dl className="nf-dl" style={{ marginBottom: 16 }}>
                   <Field label="Objetivo" value={pick(r, 'objetivo', 'Objetivo')} />
                   <Field label="Idade" value={pick(r, 'idade', 'Idade')} unit="anos" />
                   <Field label="Peso" value={peso != null ? fmtNum(peso, Number.isInteger(Number(peso)) ? 0 : 1) : null} unit="kg" />
                   <Field label="Altura" value={altura != null ? fmtNum(altura) : null} unit="cm" />
-                  <Field label="IMC (calculado)" value={imc ? fmtNum(imc, 1) : null} />
                   <Field label="Condição de saúde" value={pick(r, 'condicaoSaude', 'CondicaoSaude')} wide />
                 </dl>
                 {inlineError[id] && <div style={{ marginBottom: 12 }}><Notice tone="danger" role="alert">{inlineError[id]}</Notice></div>}

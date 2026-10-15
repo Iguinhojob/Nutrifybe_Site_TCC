@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface AvaliacaoNutricionistaRepository extends JpaRepository<AvaliacaoNutricionista, Long> {
+    void deleteByNutricionistaId(Long nutricionistaId);
     java.util.List<AvaliacaoNutricionista> findTop100ByNutricionistaIdOrderByCriadoEmDesc(Long nutricionistaId);
     long countByNutricionistaId(Long nutricionistaId);
 

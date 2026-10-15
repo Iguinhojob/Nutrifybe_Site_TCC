@@ -16,7 +16,7 @@ Este repositório contém o **site** (React) e a **API** (Java/Spring Boot). As 
 | Tela | Principais mudanças |
 |---|---|
 | Painel | Prioridades em cartões (solicitações pendentes, próximos retornos, pacientes), busca de pacientes, atalhos para ficha e conversa |
-| Solicitações | Cartões com os dados e o IMC calculado para exibição, explicação de aceitar e recusar, confirmação antes de recusar, aviso com link "Abrir ficha" após aceitar e mensagem clara para o conflito 409 |
+| Solicitações | Cartões com os dados do paciente, explicação de aceitar e recusar, confirmação antes de recusar, aviso com link "Abrir ficha" após aceitar e mensagem clara para o conflito 409 |
 | Ficha do paciente | Abas acessíveis (setas, Home/End e `?aba=` na URL): Resumo, Diário alimentar, Evolução, Plano alimentar e Conversa |
 | Diário | Navegação por dia com registro, totais do dia, progresso de calorias em relação à meta do app e de água em relação à meta do paciente |
 | Evolução | Gráfico do peso com a linha da meta, tabela de medidas e hidratação dos últimos dias |

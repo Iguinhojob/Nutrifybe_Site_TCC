@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-import { nutricionistasAPI, adminAPI } from './services/api';
+import { nutricionistasAPI, adminAPI, contaAPI } from './services/api';
 import api from './services/api';
 import { jsPDF } from 'jspdf';
 import './css/style.css';
@@ -9,6 +9,12 @@ const fundoImage = '/images/fundo_index.png';
 const nutriId = (nutri) => nutri?.id ?? nutri?.Id;
 const nutriStatus = (nutri) => String(nutri?.status ?? nutri?.Status ?? '').toLowerCase();
 const fieldText = (value) => String(value ?? '').trim().toLowerCase();
+const formatActivityTimestamp = (value) => {
+  if (value == null || value === '' || value === 0 || value === '0') return '—';
+  const parsed = typeof value === 'number' && value > 0 && value < 1e12 ? value * 1000 : value;
+  const date = new Date(parsed);
+  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString('pt-BR');
+};
 
 const AdminDashboard = () => {
   const [managedNutricionists, setManagedNutricionists] = useState([]);
@@ -33,6 +39,13 @@ const AdminDashboard = () => {
   const [isDark, setIsDark] = useState(document.body.classList.contains('dark-mode'));
   const [adminFoto, setAdminFoto] = useState(() => JSON.parse(localStorage.getItem('currentAdmin'))?.foto || null);
   const [adminNome, setAdminNome] = useState(() => JSON.parse(localStorage.getItem('currentAdmin'))?.nome || 'Admin');
+  const [adminEmailDraft, setAdminEmailDraft] = useState(() => JSON.parse(localStorage.getItem('currentAdmin'))?.email || '');
+  const [adminEmailCode, setAdminEmailCode] = useState('');
+  const [adminEmailCodeSent, setAdminEmailCodeSent] = useState(false);
+  const [adminPasswordCode, setAdminPasswordCode] = useState('');
+  const [adminPasswordCodeSent, setAdminPasswordCodeSent] = useState(false);
+  const [adminNewPassword, setAdminNewPassword] = useState('');
+  const [adminPasswordConfirm, setAdminPasswordConfirm] = useState('');
 
   const getInitials = (nome) => {
     if (!nome) return 'A';
@@ -42,6 +55,38 @@ const AdminDashboard = () => {
   const refreshAdminState = () => {
     const a = JSON.parse(localStorage.getItem('currentAdmin'));
     if (a) { setAdminFoto(a.foto || null); setAdminNome(a.nome || 'Admin'); }
+  };
+
+  const sendAdminEmailCode = async (event) => {
+    event.preventDefault();
+    try { await contaAPI.enviarCodigoEmail(adminEmailDraft.trim().toLowerCase()); setAdminEmailCodeSent(true); alert('Enviamos um codigo ao novo e-mail. Ele expira em 10 minutos.'); }
+    catch (e) { alert(e.message || 'Nao foi possivel enviar o codigo.'); }
+  };
+  const saveAdminEmail = async (event) => {
+    event.preventDefault();
+    if (!/^\d{6}$/.test(adminEmailCode.trim())) { alert('Informe o codigo de 6 numeros recebido no novo e-mail.'); return; }
+    try {
+      const result = await contaAPI.alterarEmail(adminEmailDraft.trim().toLowerCase(), adminEmailCode.trim());
+      const current = JSON.parse(localStorage.getItem('currentAdmin') || '{}');
+      localStorage.setItem('currentAdmin', JSON.stringify({ ...current, email: result.email }));
+      setAdminEmailDraft(result.email); setAdminEmailCode(''); setAdminEmailCodeSent(false);
+      alert('E-mail atualizado. Use o novo endereco no proximo acesso.');
+    } catch (e) { alert(e.message || 'Nao foi possivel confirmar o novo e-mail.'); }
+  };
+  const sendAdminPasswordCode = async (event) => {
+    event.preventDefault();
+    try { await contaAPI.enviarCodigoSenha(); setAdminPasswordCodeSent(true); alert('Enviamos um codigo ao e-mail atual da conta.'); }
+    catch (e) { alert(e.message || 'Nao foi possivel enviar o codigo.'); }
+  };
+  const saveAdminPassword = async (event) => {
+    event.preventDefault();
+    if (!/^\d{6}$/.test(adminPasswordCode.trim())) { alert('Informe o codigo de 6 numeros recebido por e-mail.'); return; }
+    if (adminNewPassword.length < 6 || adminNewPassword !== adminPasswordConfirm) { alert(adminNewPassword.length < 6 ? 'A nova senha precisa ter pelo menos 6 caracteres.' : 'As senhas nao coincidem.'); return; }
+    try {
+      await contaAPI.alterarSenha(adminPasswordCode.trim(), adminNewPassword);
+      setAdminPasswordCode(''); setAdminNewPassword(''); setAdminPasswordConfirm(''); setAdminPasswordCodeSent(false);
+      alert('Senha alterada com sucesso.');
+    } catch (e) { alert(e.message || 'Nao foi possivel alterar a senha.'); }
   };
 
   useEffect(() => {
@@ -673,7 +718,7 @@ const AdminDashboard = () => {
                       <div className="nutri-info">
                         <strong>{activity.action}</strong> - {activity.nutriName}
                         <br />
-                        <small style={{color: dm.text2}}>{new Date(activity.timestamp).toLocaleString()}</small>
+                        <small style={{color: dm.text2}}>{formatActivityTimestamp(activity.timestamp)}</small>
                       </div>
                     </div>
                   ))
@@ -739,7 +784,7 @@ const AdminDashboard = () => {
                         
                         // Data
                         doc.setTextColor(128, 128, 128);
-                        doc.text(`Data: ${new Date(activity.timestamp).toLocaleString()}`, 25, yPos + 12);
+                        doc.text(`Data: ${formatActivityTimestamp(activity.timestamp)}`, 25, yPos + 12);
                         
                         yPos += 20;
                       });
@@ -1012,7 +1057,7 @@ const AdminDashboard = () => {
                       <div key={activity.id} style={{padding: '0.5rem 0', borderBottom: `1px solid ${dm.border2}`}}>
                         <small style={{color: dm.text}}><strong>{activity.action}</strong> - {activity.nutriName}</small>
                         <br />
-                        <small style={{color: dm.text2}}>{new Date(activity.timestamp).toLocaleString()}</small>
+                        <small style={{color: dm.text2}}>{formatActivityTimestamp(activity.timestamp)}</small>
                       </div>
                     ))}
                   </div>
@@ -1352,7 +1397,7 @@ const AdminDashboard = () => {
                       const nome = formData.get('nome');
                       const email = formData.get('email');
                       try {
-                        await adminAPI.update(currentAdmin.id, { nome, email });
+                        await adminAPI.update(currentAdmin.id, { nome });
                         const updatedAdmin = { ...currentAdmin, nome, email };
                         localStorage.setItem('currentAdmin', JSON.stringify(updatedAdmin));
                         setAdminNome(nome);
@@ -1366,46 +1411,27 @@ const AdminDashboard = () => {
                       </div>
                       <div className="form-group">
                         <label className="form-label">Email</label>
-                        <input type="email" name="email" className="form-input" defaultValue={currentAdmin?.email} required />
+                        <input type="email" name="email" className="form-input" defaultValue={currentAdmin?.email} readOnly />
                       </div>
                       <button type="submit" className="btn btn-primary" style={{width: '100%', marginTop: '0.5rem'}}>Salvar Alterações</button>
+                    </form>
+                    <form onSubmit={adminEmailCodeSent ? saveAdminEmail : sendAdminEmailCode} style={{marginTop:'1rem',paddingTop:'1rem',borderTop:'1px solid '+dm.border}}>
+                      <div className="form-group"><label className="form-label">Alterar e-mail de acesso</label><input type="email" className="form-input" value={adminEmailDraft} onChange={e=>{setAdminEmailDraft(e.target.value);setAdminEmailCodeSent(false);setAdminEmailCode('')}} required /></div>
+                      {adminEmailCodeSent && <div className="form-group"><label className="form-label">Codigo enviado ao novo e-mail</label><input type="text" inputMode="numeric" autoComplete="one-time-code" className="form-input" value={adminEmailCode} onChange={e=>setAdminEmailCode(e.target.value.replace(/\D/g,'').slice(0,6))} placeholder="6 numeros" required /></div>}
+                      <button type="submit" className="btn btn-primary" style={{width:'100%'}}>{adminEmailCodeSent?'Confirmar novo e-mail':'Enviar codigo ao novo e-mail'}</button>
                     </form>
                   </div>
 
                   <div style={{background: dm.card2, padding: '1.5rem', borderRadius: '8px', border: `1px solid ${dm.border}`}}>
                     <h5 style={{margin: '0 0 1rem 0', color: dm.text, fontSize: '1rem'}}>Alterar Senha</h5>
-                    <form onSubmit={async (e) => {
-                      e.preventDefault();
-                      const formData = new FormData(e.target);
-                      const senhaAtual = formData.get('senhaAtual');
-                      const novaSenha = formData.get('novaSenha');
-                      const confirmarSenha = formData.get('confirmarSenha');
-                      const admins = await adminAPI.getAll();
-                      const adminAtual = admins.find(a => a.id === currentAdmin.id);
-                      if (senhaAtual !== adminAtual?.senha) { alert('Senha atual incorreta!'); return; }
-                      if (novaSenha !== confirmarSenha) { alert('Nova senha e confirmação não coincidem!'); return; }
-                      if (novaSenha.length < 6) { alert('Nova senha deve ter pelo menos 6 caracteres!'); return; }
-                      try {
-                        await adminAPI.update(currentAdmin.id, { senha: novaSenha });
-                        localStorage.setItem('currentAdmin', JSON.stringify({ ...currentAdmin, senha: novaSenha }));
-                        alert('Senha alterada com sucesso!');
-                        e.target.reset();
-                        addToActivityLog('Senha Alterada', currentAdmin.nome);
-                      } catch { alert('Erro ao alterar senha.'); }
-                    }}>
-                      <div className="form-group">
-                        <label className="form-label">Senha Atual</label>
-                        <input type="password" name="senhaAtual" className="form-input" required />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Nova Senha</label>
-                        <input type="password" name="novaSenha" className="form-input" required />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Confirmar Nova Senha</label>
-                        <input type="password" name="confirmarSenha" className="form-input" required />
-                      </div>
-                      <button type="submit" className="btn btn-primary" style={{width: '100%'}}>Alterar Senha</button>
+                    <form onSubmit={adminPasswordCodeSent ? saveAdminPassword : sendAdminPasswordCode}>
+                      {!adminPasswordCodeSent && <p style={{color:dm.text2,fontSize:'.88rem'}}>Enviaremos um codigo ao e-mail atual da conta. Ele vale por 10 minutos.</p>}
+                      {adminPasswordCodeSent && <>
+                        <div className="form-group"><label className="form-label">Codigo recebido por e-mail</label><input type="text" inputMode="numeric" autoComplete="one-time-code" className="form-input" value={adminPasswordCode} onChange={e=>setAdminPasswordCode(e.target.value.replace(/\D/g,'').slice(0,6))} placeholder="6 numeros" required /></div>
+                        <div className="form-group"><label className="form-label">Nova senha</label><input type="password" className="form-input" minLength={6} autoComplete="new-password" value={adminNewPassword} onChange={e=>setAdminNewPassword(e.target.value)} required /></div>
+                        <div className="form-group"><label className="form-label">Confirmar nova senha</label><input type="password" className="form-input" minLength={6} autoComplete="new-password" value={adminPasswordConfirm} onChange={e=>setAdminPasswordConfirm(e.target.value)} required /></div>
+                      </>}
+                      <button type="submit" className="btn btn-primary" style={{width:'100%'}}>{adminPasswordCodeSent?'Confirmar nova senha':'Enviar codigo por e-mail'}</button>
                     </form>
                   </div>
                 </div>

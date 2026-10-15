@@ -3,8 +3,13 @@ package com.nutrifybe.controller;
 import com.nutrifybe.model.Nutricionista;
 import com.nutrifybe.model.AvaliacaoNutricionista;
 import com.nutrifybe.repository.AvaliacaoNutricionistaRepository;
+import com.nutrifybe.repository.ChatMensagemRepository;
+import com.nutrifybe.repository.DenunciaNutricionistaRepository;
 import com.nutrifybe.repository.NutricionistaRepository;
+import com.nutrifybe.repository.PacienteRepository;
+import com.nutrifybe.repository.SolicitacaoPendenteRepository;
 import com.nutrifybe.security.TokenService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +26,24 @@ public class NutricionistasController {
     private final NutricionistaRepository repository;
     private final AvaliacaoNutricionistaRepository avaliacaoRepository;
     private final TokenService tokens;
+    private final PacienteRepository pacienteRepository;
+    private final ChatMensagemRepository chatMensagemRepository;
+    private final DenunciaNutricionistaRepository denunciaRepository;
+    private final SolicitacaoPendenteRepository solicitacaoRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public NutricionistasController(NutricionistaRepository repository, AvaliacaoNutricionistaRepository avaliacaoRepository, TokenService tokens) {
+    public NutricionistasController(NutricionistaRepository repository, AvaliacaoNutricionistaRepository avaliacaoRepository,
+                                    TokenService tokens, PacienteRepository pacienteRepository,
+                                    ChatMensagemRepository chatMensagemRepository,
+                                    DenunciaNutricionistaRepository denunciaRepository,
+                                    SolicitacaoPendenteRepository solicitacaoRepository) {
         this.repository = repository;
         this.avaliacaoRepository = avaliacaoRepository;
         this.tokens = tokens;
+        this.pacienteRepository = pacienteRepository;
+        this.chatMensagemRepository = chatMensagemRepository;
+        this.denunciaRepository = denunciaRepository;
+        this.solicitacaoRepository = solicitacaoRepository;
     }
 
     @GetMapping
@@ -104,25 +121,39 @@ public class NutricionistasController {
             return ResponseEntity.status(403).body(Map.of("success", false, "message", "Somente o administrador pode aprovar ou desativar contas"));
         }
         return repository.findById(id).map(nutri -> {
+            if (body.containsKey("email") && !String.valueOf(body.get("email")).equalsIgnoreCase(nutri.getEmail())) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Use a verificacao por e-mail para alterar o endereco da conta"));
+            }
+            if (body.containsKey("senha")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Use a verificacao por e-mail para alterar a senha"));
+            }
             if (body.containsKey("status")) nutri.setStatus((String) body.get("status"));
             if (body.containsKey("ativo")) nutri.setAtivo(((Number) body.get("ativo")).intValue());
             if (body.containsKey("nome")) nutri.setNome((String) body.get("nome"));
-            if (body.containsKey("email")) nutri.setEmail((String) body.get("email"));
             if (body.containsKey("telefone")) nutri.setTelefone((String) body.get("telefone"));
             if (body.containsKey("especialidade")) nutri.setEspecialidade((String) body.get("especialidade"));
             if (body.containsKey("descricao")) nutri.setDescricao((String) body.get("descricao"));
             if (body.containsKey("foto")) nutri.setFoto((String) body.get("foto"));
-            if (body.containsKey("senha")) nutri.setSenha(passwordEncoder.encode((String) body.get("senha")));
             repository.save(nutri);
             return ResponseEntity.ok((Object) publico(nutri));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> delete(@RequestHeader(value = "Authorization", required = false) String auth, @PathVariable Long id) {
         if (tokens.validarAdmin(auth) == null) {
             return ResponseEntity.status(401).body(Map.of("success", false, "message", "Somente o administrador pode excluir contas"));
         }
+        if (!repository.existsById(id)) return ResponseEntity.notFound().build();
+        // Mantém o cadastro e o histórico dos pacientes, apenas encerra o vínculo.
+        var pacientesVinculados = pacienteRepository.findByNutricionistaId(id);
+        pacientesVinculados.forEach(paciente -> paciente.setNutricionistaId(null));
+        pacienteRepository.saveAll(pacientesVinculados);
+        chatMensagemRepository.deleteByNutricionistaId(id);
+        avaliacaoRepository.deleteByNutricionistaId(id);
+        denunciaRepository.deleteByNutricionistaId(id);
+        solicitacaoRepository.deleteByNutricionistaId(id);
         repository.deleteById(id);
         return ResponseEntity.ok(Map.of("success", true));
     }

@@ -10,8 +10,8 @@
   --nf-surface: #ffffff;
   --nf-surface-2: #f6f8fc;
   --nf-surface-3: #eceff7;
-  --nf-border: #dbe1ec;
-  --nf-border-strong: #c3cbdb;
+  --nf-border: #b9e6ed;
+  --nf-border-strong: #83d1df;
 
   /* Texto (todos ≥ 4.5:1 sobre --nf-surface e --nf-bg) */
   --nf-text: #111b2e;
@@ -63,8 +63,8 @@ body.dark-mode {
   --nf-surface: #181a1d;
   --nf-surface-2: #202228;
   --nf-surface-3: #2a2d33;
-  --nf-border: #2c3036;
-  --nf-border-strong: #3d424b;
+  --nf-border: #4c3a7a;
+  --nf-border-strong: #6d55a3;
   --nf-text: #f1f1f3;
   --nf-text-2: #d4d6dc;
   --nf-muted: #a5a8b1;
@@ -245,6 +245,9 @@ body.dark-mode .nf-nav-count { background: #dc2626; }
 .nf-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
 .nf-card-head p { color: var(--nf-muted); font-size: .9rem; margin-top: 2px; }
 .nf-card + .nf-card { margin-top: 0; }
+/* Elementos legados do calendário ainda usam bordas inline; alinhe ao tema da área do nutricionista. */
+.nf-app [style*="#2A2D32"] { border-color: var(--nf-border) !important; }
+.nf-app [style*="border: 1px solid"][style*="border-radius"] { border-color: var(--nf-border) !important; }
 
 .nf-section-title { display: flex; align-items: center; gap: 8px; }
 

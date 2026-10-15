@@ -201,6 +201,13 @@ export const recuperarSenhaAPI = {
   }),
 };
 
+export const contaAPI = {
+  enviarCodigoSenha: () => apiRequest('/api/conta/codigo-senha', { method: 'POST', body: JSON.stringify({}) }),
+  alterarSenha: (codigo, novaSenha) => apiRequest('/api/conta/senha', { method: 'POST', body: JSON.stringify({ codigo, novaSenha }) }),
+  enviarCodigoEmail: (email) => apiRequest('/api/conta/codigo-email', { method: 'POST', body: JSON.stringify({ email }) }),
+  alterarEmail: (email, codigo) => apiRequest('/api/conta/email', { method: 'POST', body: JSON.stringify({ email, codigo }) }),
+};
+
 const api = {
   nutricionistasAPI,
   pacientesAPI,

@@ -14,6 +14,7 @@ public class Admin {
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String foto;
 
     @Column(name = "data_criacao")

@@ -19,10 +19,7 @@ const kcalOf = (meal) => {
   return Number.isFinite(n) && n >= 0 ? n : NaN;
 };
 
-/**
- * Soma as calorias das refeições. Espelha a regra do backend (MetaCaloriasService):
- * se todas as refeições tiverem calorias, a soma vira a meta diária exibida no aplicativo.
- */
+// Soma as calorias prescritas nas refeições; isso não altera a meta diária do paciente.
 export function planTotals(meals) {
   const list = meals || [];
   const missing = list.filter((m) => !Number.isFinite(kcalOf(m))).length;

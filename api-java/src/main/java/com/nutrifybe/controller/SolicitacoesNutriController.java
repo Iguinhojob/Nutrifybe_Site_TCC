@@ -35,7 +35,9 @@ public class SolicitacoesNutriController {
     public ResponseEntity<?> listar(@RequestHeader(value = "Authorization", required = false) String auth) {
         Long nutriId = nutriAtivo(auth);
         if (nutriId == null) return erro(401, "Sessão de nutricionista inválida");
-        return ResponseEntity.ok(solicitacoes.findByNutricionistaIdOrderByIdDesc(nutriId));
+        var pedidos = solicitacoes.findByNutricionistaIdOrderByIdDesc(nutriId);
+        pedidos.stream().filter(SolicitacaoPendente::isExpirada).forEach(this::expirar);
+        return ResponseEntity.ok(pedidos.stream().filter(p -> !p.isExpirada()).toList());
     }
 
     @PutMapping("/{id}/aceitar")
@@ -46,6 +48,7 @@ public class SolicitacoesNutriController {
         if (nutriId == null) return erro(401, "Sessão de nutricionista inválida");
         SolicitacaoPendente pedido = solicitacoes.findByIdAndNutricionistaId(id, nutriId).orElse(null);
         if (pedido == null) return erro(404, "Solicitação não encontrada para esta conta");
+        if (pedido.isExpirada()) { expirar(pedido); return erro(410, "O prazo de 24 horas para aceitar esta solicitação terminou"); }
         Paciente paciente = pacientes.findFirstByEmailIgnoreCase(pedido.getEmail()).orElse(null);
         if (paciente == null) {
             paciente = new Paciente();
@@ -91,6 +94,17 @@ public class SolicitacoesNutriController {
         });
         solicitacoes.delete(pedido);
         return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    private void expirar(SolicitacaoPendente pedido) {
+        pacientes.findFirstByEmailIgnoreCase(pedido.getEmail()).ifPresent(paciente -> {
+            if (pedido.getNutricionistaId().equals(paciente.getNutricionistaId()) && "pending".equalsIgnoreCase(paciente.getStatus())) {
+                paciente.setNutricionistaId(null);
+                paciente.setStatus("solo");
+                pacientes.save(paciente);
+            }
+        });
+        solicitacoes.delete(pedido);
     }
 
     private Long nutriAtivo(String auth) {

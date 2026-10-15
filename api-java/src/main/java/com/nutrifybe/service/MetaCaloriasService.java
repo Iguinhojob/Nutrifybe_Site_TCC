@@ -21,22 +21,13 @@ public class MetaCaloriasService {
             try {
                 JsonNode plan = json.readTree(prescription);
                 if (!plan.path("ativo").isBoolean() || plan.path("ativo").asBoolean()) {
-                    double total = 0;
-                    boolean complete = true;
                     JsonNode items = plan.path("meals");
                     if (items.isArray()) {
                         for (int i = 0; i < items.size(); i++) {
                             JsonNode item = items.get(i);
                             meals.add(new RefeicaoPlanejada(i, item.path("nome").asText("Refeição " + (i + 1)), item.path("horario").asText("")));
-                            double kcal = numero(item.path("calorias"));
-                            if (!Double.isFinite(kcal) || kcal < 0) complete = false;
-                            else total += kcal;
                         }
                     }
-                    double explicit = numero(plan.path("metaCalorias"));
-                    if (!Double.isFinite(explicit) || explicit <= 0) explicit = numero(plan.path("caloriasDiarias"));
-                    double goal = Double.isFinite(explicit) && explicit > 0 ? explicit : complete && !meals.isEmpty() ? total : 0;
-                    if (goal > 0 && goal <= 20000) return new Meta((int) Math.round(goal), "plano", false, meals);
                 }
             } catch (Exception ignored) {
                 // Prescriptions stored as free text have no structured calorie goal.
@@ -49,8 +40,4 @@ public class MetaCaloriasService {
         return new Meta(saved != null && saved > 0 ? saved : 2000, saved != null && saved > 0 ? "pessoal" : "padrao", true, meals);
     }
 
-    private static double numero(JsonNode value) {
-        try { return Double.parseDouble(value.asText().trim().replace(',', '.')); }
-        catch (Exception ignored) { return Double.NaN; }
-    }
 }

@@ -10,7 +10,7 @@ import { decodePlan, META_ORIGEM, planTotals } from './nutri/plan';
 import { pacientesAPI } from './services/api';
 import { formatFoodText } from './foodNames';
 import {
-  bmi, fmtDay, fmtNum, fmtTime, friendlyError, idOf, initialOf, isNum, nameOf, parseJson,
+  fmtDay, fmtNum, fmtTime, friendlyError, idOf, initialOf, isNum, nameOf, parseJson,
   plural, recordDay, relativeDay, todayKey, toNum,
 } from './ui/format';
 
@@ -96,7 +96,6 @@ function ResumoTab({ p, ctx, goTo }) {
   const todayWater = (waterByDay[today] || []).reduce((s, r) => s + waterMl(r), 0);
   const peso = latestWeight?.value ?? toNum(p.peso);
   const meta = toNum(p.pesoMeta);
-  const imc = bmi(peso, p.altura);
   const diff = peso && meta ? peso - meta : null;
 
   return (
@@ -111,11 +110,6 @@ function ResumoTab({ p, ctx, goTo }) {
           <span className="label">Meta de peso</span>
           <span className="value">{meta ? fmtNum(meta, 1) : '—'}<small>kg</small></span>
           <span className="hint">{diff === null ? 'Sem meta definida' : Math.abs(diff) < 0.05 ? 'Meta alcançada' : `${diff > 0 ? 'Faltam' : 'Abaixo da meta em'} ${fmtNum(Math.abs(diff), 1)} kg${diff > 0 ? ' para a meta' : ''}`}</span>
-        </div>
-        <div className="nf-card flat nf-metric">
-          <span className="label">IMC</span>
-          <span className="value">{imc ? fmtNum(imc, 1) : '—'}</span>
-          <span className="hint">{imc ? `Altura ${fmtNum(p.altura)} cm` : 'Precisa de peso e altura'}</span>
         </div>
         <div className="nf-card flat nf-metric">
           <span className="label">Último registro no diário</span>
@@ -322,14 +316,14 @@ function PlanoTab({ p }) {
         <div className="nf-card-head">
           <div>
             <h2 id="plano-titulo">Plano alimentar atual</h2>
-            <p>{plan.kind === 'structured' ? `${plural(totals.count, 'refeição', 'refeições')} · ${fmtNum(totals.total)} kcal planejadas por dia` : 'Plano antigo em texto livre'}</p>
+            <p>{plan.kind === 'structured' ? `${plural(totals.count, 'refeição', 'refeições')} · ${fmtNum(totals.total)} kcal prescritas nas refeições` : 'Plano antigo em texto livre'}</p>
           </div>
           <Link to={editLink} className="nf-btn primary"><Icon name="edit" size={17} /> Editar plano</Link>
         </div>
         {plan.kind === 'structured' && totals.count > 0 && !totals.complete && (
           <div style={{ marginBottom: 14 }}>
             <Notice tone="warning">
-              {plural(totals.missing, 'refeição está', 'refeições estão')} sem calorias. Enquanto isso, o aplicativo não usa este plano como meta diária do paciente.
+              {plural(totals.missing, 'refeição está', 'refeições estão')} sem calorias. Elas não serão somadas ao consumo do dia até o valor ser informado. A meta diária do paciente não muda.
             </Notice>
           </div>
         )}

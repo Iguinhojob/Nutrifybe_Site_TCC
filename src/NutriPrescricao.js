@@ -30,6 +30,7 @@ function Prescricao() {
   const [message, setMessage] = useState(null);
   const [reviewing, setReviewing] = useState(false);
   const [removing, setRemoving] = useState(null);
+  const [clearing, setClearing] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const focusKey = useRef(null);
   const messageRef = useRef(null);
@@ -138,6 +139,32 @@ function Prescricao() {
       setReviewing(false);
       if (handleAuthError(e)) return;
       showMessage({ tone: 'danger', text: friendlyError(e, 'Não foi possível salvar o plano. Suas alterações continuam aqui; tente novamente.') });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const clearPrescription = async () => {
+    setSaving(true);
+    try {
+      const updated = await pacientesAPI.updateClinical(id, { prescricaoSemanal: '' });
+      setPatient((old) => ({ ...old, ...updated, prescricaoSemanal: '' }));
+      const nextRows = [row()];
+      setRows(nextRows);
+      setNotes('');
+      setLegacy(false);
+      setSaved(snapshot(nextRows, ''));
+      setClearing(false);
+      setMessage(null);
+      toast.show({
+        tone: 'success',
+        title: 'Prescrição excluída',
+        message: `${nameOf(patient)} não verá mais este plano no aplicativo. Os registros já feitos no diário foram preservados.`,
+      });
+    } catch (e) {
+      if (handleAuthError(e)) return;
+      setClearing(false);
+      showMessage({ tone: 'danger', text: friendlyError(e, 'Não foi possível excluir a prescrição. Tente novamente.') });
     } finally {
       setSaving(false);
     }
@@ -284,15 +311,15 @@ function Prescricao() {
               <p style={{ color: 'var(--nf-muted)', margin: '10px 0 12px', fontSize: '.92rem' }}>Nenhuma refeição preenchida ainda.</p>
             )}
             <div className="nf-metric" style={{ paddingTop: 10, borderTop: '1px solid var(--nf-border)' }}>
-              <span className="label">Total planejado</span>
-              <span className="value">{fmtNum(totals.total)}<small>kcal/dia</small></span>
+              <span className="label">Soma das refeições</span>
+              <span className="value">{fmtNum(totals.total)}<small>kcal</small></span>
               <span className="hint">{plural(totals.count, 'refeição', 'refeições')}</span>
             </div>
             <div style={{ marginTop: 12 }}>
               {totals.count === 0 ? null : totals.complete ? (
-                <Notice tone="success">O aplicativo vai usar <strong style={{ display: 'inline' }}>{fmtNum(totals.total)} kcal</strong> como meta diária do paciente.</Notice>
+                <Notice tone="success">Essa soma corresponde às calorias prescritas nas refeições. A meta diária do paciente permanece a mesma; cada refeição concluída soma ao consumo do dia.</Notice>
               ) : (
-                <Notice tone="warning">{plural(totals.missing, 'refeição está', 'refeições estão')} sem calorias. Assim, o aplicativo mantém a meta que o paciente já usa.</Notice>
+                <Notice tone="warning">{plural(totals.missing, 'refeição está', 'refeições estão')} sem calorias. A meta diária do paciente permanece inalterada.</Notice>
               )}
             </div>
             {invalidCount > 0 && <div style={{ marginTop: 10 }}><Badge tone="danger" icon="alertCircle">{plural(invalidCount, 'campo de calorias inválido', 'campos de calorias inválidos')}</Badge></div>}
@@ -303,6 +330,9 @@ function Prescricao() {
               <button type="button" className="nf-btn secondary block" onClick={() => (dirty ? setLeaving(true) : navigate(fichaLink))}>
                 {dirty ? 'Descartar alterações' : 'Voltar à ficha'}
               </button>
+              {patient.prescricaoSemanal?.trim() && <button type="button" className="nf-btn danger block" onClick={() => setClearing(true)} disabled={saving}>
+                <Icon name="trash" size={17} /> Excluir prescrição enviada
+              </button>}
               <Link to={`/nutri-calendario/${id}`} className="nf-btn ghost block"><Icon name="calendar" size={17} /> Agendar retorno</Link>
             </div>
           </div>
@@ -336,9 +366,23 @@ function Prescricao() {
           </ul>
         )}
         {totals.count > 0 && (totals.complete
-          ? <Notice tone="success">Meta diária no aplicativo: <strong style={{ display: 'inline' }}>{fmtNum(totals.total)} kcal</strong>.</Notice>
-          : <Notice tone="warning">Como {plural(totals.missing, 'refeição está', 'refeições estão')} sem calorias, o aplicativo não usará este plano como meta diária.</Notice>)}
+          ? <Notice tone="success">A meta diária do paciente permanece a mesma. As calorias são da refeição e entram no consumo do dia quando ela for concluída no aplicativo.</Notice>
+          : <Notice tone="warning">Refeições sem calorias não serão somadas ao consumo até o valor ser informado. A meta diária permanece a mesma.</Notice>)}
         {notes.trim() && <p style={{ fontSize: '.92rem' }}>Inclui orientações gerais.</p>}
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        open={clearing}
+        tone="danger"
+        icon="trash"
+        title="Excluir a prescrição enviada?"
+        confirmLabel="Excluir prescrição"
+        cancelLabel="Manter prescrição"
+        busy={saving}
+        onCancel={() => setClearing(false)}
+        onConfirm={clearPrescription}
+      >
+        <p>O plano alimentar será removido do aplicativo do paciente. Refeições já registradas no diário continuarão no histórico.</p>
       </ConfirmDialog>
 
       <ConfirmDialog

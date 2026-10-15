@@ -11,4 +11,5 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
     Optional<Paciente> findFirstByEmailIgnoreCaseAndSenhaIsNotNull(String email);
     Optional<Paciente> findFirstByEmailIgnoreCase(String email);
     List<Paciente> findByNutricionistaIdAndStatusOrderByNomeAsc(Long nutricionistaId, String status);
+    List<Paciente> findByNutricionistaId(Long nutricionistaId);
 }

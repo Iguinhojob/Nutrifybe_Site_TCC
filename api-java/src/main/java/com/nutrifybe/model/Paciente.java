@@ -42,6 +42,9 @@ public class Paciente {
     private String status;
     private Integer ativo;
 
+    @Column(name = "foto", columnDefinition = "NVARCHAR(MAX)")
+    private String foto;
+
     // Senha do paciente (só entra na API, nunca sai nas respostas)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
@@ -102,6 +105,8 @@ public class Paciente {
     public void setStatus(String status) { this.status = status; }
     public Integer getAtivo() { return ativo; }
     public void setAtivo(Integer ativo) { this.ativo = ativo; }
+    public String getFoto() { return foto; }
+    public void setFoto(String foto) { this.foto = foto; }
     public String getPrescricaoSemanal() { return prescricaoSemanal; }
     public void setPrescricaoSemanal(String prescricaoSemanal) { this.prescricaoSemanal = prescricaoSemanal; }
     public String getCalendario() { return calendario; }

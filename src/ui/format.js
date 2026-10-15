@@ -70,13 +70,6 @@ export function fmtTime(raw) {
   return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
-export function bmi(peso, alturaCm) {
-  const p = toNum(peso);
-  const a = toNum(alturaCm);
-  if (!p || !a) return null;
-  return p / ((a / 100) ** 2);
-}
-
 export function parseJson(value, fallback = null) {
   if (value === null || value === undefined || value === '') return fallback;
   if (typeof value !== 'string') return value;

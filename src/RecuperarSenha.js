@@ -36,8 +36,15 @@ const RecuperarSenha = () => {
     try {
       await recuperarSenhaAPI.solicitar(email);
       setStep('email-sent');
-    } catch {
-      setMessage({ text: 'Erro ao conectar com o servidor. Tente novamente.', type: 'error' });
+    } catch (err) {
+      const reason = String(err?.message || '');
+      const networkFailure = /failed to fetch|networkerror|load failed/i.test(reason);
+      setMessage({
+        text: networkFailure
+          ? 'Não foi possível conectar à API de recuperação. Confira se o backend está ligado e se REACT_APP_API_URL aponta para ele.'
+          : reason || 'Não foi possível solicitar o e-mail de recuperação. Tente novamente.',
+        type: 'error',
+      });
     } finally {
       setLoading(false);
     }

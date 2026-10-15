@@ -1,6 +1,8 @@
 package com.nutrifybe.model;
 
 import jakarta.persistence.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "SolicitacoesPendentes")
@@ -17,6 +19,11 @@ public class SolicitacaoPendente {
     private String objetivo;
     private String condicaoSaude;
     private Long nutricionistaId;
+    @Column(name = "dataCriacao")
+    private Instant dataCriacao;
+
+    @PrePersist
+    void onCreate() { if (dataCriacao == null) dataCriacao = Instant.now(); }
 
     public Long getId() { return id; }
     public String getNome() { return nome; }
@@ -35,4 +42,10 @@ public class SolicitacaoPendente {
     public void setCondicaoSaude(String condicaoSaude) { this.condicaoSaude = condicaoSaude; }
     public Long getNutricionistaId() { return nutricionistaId; }
     public void setNutricionistaId(Long nutricionistaId) { this.nutricionistaId = nutricionistaId; }
+    public Instant getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(Instant dataCriacao) { this.dataCriacao = dataCriacao; }
+    @Transient
+    public Instant getExpiraEm() { return dataCriacao == null ? null : dataCriacao.plus(24, ChronoUnit.HOURS); }
+    @Transient
+    public boolean isExpirada() { return dataCriacao == null || !Instant.now().isBefore(dataCriacao.plus(24, ChronoUnit.HOURS)); }
 }

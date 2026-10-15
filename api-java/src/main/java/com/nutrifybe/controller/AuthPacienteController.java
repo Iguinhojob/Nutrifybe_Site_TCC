@@ -132,6 +132,7 @@ public class AuthPacienteController {
             return erro(401, "E-mail ou senha inválidos");
         }
         Paciente p = op.get();
+        expirarSolicitacao(p);
         if (p.getAtivo() != null && p.getAtivo() == 0) {
             return erro(403, "Conta inativa");
         }
@@ -139,11 +140,13 @@ public class AuthPacienteController {
     }
 
     @GetMapping("/me")
+    @Transactional
     public ResponseEntity<?> me(@RequestHeader(value = "Authorization", required = false) String auth) {
         Long id = tokens.validar(auth);
         if (id == null) return erro(401, "Sessão inválida");
         Optional<Paciente> op = repository.findById(id);
         if (op.isEmpty()) return erro(404, "Paciente não encontrado");
+        expirarSolicitacao(op.get());
         return ResponseEntity.ok(op.get());
     }
 
@@ -176,6 +179,13 @@ public class AuthPacienteController {
         if (containsAny(body, "motivacao", "motivation")) p.setMotivacao(primeiroTexto(body, "motivacao", "motivation"));
         if (containsAny(body, "restricoes", "restrictions")) p.setRestricoes(primeiroTexto(body, "restricoes", "restrictions"));
         if (body.containsKey("observacoes")) p.setObservacoes(Campos.texto(body.get("observacoes")));
+        if (body.containsKey("email")) return erro(400, "Use a verificacao por e-mail para alterar o endereco da conta");
+        if (body.containsKey("senha")) return erro(400, "Use a verificacao por e-mail para alterar a senha");
+        if (body.containsKey("foto")) {
+            String foto = Campos.texto(body.get("foto"));
+            if (foto != null && foto.length() > 3_500_000) return erro(413, "A foto e muito grande. Escolha uma imagem menor.");
+            p.setFoto(foto);
+        }
         if (containsAny(body, "origem", "origin")) p.setOrigem(primeiroTexto(body, "origem", "origin"));
         if (containsAny(body, "preferenciaAcompanhamento", "followupPreference")) p.setPreferenciaAcompanhamento(primeiroTexto(body, "preferenciaAcompanhamento", "followupPreference"));
         repository.save(p);
@@ -203,8 +213,9 @@ public class AuthPacienteController {
         if (op.isEmpty()) return erro(404, "Paciente nao encontrado");
 
         Paciente paciente = op.get();
-        if (paciente.getNutricionistaId() != null && !nutricionistaId.equals(paciente.getNutricionistaId())) {
-            return erro(409, "Encerre o vínculo atual antes de solicitar outro nutricionista");
+        expirarSolicitacao(paciente);
+        if (paciente.getNutricionistaId() != null) {
+            return erro(409, "Você já tem uma solicitação pendente ou um acompanhamento ativo");
         }
         if (!nutricionistaId.equals(paciente.getNutricionistaId())) {
             paciente.setNutricionistaId(nutricionistaId);
@@ -213,6 +224,24 @@ public class AuthPacienteController {
         }
         criarSolicitacao(paciente);
         return ResponseEntity.ok(paciente);
+    }
+
+    @DeleteMapping("/me/vinculo/solicitacao")
+    @Transactional
+    public ResponseEntity<?> cancelarSolicitacao(@RequestHeader(value = "Authorization", required = false) String auth) {
+        Long id = tokens.validar(auth);
+        if (id == null) return erro(401, "Sessão inválida");
+        Paciente paciente = repository.findById(id).orElse(null);
+        if (paciente == null) return erro(404, "Paciente não encontrado");
+        if (paciente.getNutricionistaId() == null || !"pending".equalsIgnoreCase(paciente.getStatus())) {
+            return erro(400, "Não há solicitação pendente para cancelar");
+        }
+        solicitacaoRepository.findFirstByEmailIgnoreCaseAndNutricionistaId(paciente.getEmail(), paciente.getNutricionistaId())
+                .ifPresent(solicitacaoRepository::delete);
+        paciente.setNutricionistaId(null);
+        paciente.setStatus("solo");
+        repository.save(paciente);
+        return ResponseEntity.ok(Map.of("success", true, "paciente", paciente));
     }
 
     /** O paciente encerra seu próprio acompanhamento após registrar a avaliação do profissional. */
@@ -282,6 +311,18 @@ public class AuthPacienteController {
         solicitacao.setCondicaoSaude(paciente.getCondicaoSaude());
         solicitacao.setNutricionistaId(nutricionistaId);
         solicitacaoRepository.save(solicitacao);
+    }
+
+    private void expirarSolicitacao(Paciente paciente) {
+        if (paciente.getNutricionistaId() == null || !"pending".equalsIgnoreCase(paciente.getStatus())) return;
+        solicitacaoRepository.findFirstByEmailIgnoreCaseAndNutricionistaId(paciente.getEmail(), paciente.getNutricionistaId())
+                .filter(SolicitacaoPendente::isExpirada)
+                .ifPresent(pedido -> {
+                    solicitacaoRepository.delete(pedido);
+                    paciente.setNutricionistaId(null);
+                    paciente.setStatus("solo");
+                    repository.save(paciente);
+                });
     }
 
     private static String primeiroTexto(Map<String, Object> body, String... nomes) {

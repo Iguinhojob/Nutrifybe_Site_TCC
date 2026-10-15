@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SolicitacaoPendenteRepository extends JpaRepository<SolicitacaoPendente, Long> {
+    void deleteByNutricionistaId(Long nutricionistaId);
     boolean existsByEmailIgnoreCaseAndNutricionistaId(String email, Long nutricionistaId);
     List<SolicitacaoPendente> findByNutricionistaIdOrderByIdDesc(Long nutricionistaId);
     Optional<SolicitacaoPendente> findByIdAndNutricionistaId(Long id, Long nutricionistaId);
+    Optional<SolicitacaoPendente> findFirstByEmailIgnoreCaseAndNutricionistaId(String email, Long nutricionistaId);
 }
