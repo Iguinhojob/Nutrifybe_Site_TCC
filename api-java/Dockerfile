@@ -9,5 +9,7 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/nutrifybe-api-1.0.0.jar app.jar
+# O contêiner final também precisa do arquivo para carregar as configurações no Render.
+COPY .env .env
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
