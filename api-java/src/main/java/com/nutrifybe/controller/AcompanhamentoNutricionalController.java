@@ -10,6 +10,8 @@ import com.nutrifybe.repository.PacienteRepository;
 import com.nutrifybe.repository.SolicitacaoPendenteRepository;
 import com.nutrifybe.model.Nutricionista;
 import com.nutrifybe.model.SolicitacaoPendente;
+import com.nutrifybe.model.NotificacaoPaciente;
+import com.nutrifybe.repository.NotificacaoPacienteRepository;
 import com.nutrifybe.security.TokenService;
 import com.nutrifybe.service.MetaCaloriasService;
 import com.nutrifybe.util.Campos;
@@ -34,12 +36,13 @@ public class AcompanhamentoNutricionalController {
     private final ObjectMapper json;
     private final SolicitacaoPendenteRepository solicitacoes;
     private final MetaCaloriasService metas;
+    private final NotificacaoPacienteRepository notificacoes;
 
     public AcompanhamentoNutricionalController(PacienteRepository pacientes,
             NutricionistaRepository nutricionistas, DiarioRefeicaoRepository refeicoes,
             DiarioAguaRepository agua, DiarioMedidaRepository medidas, TokenService tokens,
             ObjectMapper json, SolicitacaoPendenteRepository solicitacoes,
-            MetaCaloriasService metas) {
+            MetaCaloriasService metas, NotificacaoPacienteRepository notificacoes) {
         this.pacientes = pacientes;
         this.nutricionistas = nutricionistas;
         this.refeicoes = refeicoes;
@@ -49,6 +52,7 @@ public class AcompanhamentoNutricionalController {
         this.json = json;
         this.solicitacoes = solicitacoes;
         this.metas = metas;
+        this.notificacoes = notificacoes;
     }
 
     @GetMapping
@@ -152,6 +156,7 @@ public class AcompanhamentoNutricionalController {
         paciente.setNutricionistaId(null);
         paciente.setStatus("solo");
         pacientes.save(paciente);
+        notificacoes.save(new NotificacaoPaciente(paciente.getId(), "acompanhamento_encerrado", "Acompanhamento encerrado", "O nutricionista encerrou o acompanhamento. Você voltou ao modo autônomo."));
         return ResponseEntity.ok(Map.of("success", true));
     }
 

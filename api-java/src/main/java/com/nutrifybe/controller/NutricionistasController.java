@@ -133,6 +133,16 @@ public class NutricionistasController {
             if (body.containsKey("telefone")) nutri.setTelefone((String) body.get("telefone"));
             if (body.containsKey("especialidade")) nutri.setEspecialidade((String) body.get("especialidade"));
             if (body.containsKey("descricao")) nutri.setDescricao((String) body.get("descricao"));
+            if (body.containsKey("experienceYears")) {
+                Object anos = body.get("experienceYears");
+                try {
+                    Integer valor = anos == null || anos.toString().isBlank() ? null : Integer.valueOf(anos.toString());
+                    if (valor != null && (valor < 0 || valor > 80)) throw new NumberFormatException();
+                    nutri.setExperienceYears(valor);
+                } catch (NumberFormatException e) { return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Informe entre 0 e 80 anos de experiência")); }
+            }
+            if (body.containsKey("focusAreas")) nutri.setFocusAreas((String) body.get("focusAreas"));
+            if (body.containsKey("consultationModes")) nutri.setConsultationModes((String) body.get("consultationModes"));
             if (body.containsKey("foto")) nutri.setFoto((String) body.get("foto"));
             repository.save(nutri);
             return ResponseEntity.ok((Object) publico(nutri));
@@ -169,8 +179,15 @@ public class NutricionistasController {
         dados.put("telefone", n.getTelefone());
         dados.put("especialidade", n.getEspecialidade());
         dados.put("descricao", n.getDescricao());
+        dados.put("experienceYears", n.getExperienceYears());
+        dados.put("focusAreas", listaPerfil(n.getFocusAreas()));
+        dados.put("consultationModes", listaPerfil(n.getConsultationModes()));
         dados.put("foto", n.getFoto());
         dados.put("dataCriacao", n.getDataCriacao());
         return dados;
+    }
+    private java.util.List<String> listaPerfil(String texto) {
+        if (texto == null || texto.isBlank()) return java.util.List.of();
+        return java.util.Arrays.stream(texto.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toList();
     }
 }

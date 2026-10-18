@@ -2,6 +2,8 @@ package com.nutrifybe.controller;
 
 import com.nutrifybe.model.Paciente;
 import com.nutrifybe.model.SolicitacaoPendente;
+import com.nutrifybe.model.NotificacaoPaciente;
+import com.nutrifybe.repository.NotificacaoPacienteRepository;
 import com.nutrifybe.repository.NutricionistaRepository;
 import com.nutrifybe.repository.PacienteRepository;
 import com.nutrifybe.repository.SolicitacaoPendenteRepository;
@@ -22,13 +24,15 @@ public class SolicitacoesNutriController {
     private final PacienteRepository pacientes;
     private final NutricionistaRepository nutricionistas;
     private final TokenService tokens;
+    private final NotificacaoPacienteRepository notificacoes;
 
     public SolicitacoesNutriController(SolicitacaoPendenteRepository solicitacoes, PacienteRepository pacientes,
-                                       NutricionistaRepository nutricionistas, TokenService tokens) {
+                                       NutricionistaRepository nutricionistas, TokenService tokens, NotificacaoPacienteRepository notificacoes) {
         this.solicitacoes = solicitacoes;
         this.pacientes = pacientes;
         this.nutricionistas = nutricionistas;
         this.tokens = tokens;
+        this.notificacoes = notificacoes;
     }
 
     @GetMapping
@@ -68,6 +72,7 @@ public class SolicitacoesNutriController {
         paciente.setNutricionistaId(nutriId);
         paciente.setStatus("accepted");
         Paciente salvo = pacientes.save(paciente);
+        notificacoes.save(new NotificacaoPaciente(salvo.getId(), "vinculo_aceito", "Solicitação aceita", "O nutricionista aceitou sua solicitação de acompanhamento."));
         solicitacoes.delete(pedido);
         Map<String, Object> resultado = new LinkedHashMap<>();
         resultado.put("id", salvo.getId());
@@ -90,6 +95,7 @@ public class SolicitacoesNutriController {
                 paciente.setNutricionistaId(null);
                 paciente.setStatus("solo");
                 pacientes.save(paciente);
+                notificacoes.save(new NotificacaoPaciente(paciente.getId(), "vinculo_recusado", "Solicitação recusada", "O nutricionista recusou sua solicitação. Você pode escolher outro profissional."));
             }
         });
         solicitacoes.delete(pedido);

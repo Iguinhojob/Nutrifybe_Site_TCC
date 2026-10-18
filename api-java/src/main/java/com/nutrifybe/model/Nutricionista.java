@@ -18,6 +18,9 @@ public class Nutricionista {
     private String telefone;
     private String especialidade;
     private String descricao;
+    private Integer experienceYears;
+    private String focusAreas;
+    private String consultationModes;
 
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String foto;
@@ -47,4 +50,10 @@ public class Nutricionista {
     public String getFoto() { return foto; }
     public void setFoto(String foto) { this.foto = foto; }
     public String getDataCriacao() { return dataCriacao; }
+    public Integer getExperienceYears() { return experienceYears; }
+    public void setExperienceYears(Integer value) { this.experienceYears = value; }
+    public String getFocusAreas() { return focusAreas; }
+    public void setFocusAreas(String value) { this.focusAreas = value; }
+    public String getConsultationModes() { return consultationModes; }
+    public void setConsultationModes(String value) { this.consultationModes = value; }
 }

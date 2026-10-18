@@ -6,7 +6,7 @@ import Icon from './ui/icons';
 import { nutricionistasAPI, contaAPI } from './services/api';
 import { friendlyError, getStoredUser, initialOf } from './ui/format';
 
-const EMPTY = { nome: '', email: '', telefone: '', especialidade: '', descricao: '', foto: '' };
+const EMPTY = { nome: '', email: '', telefone: '', especialidade: '', descricao: '', foto: '', experienceYears: '', focusAreas: '', consultationModes: '' };
 const fromUser = (u) => ({
   nome: u?.nome || u?.Nome || '',
   email: u?.email || u?.Email || '',
@@ -14,6 +14,9 @@ const fromUser = (u) => ({
   especialidade: u?.especialidade || u?.Especialidade || '',
   descricao: u?.descricao || u?.Descricao || '',
   foto: u?.foto || u?.Foto || '',
+  experienceYears: u?.experienceYears == null ? '' : String(u.experienceYears),
+  focusAreas: Array.isArray(u?.focusAreas) ? u.focusAreas.join(', ') : (u?.focusAreas || ''),
+  consultationModes: Array.isArray(u?.consultationModes) ? u.consultationModes.join(', ') : (u?.consultationModes || ''),
 });
 
 function Perfil() {
@@ -209,6 +212,20 @@ function Perfil() {
             <div className="nf-field">
               <label htmlFor="p-esp">Especialidade</label>
               <input id="p-esp" name="especialidade" className="nf-input" value={formData.especialidade} onChange={onChange} placeholder="Ex.: Nutrição esportiva" />
+            </div>
+            <div className="nf-field">
+              <label htmlFor="p-exp">Anos de experiência</label>
+              <input id="p-exp" name="experienceYears" type="number" min="0" max="80" step="1" className="nf-input" value={formData.experienceYears} onChange={onChange} placeholder="Ex.: 5" />
+            </div>
+            <div className="nf-field">
+              <label htmlFor="p-areas">Áreas de atuação</label>
+              <input id="p-areas" name="focusAreas" maxLength={255} className="nf-input" value={formData.focusAreas} onChange={onChange} placeholder="Ex.: Nutrição clínica, esportiva" />
+              <span className="help">Separe as áreas por vírgulas.</span>
+            </div>
+            <div className="nf-field">
+              <label htmlFor="p-atendimento">Formas de atendimento</label>
+              <input id="p-atendimento" name="consultationModes" maxLength={255} className="nf-input" value={formData.consultationModes} onChange={onChange} placeholder="Ex.: Online, Presencial" />
+              <span className="help">Separe as modalidades por vírgulas.</span>
             </div>
             <div className="nf-field" style={{ gridColumn: '1 / -1' }}>
               <label htmlFor="p-desc">Descrição profissional</label>
